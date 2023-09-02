@@ -14,6 +14,16 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
+    fontSize : {
+      'h1' : ['40px', {fontWeight: '700'}],
+      'h2' : ['36px', {fontWeight: '700'}],
+      'h3' : ['24px', {fontWeight: '700'}],
+      'h4' : ['16px', {fontWeight: '700'}],
+      'p1' : ['18px', {fontWeight: '500'}],
+      'p2' : ['16px', {fontWeight: '500'}],
+      'p3' : ['14px', {fontWeight: '500'}],
+      'p4' : ['12px', {fontWeight: '500'}],
+    },
     colors:{
       'error_red' : "#CC0000",
       'warning_yellow' : "#FBC711",
@@ -37,8 +47,9 @@ const config: Config = {
       '64px' : '64px',
     },
     borderRadius : {
-      's' : '5px',
-      'm' : '15px'
+      'none' : '0px',
+      'sm' : '5px',
+      'lg' : '15px'
     }
   },
   plugins: [],
