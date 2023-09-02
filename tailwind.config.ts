@@ -35,6 +35,10 @@ const config: Config = {
       '24px' : '24px',
       '32px' : '32px',
       '64px' : '64px',
+    },
+    borderRadius : {
+      's' : '5px',
+      'm' : '15px'
     }
   },
   plugins: [],
