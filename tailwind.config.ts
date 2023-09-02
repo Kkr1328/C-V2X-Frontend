@@ -27,6 +27,14 @@ const config: Config = {
       'light_background_grey' : "#F2F2F2",
       'dark_background_blue' : "#D4ECF4",
       'light_background_blue' : "#E9F6FA",
+    },
+    spacing : {
+      '4px' : '4px',
+      '8px' : '8px',
+      '16px' : '16px',
+      '24px' : '24px',
+      '32px' : '32px',
+      '64px' : '64px',
     }
   },
   plugins: [],
