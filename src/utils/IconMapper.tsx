@@ -1,4 +1,4 @@
-import { NAVBAR_LABEL } from '@/constants/PAGE';
+import { NAVBAR_LABEL } from '@/constants/LABEL';
 
 import InsertChartRoundedIcon from '@mui/icons-material/InsertChartRounded';
 import PieChartRoundedIcon from '@mui/icons-material/PieChartRounded';
