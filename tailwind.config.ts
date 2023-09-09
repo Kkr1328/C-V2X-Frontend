@@ -47,6 +47,7 @@ const config: Config = {
       '24' : '24px',
       '32' : '32px',
       '64' : '64px',
+      '72' : '72px',
       '280' : '280px'
     },
     borderRadius : {
