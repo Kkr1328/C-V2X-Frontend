@@ -9,4 +9,6 @@ export enum NAVBAR_LABEL {
     DRIVERS = "Drivers",
     CAMERAS = "Cameras",
     RSUS = "RSUs",
+    EXPAND = "Expand",
+    COLLAPSE = "Collapse",
 }
