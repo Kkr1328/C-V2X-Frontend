@@ -31,7 +31,10 @@ export default function Navbar() {
 			<List className="w-full h-full p-none bg-white">
 				<NavbarMenu
 					isExpanded={isExpanded}
-					option={NAVBAR_LABEL.DASHBOARD}
+					option={{
+						label: NAVBAR_LABEL.DASHBOARD,
+						route: ROUTE.DASHBOARD,
+					}}
 					sub_options={[
 						{
 							label: NAVBAR_LABEL.OVERVIEW,
@@ -53,7 +56,10 @@ export default function Navbar() {
 				/>
 				<NavbarMenu
 					isExpanded={isExpanded}
-					option={NAVBAR_LABEL.ENTITY_MANAGEMENT}
+					option={{
+						label: NAVBAR_LABEL.ENTITY_MANAGEMENT,
+						route: ROUTE.ENTITY_MANAGEMENT,
+					}}
 					sub_options={[
 						{
 							label: NAVBAR_LABEL.CARS,
