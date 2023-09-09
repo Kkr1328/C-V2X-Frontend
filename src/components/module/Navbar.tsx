@@ -1,7 +1,9 @@
 'use client';
 
 import { Drawer, List, Toolbar } from '@mui/material';
+
 import NavbarMenu from '../common/NavbarMenu';
+
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 import { ROUTE } from '@/constants/ROUTE';
 
@@ -9,9 +11,9 @@ export default function Navbar() {
 	return (
 		<Drawer
 			variant="permanent"
-			className="z-10 bg-white"
+			className="z-10 w-280 shrink-0 bg-white"
 			sx={{
-				[`& .MuiDrawer-paper`]: { width: '240', boxSizing: 'border-box' },
+				[`& .MuiDrawer-paper`]: { width: '280px', boxSizing: 'border-box' },
 			}}>
 			<Toolbar />
 			<List className="w-full bg-white">
@@ -30,6 +32,10 @@ export default function Navbar() {
 							label: NAVBAR_LABEL.EMERGENCY,
 							route: ROUTE.EMERGENCY,
 						},
+						{
+							label: NAVBAR_LABEL.HEARTBEAT,
+							route: ROUTE.HEARTBEAT,
+						},
 					]}
 				/>
 				<NavbarMenu
@@ -42,6 +48,14 @@ export default function Navbar() {
 						{
 							label: NAVBAR_LABEL.DRIVERS,
 							route: ROUTE.DRIVERS,
+						},
+						{
+							label: NAVBAR_LABEL.CAMERAS,
+							route: ROUTE.CAMERAS,
+						},
+						{
+							label: NAVBAR_LABEL.RSUS,
+							route: ROUTE.RSUS,
 						},
 					]}
 				/>
