@@ -1,23 +1,36 @@
 'use client';
 
-import { Drawer, List, Toolbar } from '@mui/material';
+import { Drawer, List, ListItemButton, Toolbar } from '@mui/material';
 
 import NavbarMenu from '../common/NavbarMenu';
 
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 import { ROUTE } from '@/constants/ROUTE';
+import IconMapper from '@/utils/IconMapper';
+import React from 'react';
 
 export default function Navbar() {
+	const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
+
 	return (
 		<Drawer
 			variant="permanent"
-			className="z-10 w-280 shrink-0 bg-white"
+			className={`z-10 ${
+				isExpanded ? 'w-280' : 'w-72'
+			} flex shrink-0 bg-white transition-all`}
 			sx={{
-				[`& .MuiDrawer-paper`]: { width: '280px', boxSizing: 'border-box' },
+				[`& .MuiDrawer-paper`]: {
+					width: isExpanded ? '280px' : '72px',
+					boxSizing: 'border-box',
+					transitionProperty: 'all',
+					transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+					transitionDuration: '150ms',
+				},
 			}}>
 			<Toolbar />
-			<List className="w-full bg-white">
+			<List className="w-full h-full p-none bg-white">
 				<NavbarMenu
+					isExpanded={isExpanded}
 					option={NAVBAR_LABEL.DASHBOARD}
 					sub_options={[
 						{
@@ -39,6 +52,7 @@ export default function Navbar() {
 					]}
 				/>
 				<NavbarMenu
+					isExpanded={isExpanded}
 					option={NAVBAR_LABEL.ENTITY_MANAGEMENT}
 					sub_options={[
 						{
@@ -60,6 +74,14 @@ export default function Navbar() {
 					]}
 				/>
 			</List>
+			<ListItemButton
+				className="w-full px-24 py-16 justify-center self-end
+							hover:text-primary_blue hover:bg-light_background_blue"
+				onClick={() => setIsExpanded(!isExpanded)}>
+				<IconMapper
+					icon={isExpanded ? NAVBAR_LABEL.COLLAPSE : NAVBAR_LABEL.EXPAND}
+				/>
+			</ListItemButton>
 		</Drawer>
 	);
 }

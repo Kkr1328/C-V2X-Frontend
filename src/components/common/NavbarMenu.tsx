@@ -17,6 +17,7 @@ interface NavbarMenuProps {
 	option: string;
 	sub_options: MenuOptionProps[];
 	focused_option?: string;
+	isExpanded: boolean;
 }
 
 export default function NavbarMenu(props: NavbarMenuProps) {
@@ -26,17 +27,30 @@ export default function NavbarMenu(props: NavbarMenuProps) {
 		<>
 			<ListItemButton
 				onClick={() => setOpen(!open)}
-				className="px-24 py-16 gap-x-16">
+				className="px-24 py-16 gap-x-16 bg-light_background_grey
+							hover:text-primary_blue hover:bg-light_background_blue">
 				<IconMapper icon={props.option} />
-				<ListItemText className="text-p2" primary={props.option} />
-				{open ? <ExpandLess /> : <ExpandMore />}
+				{props.isExpanded && (
+					<>
+						<ListItemText
+							className="text-p2 truncate m-none"
+							primary={props.option}
+						/>
+						{open ? <ExpandLess /> : <ExpandMore />}
+					</>
+				)}
 			</ListItemButton>
-			<Collapse in={open} timeout="auto" unmountOnExit>
+			<Collapse in={props.isExpanded && open} timeout="auto" unmountOnExit>
 				<List component="div" disablePadding>
 					{props.sub_options.map(({ label, route }) => (
-						<ListItemButton className="px-24 py-16 pl-64 gap-x-16">
+						<ListItemButton
+							className="px-24 py-16 pl-64 gap-x-16 bg-dark_background_grey 
+										hover:text-primary_blue hover:bg-dark_background_blue">
 							<IconMapper icon={label} />
-							<ListItemText className="text-p2" primary={label} />
+							<ListItemText
+								className="text-p2 truncate m-none"
+								primary={label}
+							/>
 						</ListItemButton>
 					))}
 				</List>
