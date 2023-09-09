@@ -1,7 +1,8 @@
 'use client';
 
-import { AppBar, Avatar, Toolbar } from '@mui/material';
 import Image from 'next/image';
+
+import { AppBar, Avatar, Toolbar } from '@mui/material';
 
 export default function Header() {
 	return (
