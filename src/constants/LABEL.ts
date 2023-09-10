@@ -12,3 +12,15 @@ export enum NAVBAR_LABEL {
     EXPAND = "Expand",
     COLLAPSE = "Collapse",
 }
+
+export enum BUTTON_LABEL {
+    CLEAR = "Clear",
+    SEARCH = "Search",
+    REGISTER = "Register",
+    REFRESH = "Refresh",
+    EDIT = "Edit",
+    DELETE = "Delete",
+    CANCLE = "Cancle",
+    CONFIRM = "Confirm",
+    ZOOM = "Zoom"
+}
