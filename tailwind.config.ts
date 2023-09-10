@@ -15,14 +15,14 @@ const config: Config = {
       },
     },
     fontSize : {
-      'h1' : ['40px', {fontWeight: '700'}],
-      'h2' : ['36px', {fontWeight: '700'}],
-      'h3' : ['24px', {fontWeight: '700'}],
-      'h4' : ['16px', {fontWeight: '700'}],
-      'h5' : ['12px', {fontWeight: '700'}],
-      'p1' : ['16px', {fontWeight: '400'}],
-      'p2' : ['12px', {fontWeight: '400'}],
-      'p3' : ['10px', {fontWeight: '400'}],
+      'h1' : ['40px', {lineHeight: '57.6px', fontWeight: '700'}],
+      'h2' : ['36px', {lineHeight: '51.8px', fontWeight: '700'}],
+      'h3' : ['24px', {lineHeight: '34.5px', fontWeight: '700'}],
+      'h4' : ['16px', {lineHeight: '23px', fontWeight: '700'}],
+      'h5' : ['12px', {lineHeight: '17.3px', fontWeight: '700'}],
+      'p1' : ['16px', {lineHeight: '23px', fontWeight: '400'}],
+      'p2' : ['12px', {lineHeight: '17.3px', fontWeight: '400'}],
+      'p3' : ['10px', {lineHeight: '14.4px', fontWeight: '400'}],
     },
     colors:{
       'black' : "#000000",
@@ -32,6 +32,7 @@ const config: Config = {
       'active_green' : "#00880E",
       'inactive_grey' : "#D8D8D8",
       'primary_blue' : "#17A5D3",
+      'dark_primary_blue' : "#1596D0",
       'dark_text_grey' : "#555555",
       'light_text_grey' : "#979797",
       'dark_background_grey' : "#EEEEEE",
@@ -46,6 +47,8 @@ const config: Config = {
       '16' : '16px',
       '24' : '24px',
       '32' : '32px',
+      '40' : '40px',
+      '48' : '48px',
       '64' : '64px',
       '72' : '72px',
       '280' : '280px'
@@ -53,6 +56,7 @@ const config: Config = {
     borderRadius : {
       'none' : '0px',
       'sm' : '5px',
+      'md' : '10px',
       'lg' : '15px'
     }
   },
