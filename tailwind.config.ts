@@ -19,7 +19,7 @@ const config: Config = {
       'h2' : ['36px', {lineHeight: '51.8px', fontWeight: '700'}],
       'h3' : ['24px', {lineHeight: '34.5px', fontWeight: '700'}],
       'h4' : ['16px', {lineHeight: '23px', fontWeight: '700'}],
-      'h5' : ['12px', {lineHeight: '17.3px', fontWeight: '700'}],
+      'h5' : ['14px', {lineHeight: '17.3px', fontWeight: '700'}],
       'p1' : ['16px', {lineHeight: '23px', fontWeight: '400'}],
       'p2' : ['12px', {lineHeight: '17.3px', fontWeight: '400'}],
       'p3' : ['10px', {lineHeight: '14.4px', fontWeight: '400'}],
@@ -51,7 +51,8 @@ const config: Config = {
       '48' : '48px',
       '64' : '64px',
       '72' : '72px',
-      '280' : '280px'
+      '280' : '280px',
+      '600' : '600px'
     },
     borderRadius : {
       'none' : '0px',
