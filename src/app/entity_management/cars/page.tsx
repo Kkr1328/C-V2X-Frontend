@@ -1,3 +1,10 @@
+import { NAVBAR_LABEL } from '@/constants/LABEL';
+import PageTitle from '@/components/common/PageTitle';
+
 export default function Home() {
-	return <p className="text-black">This is cars</p>;
+	return (
+		<>
+			<PageTitle title={NAVBAR_LABEL.CARS} />
+		</>
+	);
 }
