@@ -23,7 +23,7 @@ export default function RootLayout({
 				<Box className="w-screen h-screen flex bg-dark_background_grey">
 					<Header />
 					<Navbar />
-					<Box className="grow px-64 py-32">
+					<Box className="grow px-32 py-32">
 						<Toolbar />
 						{children}
 					</Box>
