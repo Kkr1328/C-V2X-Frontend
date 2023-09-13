@@ -24,3 +24,9 @@ export enum BUTTON_LABEL {
     CONFIRM = "Confirm",
     ZOOM = "Zoom"
 }
+
+export enum PILL_LABEL {
+    ACTIVE = "ACTIVE",
+    INACTIVE = "INACTIVE",
+    EMERGENCY = "EMERGENCY"
+}
