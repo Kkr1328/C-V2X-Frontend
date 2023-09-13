@@ -1,5 +1,6 @@
-import { PILL_LABEL } from '@/constants/LABEL';
 import { Chip } from '@mui/material';
+
+import { PILL_LABEL } from '@/constants/LABEL';
 
 interface PillProps {
 	variant: keyof typeof PILL_LABEL;

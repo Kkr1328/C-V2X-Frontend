@@ -1,5 +1,6 @@
-import IconMapper from '@/utils/IconMapper';
 import Button from '@mui/material/Button';
+
+import IconMapper from '@/utils/IconMapper';
 
 interface ButtonCV2XProp {
 	icon?: string;
