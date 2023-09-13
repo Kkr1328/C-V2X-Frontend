@@ -30,13 +30,13 @@ export default function NavbarMenu(props: NavbarMenuProps) {
 		<>
 			<ListItemButton
 				onClick={() => setOpen(!open)}
-				className={`px-24 py-16 gap-x-16 
+				className={`px-24 py-16 gap-x-16 border-b border-solid
 					${
 						pathname.includes(props.option.route)
-							? 'text-primary_blue bg-light_background_blue'
-							: 'bg-light_background_grey'
+							? 'border-primary_blue text-primary_blue bg-light_background_blue'
+							: 'bg-white'
 					}
-					hover:text-primary_blue hover:bg-light_background_blue`}>
+					hover:border-blue hover:text-primary_blue hover:bg-light_background_blue `}>
 				<IconMapper icon={props.option.label} />
 				{props.isExpanded && (
 					<>
@@ -52,7 +52,7 @@ export default function NavbarMenu(props: NavbarMenuProps) {
 				<List component="div" disablePadding>
 					{props.sub_options.map(({ label, route }) => (
 						<ListItemButton
-							className={`px-24 py-16 pl-64 gap-x-16 
+							className={`px-24 py-16 pl-64 gap-x-16 border-b border-black
 								${
 									pathname === route
 										? 'text-primary_blue bg-dark_background_blue'
