@@ -7,6 +7,7 @@ interface ButtonCV2XProp {
 	variant?: 'contained' | 'outlined' | 'text';
 	color?: 'primary' | 'secondary' | 'accept' | 'error';
 	disabled?: boolean;
+	onClick?: () => void;
 }
 
 export default function ButtonCV2X(props: ButtonCV2XProp) {
@@ -67,7 +68,8 @@ export default function ButtonCV2X(props: ButtonCV2XProp) {
 		<Button
 			variant={props.variant}
 			disabled={props.disabled}
-			className={buttonStyle}>
+			className={buttonStyle}
+			onClick={props.onClick}>
 			{props.icon && <IconMapper icon={props.icon} />}
 			<p className="text-h5">{props.label}</p>
 		</Button>
