@@ -26,28 +26,35 @@ const config: Config = {
     },
     colors:{
       'black' : "#000000",
+
       'white' : "#FFFFFF",
+
       'error_red' : "#CC0000",
       'dark_error_red' : "#B50000",
+      'dark_background_red' : "#FFDDDD",
+
       'warning_yellow' : "#FBC711",
+
       'active_green' : "#00880E",
       'dark_active_green' : "#00700B",
-      'inactive_grey' : "#D8D8D8",
+      'dark_background_green' : "#bee8c6",
+
       'primary_blue' : "#17A5D3",
       'dark_primary_blue' : "#1596D0",
+      'dark_background_blue' : "#D4ECF4",
+      'light_background_blue' : "#E9F6FA",
+
+      'inactive_grey' : "#D8D8D8",
       'dark_text_grey' : "#555555",
       'light_text_grey' : "#979797",
       'dark_background_grey' : "#EEEEEE",
       'light_background_grey' : "#F2F2F2",
-      'dark_background_blue' : "#D4ECF4",
-      'light_background_blue' : "#E9F6FA",
-      'dark_background_red' : "#FFDDDD",
-      'dark_background_green' : "#bee8c6",
     },
     spacing : {
       'none' : '0',
       '4' : '4px',
       '8' : '8px',
+      '12' : '12px',
       '16' : '16px',
       '24' : '24px',
       '32' : '32px',
