@@ -1,11 +1,13 @@
+'use client';
+
 import { ChangeEvent } from 'react';
 
 import { Stack, TextField } from '@mui/material';
 
 interface TextFieldCV2XProp {
 	title?: string;
-	value?: string;
-	onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+	value: string;
+	onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 	placeholder?: string;
 }
 
