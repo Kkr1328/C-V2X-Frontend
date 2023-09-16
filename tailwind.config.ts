@@ -34,6 +34,7 @@ const config: Config = {
       'dark_background_red' : "#FFDDDD",
 
       'warning_yellow' : "#FBC711",
+      "dark_warning_yellow" : "#EFBE10",
 
       'active_green' : "#00880E",
       'dark_active_green' : "#00700B",
@@ -59,6 +60,7 @@ const config: Config = {
       '24' : '24px',
       '32' : '32px',
       '40' : '40px',
+      '44' : '44px',
       '48' : '48px',
       '64' : '64px',
       '72' : '72px',
