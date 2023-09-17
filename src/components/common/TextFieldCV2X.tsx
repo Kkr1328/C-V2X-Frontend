@@ -13,15 +13,16 @@ interface TextFieldCV2XProp {
 
 export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 	return (
-		<Stack className="gap-4">
+		<Stack className="w-full gap-4">
 			{props.title && <p className="text-black text-h4">{props.title}</p>}
 			<TextField
 				fullWidth
 				placeholder={props.placeholder}
 				variant="outlined"
-				className="rounded-lg bg-light_background_grey"
+				className="rounded-lg h-44 bg-light_background_grey"
 				sx={{
 					'& .MuiOutlinedInput-root': {
+						height: '44px',
 						'& fieldset': {
 							borderColor: '#F2F2F2', //light_background_grey
 							borderRadius: '15px',
@@ -32,6 +33,11 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 						'&.Mui-focused fieldset': {
 							borderColor: '#17A5D3', //primary_blue
 						},
+					},
+					'& .MuiInputBase-input': {
+						height: '20px',
+						paddingX: '16px',
+						paddingY: '12px',
 					},
 				}}
 				value={props.value}
