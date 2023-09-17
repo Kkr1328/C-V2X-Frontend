@@ -27,7 +27,7 @@ interface SelectCV2XProp {
 
 export default function SelectCV2X(props: SelectCV2XProp) {
 	return (
-		<Stack className="gap-4">
+		<Stack className="w-full gap-4">
 			{props.title && <p className="text-black text-h4">{props.title}</p>}
 			<Autocomplete
 				fullWidth
@@ -36,11 +36,12 @@ export default function SelectCV2X(props: SelectCV2XProp) {
 				onChange={props.onChange}
 				options={props.options}
 				getOptionLabel={(option) => option.label}
+				className="h-44"
 				renderInput={(params) => (
 					<TextField
 						{...params}
 						placeholder={props.placeholder}
-						className="rounded-lg bg-light_background_grey"
+						className="rounded-lg h-44 bg-light_background_grey"
 						sx={{
 							'& .MuiOutlinedInput-root': {
 								'& fieldset': {
@@ -57,6 +58,13 @@ export default function SelectCV2X(props: SelectCV2XProp) {
 						}}
 					/>
 				)}
+				sx={{
+					'& .MuiInputBase-root': {
+						height: '44px',
+						paddingY: '4.5px',
+						paddingX: '11px',
+					},
+				}}
 			/>
 		</Stack>
 	);
