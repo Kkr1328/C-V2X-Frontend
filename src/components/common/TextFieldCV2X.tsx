@@ -14,7 +14,7 @@ interface TextFieldCV2XProp {
 export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 	return (
 		<Stack className="w-full gap-4">
-			{props.title && <p className="text-black text-h4">{props.title}</p>}
+			{props.title && <p className="text-black text-h5">{props.title}</p>}
 			<TextField
 				fullWidth
 				placeholder={props.placeholder}

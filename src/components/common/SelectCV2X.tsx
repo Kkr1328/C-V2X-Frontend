@@ -28,7 +28,7 @@ interface SelectCV2XProp {
 export default function SelectCV2X(props: SelectCV2XProp) {
 	return (
 		<Stack className="w-full gap-4">
-			{props.title && <p className="text-black text-h4">{props.title}</p>}
+			{props.title && <p className="text-black text-h5">{props.title}</p>}
 			<Autocomplete
 				fullWidth
 				blurOnSelect

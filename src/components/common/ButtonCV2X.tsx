@@ -72,7 +72,7 @@ export default function ButtonCV2X(props: ButtonCV2XProp) {
 			className={buttonStyle}
 			onClick={props.onClick}>
 			{props.icon && <IconMapper icon={props.icon} />}
-			<p className="text-h4">{props.label}</p>
+			<p className="text-h5">{props.label}</p>
 		</Button>
 	);
 }
