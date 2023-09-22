@@ -128,7 +128,7 @@ export const RSUFilterTemplate: InputFieldProp[] = [
 		row: 1,
 	},
 	{
-		label: INPUT_LABEL.POSITION,
+		label: INPUT_LABEL.RECOMENDED_SPEED,
 		type: 'Select',
 		placeholder: '50',
 		row: 1,
