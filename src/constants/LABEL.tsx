@@ -52,3 +52,10 @@ export enum PILL_LABEL {
 	INACTIVE = 'INACTIVE',
 	EMERGENCY = 'EMERGENCY',
 }
+
+export enum MODAL_LABEL {
+	REGISTER_CAR = 'Register a new car',
+	REGISTER_DRIVER = 'Register a new driver',
+	REGISTER_CAMERA = 'Register a new camera',
+	REGISTER_RSU = 'Register a new RSU',
+}
