@@ -16,7 +16,7 @@ const config: Config = {
     },
     fontSize : {
       'h1' : ['40px', {lineHeight: '57.6px', fontWeight: '700'}],
-      'h2' : ['36px', {lineHeight: '51.8px', fontWeight: '700'}],
+      'h2' : ['32px', {lineHeight: '46.1px', fontWeight: '700'}],
       'h3' : ['24px', {lineHeight: '34.5px', fontWeight: '700'}],
       'h4' : ['20px', {lineHeight: '28.8px', fontWeight: '700'}],
       'h5' : ['16px', {lineHeight: '23px', fontWeight: '700'}],
