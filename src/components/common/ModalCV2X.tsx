@@ -12,6 +12,8 @@ import IconMapper from '@/utils/IconMapper';
 import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
 
 interface ModalCV2XProp {
+	open: boolean;
+	handleOnClose: () => void;
 	variant: 'Inform' | 'Delete' | 'Register' | 'Edit';
 	title: string;
 	pill?: keyof typeof PILL_LABEL;
@@ -20,14 +22,10 @@ interface ModalCV2XProp {
 }
 
 export default function ModalCV2X(props: ModalCV2XProp) {
-	const [open, setOpen] = React.useState<boolean>(true);
-
-	const handleCloseModel = () => setOpen(false);
-
 	return (
 		<Modal
-			open={open}
-			onClose={() => setOpen(false)}
+			open={props.open}
+			onClose={props.handleOnClose}
 			className="flex items-center justify-center">
 			<Card className="w-600 rounded-lg">
 				<div className="p-16 items-center flex gap-16">
@@ -39,7 +37,7 @@ export default function ModalCV2X(props: ModalCV2XProp) {
 							<IconButton
 								disableRipple
 								className="p-none"
-								onClick={handleCloseModel}>
+								onClick={props.handleOnClose}>
 								<IconMapper icon={BUTTON_LABEL.CANCLE} />
 							</IconButton>
 						</>
@@ -56,7 +54,7 @@ export default function ModalCV2X(props: ModalCV2XProp) {
 								variant="text"
 								color="secondary"
 								label={BUTTON_LABEL.CANCLE}
-								onClick={handleCloseModel}
+								onClick={props.handleOnClose}
 							/>
 							{props.variant === 'Delete' ? (
 								<ButtonCV2X
