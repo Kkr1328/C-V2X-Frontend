@@ -65,13 +65,13 @@ const config: Config = {
       '64' : '64px',
       '72' : '72px',
       '280' : '280px',
-      '600' : '600px'
+      '600' : '600px',
     },
     borderRadius : {
       'none' : '0px',
       'sm' : '5px',
       'md' : '10px',
-      'lg' : '15px'
+      'lg' : '15px',
     }
   },
   plugins: [],
