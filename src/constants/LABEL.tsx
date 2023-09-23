@@ -48,6 +48,8 @@ export enum BUTTON_LABEL {
 	MISSING = 'Missing',
 	LOCATION = 'Location',
 	NO_DATA = 'No results found',
+	VISIBLE = 'Visible',
+	INVISIBLE = 'Invisible',
 }
 
 export enum PILL_LABEL {
