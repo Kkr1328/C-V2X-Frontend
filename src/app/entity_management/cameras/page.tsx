@@ -10,19 +10,12 @@ import {
 	CameraActionModalTemplate,
 	CameraFilterTemplate,
 } from '@/constants/TEMPLATE';
-import { Position } from '@/constants/TYPE';
+import { CameraSearchRequest } from '@/constants/TYPE';
 import { Card, Divider, Stack } from '@mui/material';
 import { useState } from 'react';
 
-interface SearchCamerasRequest {
-	id: string;
-	name: string;
-	position: Position;
-	car: string;
-}
-
 export default function Home() {
-	const [searchRequest, setSearchRequest] = useState<SearchCamerasRequest>();
+	const [searchRequest, setSearchRequest] = useState<CameraSearchRequest>();
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 
 	return (
@@ -31,7 +24,8 @@ export default function Home() {
 				title={MODAL_LABEL.REGISTER_CAMERA}
 				variant="Register"
 				open={openRegisterModal}
-				handleOnClose={() => setOpenRegisterModal(false)}>
+				handleOnClose={() => setOpenRegisterModal(false)}
+			>
 				<ModalInputs template={CameraActionModalTemplate} />
 			</ModalCV2X>
 			<Stack className="gap-16">
@@ -41,7 +35,7 @@ export default function Home() {
 						<Filter template={CameraFilterTemplate} />
 						<Divider />
 						<Stack direction="row" className="gap-8">
-							<p className="text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
+							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
 							<div className="grow" />
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REGISTER}

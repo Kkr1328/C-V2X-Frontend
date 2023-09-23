@@ -22,7 +22,8 @@ export default function Home() {
 				title={MODAL_LABEL.REGISTER_CAR}
 				variant="Register"
 				open={openRegisterModal}
-				handleOnClose={() => setOpenRegisterModal(false)}>
+				handleOnClose={() => setOpenRegisterModal(false)}
+			>
 				<ModalInputs template={CarActionModalTemplate} />
 			</ModalCV2X>
 			<Stack className="gap-16">
@@ -32,7 +33,7 @@ export default function Home() {
 						<Filter template={CarFilterTemplate} />
 						<Divider />
 						<Stack direction="row" className="gap-8">
-							<p className="font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
+							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
 							<div className="grow" />
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REGISTER}

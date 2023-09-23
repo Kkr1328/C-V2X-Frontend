@@ -26,10 +26,13 @@ export default function ModalCV2X(props: ModalCV2XProp) {
 		<Modal
 			open={props.open}
 			onClose={props.handleOnClose}
-			className="flex items-center justify-center">
+			className="flex items-center justify-center"
+		>
 			<Card className="w-600 rounded-lg">
 				<div className="p-16 items-center flex gap-16">
-					<p className="font-istok text-h3 text-black">{props.title}</p>
+					<p className="inline-block align-baseline font-istok text-h3 text-black">
+						{props.title}
+					</p>
 					{props.pill && <Pill variant={props.pill} />}
 					{props.variant === 'Inform' && (
 						<>
@@ -37,7 +40,8 @@ export default function ModalCV2X(props: ModalCV2XProp) {
 							<IconButton
 								disableRipple
 								className="p-none"
-								onClick={props.handleOnClose}>
+								onClick={props.handleOnClose}
+							>
 								<IconMapper icon={BUTTON_LABEL.CANCLE} />
 							</IconButton>
 						</>

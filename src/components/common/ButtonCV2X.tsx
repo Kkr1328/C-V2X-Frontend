@@ -70,9 +70,12 @@ export default function ButtonCV2X(props: ButtonCV2XProp) {
 			variant={props.variant}
 			disabled={props.disabled}
 			className={buttonStyle}
-			onClick={props.onClick}>
+			onClick={props.onClick}
+		>
 			{props.icon && <IconMapper icon={props.icon} />}
-			<p className="font-istok text-h5">{props.label}</p>
+			<p className="inline-block align-baseline font-istok text-h5">
+				{props.label}
+			</p>
 		</Button>
 	);
 }

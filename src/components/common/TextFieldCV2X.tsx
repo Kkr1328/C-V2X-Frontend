@@ -15,7 +15,9 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 	return (
 		<Stack className="w-full gap-4">
 			{props.title && (
-				<p className="font-istok text-black text-h5">{props.title}</p>
+				<p className="inline-block align-baseline font-istok text-black text-h5">
+					{props.title}
+				</p>
 			)}
 			<TextField
 				fullWidth
