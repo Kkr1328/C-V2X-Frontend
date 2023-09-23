@@ -45,12 +45,16 @@ export enum BUTTON_LABEL {
 	CANCLE = 'Cancle',
 	CONFIRM = 'Confirm',
 	ZOOM = 'Zoom',
+	MISSING = 'Missing',
+	LOCATION = 'Location',
+	NO_DATA = 'No results found',
 }
 
 export enum PILL_LABEL {
 	ACTIVE = 'ACTIVE',
 	INACTIVE = 'INACTIVE',
 	EMERGENCY = 'EMERGENCY',
+	WARNING = 'WARNING',
 }
 
 export enum MODAL_LABEL {
