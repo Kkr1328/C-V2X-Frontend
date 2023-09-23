@@ -1,16 +1,24 @@
 'use client';
 
+import React from 'react';
+
 import { Drawer, List, ListItemButton, Toolbar } from '@mui/material';
 
 import NavbarMenu from '../common/NavbarMenu';
+import IconMapper from '@/utils/IconMapper';
 
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 import { ROUTE } from '@/constants/ROUTE';
-import IconMapper from '@/utils/IconMapper';
-import React from 'react';
 
-export default function Navbar() {
+interface NavbarProps {
+	emergencyNotification?: Number;
+}
+
+export default function Navbar(props: NavbarProps) {
 	const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
+
+	const handleExpand = () => setIsExpanded(true);
+	const handleToggleExpand = () => setIsExpanded(!isExpanded);
 
 	return (
 		<Drawer
@@ -26,16 +34,18 @@ export default function Navbar() {
 					transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 					transitionDuration: '150ms',
 				},
-			}}>
+			}}
+		>
 			<Toolbar />
 			<List className="w-full h-full p-none bg-white">
 				<NavbarMenu
 					isExpanded={isExpanded}
+					handleExpand={handleExpand}
 					option={{
 						label: NAVBAR_LABEL.DASHBOARD,
 						route: ROUTE.DASHBOARD,
 					}}
-					sub_options={[
+					subOptions={[
 						{
 							label: NAVBAR_LABEL.OVERVIEW,
 							route: ROUTE.OVERVIEW,
@@ -53,14 +63,16 @@ export default function Navbar() {
 							route: ROUTE.HEARTBEAT,
 						},
 					]}
+					emergencyNotification={props.emergencyNotification || 0}
 				/>
 				<NavbarMenu
 					isExpanded={isExpanded}
+					handleExpand={handleExpand}
 					option={{
 						label: NAVBAR_LABEL.ENTITY_MANAGEMENT,
 						route: ROUTE.ENTITY_MANAGEMENT,
 					}}
-					sub_options={[
+					subOptions={[
 						{
 							label: NAVBAR_LABEL.CARS,
 							route: ROUTE.CARS,
@@ -83,7 +95,8 @@ export default function Navbar() {
 			<ListItemButton
 				className="w-full px-24 py-16 justify-center self-end
 							hover:text-primary_blue hover:bg-light_background_blue"
-				onClick={() => setIsExpanded(!isExpanded)}>
+				onClick={handleToggleExpand}
+			>
 				<IconMapper
 					icon={isExpanded ? NAVBAR_LABEL.COLLAPSE : NAVBAR_LABEL.EXPAND}
 				/>
