@@ -19,69 +19,64 @@ import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ZoomOutMapRoundedIcon from '@mui/icons-material/ZoomOutMapRounded';
+import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
+import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
+import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 
 interface IconMapperProps {
 	icon: string;
-	size?: '24px' | '48px';
+	size?: '24px' | '48px' | '72px';
 }
 
 export default function IconMapper(props: IconMapperProps) {
+	const iconStyle = { fontSize: props.size || '24px' };
+
 	switch (props.icon) {
 		case NAVBAR_LABEL.DASHBOARD:
-			return <InsertChartRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <InsertChartRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.OVERVIEW:
-			return <PieChartRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <PieChartRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.CAMERA:
-			return <CameraAltRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <CameraAltRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.EMERGENCY:
-			return (
-				<NotificationsRoundedIcon sx={{ fontSize: props.size || '24px' }} />
-			);
+			return <NotificationsRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.HEARTBEAT:
-			return <FavoriteRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <FavoriteRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.ENTITY_MANAGEMENT:
-			return <DescriptionRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <DescriptionRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.CARS:
-			return (
-				<DirectionsCarRoundedIcon sx={{ fontSize: props.size || '24px' }} />
-			);
+			return <DirectionsCarRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.DRIVERS:
-			return <PersonRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <PersonRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.CAMERAS:
-			return <CameraAltRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <CameraAltRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.RSUS:
-			return (
-				<WifiTetheringRoundedIcon sx={{ fontSize: props.size || '24px' }} />
-			);
+			return <WifiTetheringRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.EXPAND:
-			return (
-				<KeyboardDoubleArrowRightRoundedIcon
-					sx={{ fontSize: props.size || '24px' }}
-				/>
-			);
+			return <KeyboardDoubleArrowRightRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.COLLAPSE:
-			return (
-				<KeyboardDoubleArrowLeftRoundedIcon
-					sx={{ fontSize: props.size || '24px' }}
-				/>
-			);
+			return <KeyboardDoubleArrowLeftRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.CANCLE:
-			return <CloseRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <CloseRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.CLEAR:
-			return <RefreshRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <RefreshRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.EDIT:
-			return <EditRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <EditRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.REFRESH:
-			return <CachedRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <CachedRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.SEARCH:
-			return <SearchRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <SearchRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.DELETE:
-			return (
-				<DeleteOutlineRoundedIcon sx={{ fontSize: props.size || '24px' }} />
-			);
+			return <DeleteOutlineRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.REGISTER:
-			return <AddRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <AddRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.ZOOM:
-			return <ZoomOutMapRoundedIcon sx={{ fontSize: props.size || '24px' }} />;
+			return <ZoomOutMapRoundedIcon sx={iconStyle} />;
+		case BUTTON_LABEL.MISSING:
+			return <RemoveRoundedIcon sx={iconStyle} />;
+		case BUTTON_LABEL.LOCATION:
+			return <LocationOnRoundedIcon sx={iconStyle} />;
+		case BUTTON_LABEL.NO_DATA:
+			return <HighlightOffRoundedIcon sx={iconStyle} />;
 	}
 }
