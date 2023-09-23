@@ -14,6 +14,9 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
+    fontFamily: {
+      'istok': ['Istok Web', 'sans'], 
+    },
     fontSize : {
       'h1' : ['40px', {lineHeight: '57.6px', fontWeight: '700'}],
       'h2' : ['32px', {lineHeight: '46.1px', fontWeight: '700'}],

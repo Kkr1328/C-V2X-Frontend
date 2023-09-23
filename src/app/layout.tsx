@@ -19,6 +19,12 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
+			<header>
+				<link
+					rel="stylesheet"
+					href="https://fonts.googleapis.com/css2?family=Istok+Web&display=swap"
+				/>
+			</header>
 			<body className={inter.className}>
 				<Box className="w-screen h-screen flex bg-dark_background_grey">
 					<Header />
