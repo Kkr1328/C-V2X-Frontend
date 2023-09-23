@@ -25,7 +25,7 @@ import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 
 interface IconMapperProps {
 	icon: string;
-	size?: '24px' | '48px' | '72px';
+	size?: '24px' | '36px' | '48px';
 }
 
 export default function IconMapper(props: IconMapperProps) {
