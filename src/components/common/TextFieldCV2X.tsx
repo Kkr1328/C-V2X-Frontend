@@ -55,9 +55,8 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 						{props.handleLocate && (
 							<IconButton
 								disableRipple
-								className={`p-none ${
-									props.isLoading ? 'text-light_text_grey' : 'text-primary_blue'
-								}`}
+								className="p-none text-primary_blue"
+								disabled={props.isLoading}
 								onClick={props.handleLocate}
 							>
 								<IconMapper icon={BUTTON_LABEL.LOCATION} />
