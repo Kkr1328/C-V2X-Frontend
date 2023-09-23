@@ -32,7 +32,7 @@ export default function Home() {
 						<Filter template={RSUFilterTemplate} />
 						<Divider />
 						<Stack direction="row" className="gap-8">
-							<p className="text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
+							<p className="font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
 							<div className="grow" />
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REGISTER}

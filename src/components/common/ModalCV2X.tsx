@@ -29,7 +29,7 @@ export default function ModalCV2X(props: ModalCV2XProp) {
 			className="flex items-center justify-center">
 			<Card className="w-600 rounded-lg">
 				<div className="p-16 items-center flex gap-16">
-					<p className="text-h3 text-black">{props.title}</p>
+					<p className="font-istok text-h3 text-black">{props.title}</p>
 					{props.pill && <Pill variant={props.pill} />}
 					{props.variant === 'Inform' && (
 						<>

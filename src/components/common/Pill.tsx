@@ -15,7 +15,7 @@ export default function Pill(props: PillProps) {
 					p: 0,
 				},
 			}}
-			label={<p className="text-h5">{props.variant}</p>}
+			label={<p className="font-istok text-h5">{props.variant}</p>}
 			variant="outlined"
 			className={`px-4 py-0 border-2 ${
 				props.variant === 'INACTIVE'
