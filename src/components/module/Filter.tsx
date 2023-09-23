@@ -25,12 +25,17 @@ export default function Filter(props: FilterProp) {
 	return (
 		<Stack className="w-full gap-8">
 			{Array.from({ length: maxRow }, (_, index) => (
-				<Stack direction="row" className="gap-16 items-end">
+				<Stack
+					key={`row ${index}`}
+					direction="row"
+					className="gap-16 items-end"
+				>
 					{props.template
 						.filter((inputField) => inputField.row === index + 1)
 						.map((inputField) =>
 							inputField.type === 'TextField' ? (
 								<TextFieldCV2X
+									key={inputField.label}
 									title={inputField.label}
 									placeholder={inputField.placeholder}
 									value={textfieldvalue}
@@ -42,6 +47,7 @@ export default function Filter(props: FilterProp) {
 							) : (
 								inputField.type === 'Select' && (
 									<SelectCV2X
+										key={inputField.label}
 										title={inputField.label}
 										placeholder={inputField.placeholder}
 										value={selectvalue}
