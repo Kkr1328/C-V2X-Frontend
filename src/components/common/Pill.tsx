@@ -15,13 +15,19 @@ export default function Pill(props: PillProps) {
 					p: 0,
 				},
 			}}
-			label={<p className="font-istok text-h5">{props.variant}</p>}
+			label={
+				<p className="inline-block align-baseline font-istok text-h6">
+					{props.variant}
+				</p>
+			}
 			variant="outlined"
 			className={`px-4 py-0 border-2 ${
-				props.variant === 'INACTIVE'
+				props.variant === PILL_LABEL.INACTIVE
 					? 'text-light_text_grey border-light_text_grey'
-					: props.variant === 'EMERGENCY'
+					: props.variant === PILL_LABEL.EMERGENCY
 					? 'text-error_red border-error_red'
+					: props.variant === PILL_LABEL.WARNING
+					? 'text-dark_warning_yellow border-dark_warning_yellow'
 					: 'text-active_green border-active_green'
 			} rounded-sm`}
 		/>
