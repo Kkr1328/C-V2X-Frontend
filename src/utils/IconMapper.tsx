@@ -22,6 +22,8 @@ import ZoomOutMapRoundedIcon from '@mui/icons-material/ZoomOutMapRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 interface IconMapperProps {
 	icon: string;
@@ -78,5 +80,9 @@ export default function IconMapper(props: IconMapperProps) {
 			return <LocationOnRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.NO_DATA:
 			return <HighlightOffRoundedIcon sx={iconStyle} />;
+		case BUTTON_LABEL.VISIBLE:
+			return <Visibility sx={iconStyle} />;
+		case BUTTON_LABEL.INVISIBLE:
+			return <VisibilityOff sx={iconStyle} />;
 	}
 }
