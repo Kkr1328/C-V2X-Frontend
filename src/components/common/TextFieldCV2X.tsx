@@ -9,9 +9,11 @@ import {
 	Stack,
 	TextField,
 } from '@mui/material';
-import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
+
 import Pill from './Pill';
 import IconMapper from '@/utils/IconMapper';
+
+import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
 
 interface TextFieldCV2XProp {
 	title?: string;
