@@ -23,6 +23,7 @@ const config: Config = {
 			h3: ['24px', { lineHeight: '34.5px', fontWeight: '700' }],
 			h4: ['20px', { lineHeight: '28.8px', fontWeight: '700' }],
 			h5: ['16px', { lineHeight: '23px', fontWeight: '700' }],
+			h6: ['12px', { lineHeight: '14.5px', fontWeight: '700' }],
 			p1: ['16px', { lineHeight: '23px', fontWeight: '400' }],
 			p2: ['12px', { lineHeight: '17.3px', fontWeight: '400' }],
 			p3: ['10px', { lineHeight: '14.4px', fontWeight: '400' }],
