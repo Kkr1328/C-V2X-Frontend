@@ -104,7 +104,7 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 					}}
 					InputProps={{
 						readOnly: props.isReadOnly,
-						endAdornment: (
+						endAdornment: props.isPassword && (
 							<InputAdornment position="end">
 								<IconButton
 									onClick={handleClickShowPassword}
@@ -121,7 +121,7 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 							</InputAdornment>
 						),
 					}}
-					type={showPassword ? 'text' : 'password'}
+					type={props.isPassword && !showPassword ? 'password' : 'text'}
 					value={props.value}
 					onChange={props.onChange}
 				/>
