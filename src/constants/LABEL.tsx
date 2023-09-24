@@ -40,7 +40,7 @@ export enum BUTTON_LABEL {
 	REGISTER_CAMERA = 'Register a new camera',
 	REGISTER_RSU = 'Register a new RSU',
 	REFRESH = 'Refresh',
-	EDIT = 'Edit',
+	UPDATE = 'Update',
 	DELETE = 'Delete',
 	CANCLE = 'Cancle',
 	CONFIRM = 'Confirm',
