@@ -28,7 +28,7 @@ import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 
 interface IconMapperProps {
 	icon: string;
-	size?: '24px' | '36px' | '48px';
+	size?: '16px' | '24px' | '36px' | '48px';
 }
 
 export default function IconMapper(props: IconMapperProps) {
