@@ -24,6 +24,7 @@ import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 
 interface IconMapperProps {
 	icon: string;
@@ -62,7 +63,7 @@ export default function IconMapper(props: IconMapperProps) {
 			return <CloseRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.CLEAR:
 			return <RefreshRoundedIcon sx={iconStyle} />;
-		case BUTTON_LABEL.EDIT:
+		case BUTTON_LABEL.UPDATE:
 			return <EditRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.REFRESH:
 			return <CachedRoundedIcon sx={iconStyle} />;
@@ -78,6 +79,8 @@ export default function IconMapper(props: IconMapperProps) {
 			return <RemoveRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.LOCATION:
 			return <LocationOnRoundedIcon sx={iconStyle} />;
+		case BUTTON_LABEL.STATUS:
+			return <CircleRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.NO_DATA:
 			return <HighlightOffRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.VISIBLE:

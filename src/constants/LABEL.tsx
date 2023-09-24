@@ -47,6 +47,7 @@ export enum BUTTON_LABEL {
 	ZOOM = 'Zoom',
 	MISSING = 'Missing',
 	LOCATION = 'Location',
+	STATUS = 'Status',
 	NO_DATA = 'No results found',
 	VISIBLE = 'Visible',
 	INVISIBLE = 'Invisible',
