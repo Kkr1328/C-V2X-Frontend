@@ -5,11 +5,13 @@ import ModalCV2X from '@/components/common/ModalCV2X';
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter';
 import ModalInputs from '@/components/module/ModalInputs';
+import TableCV2X from '@/components/module/TableCV2X';
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
-import {
-	RSUActionModalTemplate,
-	RSUFilterTemplate,
-} from '@/constants/TEMPLATE';
+import { MockedRSUsTableContent } from '@/mock/ENTITY_TABLE';
+import { RSUActionModalTemplate } from '@/templates/ACTION_MODAL';
+import { RSUsTableTemplate } from '@/templates/ENTITY_TABLE';
+import { RSUFilterTemplate } from '@/templates/FILTER';
+import { RSUsTableRowProps } from '@/types/ENTITY_TABLE';
 import { Card, Divider, Stack } from '@mui/material';
 import { useState } from 'react';
 
@@ -20,7 +22,7 @@ export default function Home() {
 		<>
 			<ModalCV2X
 				title={MODAL_LABEL.REGISTER_RSU}
-				variant="Register"
+				variant={BUTTON_LABEL.REGISTER}
 				open={openRegisterModal}
 				handleOnClose={() => setOpenRegisterModal(false)}
 			>
@@ -47,6 +49,10 @@ export default function Home() {
 								variant="outlined"
 							/>
 						</Stack>
+						<TableCV2X<RSUsTableRowProps>
+							columns={RSUsTableTemplate}
+							rows={MockedRSUsTableContent}
+						/>
 					</Stack>
 				</Card>
 			</Stack>
