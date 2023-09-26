@@ -1,123 +1,103 @@
 import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { Divider } from '@mui/material';
 
-interface Column {
-	id: 'name' | 'code' | 'population' | 'size';
-	label: string;
-	minWidth?: number;
-	align?: 'right';
+import {
+	Table,
+	TableContainer,
+	TableBody,
+	TableHead,
+	TableRow,
+	TableCell,
+	IconButton,
+	Stack,
+} from '@mui/material';
+
+import IconMapper from '@/utils/IconMapper';
+
+import { BUTTON_LABEL } from '@/constants/LABEL';
+import { TableHeaderProps, TableRowProps } from '@/types/ENTITY_TABLE';
+
+interface TableCV2XProps<T extends TableRowProps> {
+	columns: TableHeaderProps<T>[];
+	rows: T[];
+	handleOnClickLocation?: () => void;
+	handleOnClickInformation?: () => void;
+	handleOnClickEdit?: () => void;
+	handleOnClickDelete?: () => void;
 }
 
-const columns: readonly Column[] = [
-	{ id: 'name', label: 'Name', minWidth: 170 },
-	{ id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-	{
-		id: 'population',
-		label: 'Population',
-		minWidth: 170,
-		align: 'right',
-	},
-	{
-		id: 'size',
-		label: 'Size\u00a0(km\u00b2)',
-		minWidth: 170,
-		align: 'right',
-	},
-];
-
-interface Data {
-	name: string;
-	code: string;
-	population: number;
-	size: number;
-}
-
-const rows: Data[] = [
-	{
-		name: 'India',
-		code: 'IN',
-		population: 1324171354,
-		size: 3287263,
-	},
-	{
-		name: 'India',
-		code: 'IN',
-		population: 1324171354,
-		size: 3287263,
-	},
-	{
-		name: 'India',
-		code: 'IN',
-		population: 1324171354,
-		size: 3287263,
-	},
-	{
-		name: 'India',
-		code: 'IN',
-		population: 1324171354,
-		size: 3287263,
-	},
-	{
-		name: 'India',
-		code: 'IN',
-		population: 1324171354,
-		size: 3287263,
-	},
-	{
-		name: 'India',
-		code: 'IN',
-		population: 1324171354,
-		size: 3287263,
-	},
-	{
-		name: 'India',
-		code: 'IN',
-		population: 1324171354,
-		size: 3287263,
-	},
-	{
-		name: 'India',
-		code: 'IN',
-		population: 1324171354,
-		size: 3287263,
-	},
-];
-
-export default function StickyHeadTable() {
+export default function TableCV2X<T extends TableRowProps>(
+	props: TableCV2XProps<T>
+) {
 	return (
 		<TableContainer sx={{ maxHeight: 440 }}>
 			<Table stickyHeader>
 				<TableHead>
 					<TableRow>
-						{columns.map((column) => (
-							<TableCell
-								key={column.id}
-								align={column.align}
-								style={{ minWidth: column.minWidth }}
-							>
-								{column.label}
-								<Divider orientation="vertical" variant="middle" flexItem />
-							</TableCell>
+						{props.columns.map((column, index) => (
+							<React.Fragment key={index}>
+								<TableCell
+									className="p-16 bg-dark_background_grey"
+									key={`header_item_${index}`}
+									align={column.align}
+								>
+									<p className="inline-block align-baseline font-istok text-black text-h5">
+										{column.label}
+									</p>
+									{/* <Divider
+										orientation="vertical"
+										className="text-error_red border-error_red bg-error_red"
+									/> */}
+								</TableCell>
+							</React.Fragment>
 						))}
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{rows.map((row) => {
+					{props.rows.map((row) => {
 						return (
-							<TableRow hover tabIndex={-1} key={row.code}>
-								{columns.map((column) => {
-									const value = row[column.id];
-									return (
-										<TableCell key={column.id} align={column.align}>
-											{value}
-										</TableCell>
-									);
+							<TableRow hover tabIndex={-1} key={row.id}>
+								{props.columns.map((column, index) => {
+									if (column.id !== 'action') {
+										return (
+											<TableCell key={`row_item_${index}`} align={column.align}>
+												<p className="inline-block align-baseline font-istok text-black text-p1">
+													{row[column.id] as React.ReactNode}
+												</p>
+											</TableCell>
+										);
+									} else {
+										return (
+											<TableCell
+												key={column.id}
+												align={column.align}
+												sx={{ width: '132px' }}
+											>
+												<Stack direction="row" className="gap-8 justify-center">
+													<IconButton
+														disableRipple
+														className="p-none text-primary_blue"
+														onClick={props.handleOnClickInformation}
+													>
+														<IconMapper icon={BUTTON_LABEL.SEARCH} />
+													</IconButton>
+													<IconButton
+														disableRipple
+														className="p-none text-black"
+														onClick={props.handleOnClickEdit}
+													>
+														<IconMapper icon={BUTTON_LABEL.UPDATE} />
+													</IconButton>
+													<IconButton
+														disableRipple
+														className="p-none text-error_red"
+														onClick={props.handleOnClickDelete}
+													>
+														<IconMapper icon={BUTTON_LABEL.DELETE} />
+													</IconButton>
+												</Stack>
+											</TableCell>
+										);
+									}
 								})}
 							</TableRow>
 						);
