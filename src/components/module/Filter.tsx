@@ -1,11 +1,14 @@
 'use client';
 
-import { InputFieldProp } from '@/constants/TEMPLATE';
+import React from 'react';
+
 import { Stack } from '@mui/material';
+
 import TextFieldCV2X from '../common/TextFieldCV2X';
 import SelectCV2X, { SelectOption } from '../common/SelectCV2X';
-import React from 'react';
 import ButtonCV2X from '../common/ButtonCV2X';
+
+import { InputFieldProp } from '@/types/COMMON';
 import { BUTTON_LABEL } from '@/constants/LABEL';
 
 interface FilterProp {

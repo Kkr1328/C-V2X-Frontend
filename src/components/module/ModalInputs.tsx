@@ -1,13 +1,18 @@
 'use client';
 
+import React from 'react';
+
+import { Stack } from '@mui/material';
+
 import SelectCV2X, { SelectOption } from '@/components/common/SelectCV2X';
 import TextFieldCV2X from '@/components/common/TextFieldCV2X';
-import { InputFieldProp } from '@/constants/TEMPLATE';
-import { Stack } from '@mui/material';
-import React from 'react';
+
+import { InputFieldProp } from '@/types/COMMON';
 
 interface ModalInputsProp {
 	template: InputFieldProp[];
+
+	isLoading?: boolean;
 }
 
 export default function ModalInputs(props: ModalInputsProp) {
@@ -29,6 +34,7 @@ export default function ModalInputs(props: ModalInputsProp) {
 								<TextFieldCV2X
 									title={inputField.label}
 									placeholder={inputField.placeholder}
+									isLoading={props.isLoading}
 									value={textfieldvalue}
 									onChange={(event) => {
 										settextfieldvalue(event.target.value);
@@ -40,6 +46,7 @@ export default function ModalInputs(props: ModalInputsProp) {
 									<SelectCV2X
 										title={inputField.label}
 										placeholder={inputField.placeholder}
+										isLoading={props.isLoading}
 										value={selectvalue}
 										onChange={(_, value) => {
 											setselectvalue(value);

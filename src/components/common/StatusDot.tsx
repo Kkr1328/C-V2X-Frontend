@@ -1,5 +1,6 @@
-import { BUTTON_LABEL } from '@/constants/LABEL';
 import IconMapper from '@/utils/IconMapper';
+
+import { BUTTON_LABEL } from '@/constants/LABEL';
 
 interface StatusDotProps {
 	variant: 'Active' | 'Inactive' | 'Warning' | 'Emergency' | 'Missing';
