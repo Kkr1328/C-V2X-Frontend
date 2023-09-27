@@ -7,36 +7,44 @@ export interface TableHeaderProps<T> {
 	isSorted?: boolean;
 }
 
-export interface TableRowProps {
+export interface TableProps {
 	id: string;
 	name: string;
 }
 
-export interface CarsTableRowProps {
+export interface CameraType {
+	name: string;
+	position: Position;
+}
+
+export interface CarsTableProps {
 	id: string;
 	name: string;
 	license_plate: string;
 	model: string;
-	camera: string;
+	cameras: CameraType;
 	driver: string;
+	//
+	front_camera?: string;
+	back_camera?: string;
 }
 
-export interface DriversTableRowProps {
+export interface DriversTableProps {
 	id: string;
 	name: string;
 	username: string;
 	phone_no: string;
 }
 
-export interface CamerasTableRowProps {
+export interface CamerasTableProps {
 	id: string;
 	name: string;
 	position: Position;
 	car: string;
 }
 
-export interface RSUsTableRowProps {
+export interface RSUsTableProps {
 	id: string;
 	name: string;
-	rec_speed: number;
+	rec_speed: string;
 }
