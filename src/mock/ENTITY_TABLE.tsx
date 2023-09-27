@@ -1,17 +1,17 @@
 import {
-	CamerasTableRowProps,
-	CarsTableRowProps,
-	DriversTableRowProps,
-	RSUsTableRowProps,
+	CamerasTableProps,
+	CarsTableProps,
+	DriversTableProps,
+	RSUsTableProps,
 } from '@/types/ENTITY_TABLE';
 
-export const MockedCarsTableContent: CarsTableRowProps[] = [
+export const MockedCarsTableContent: CarsTableProps[] = [
 	{
 		id: 'carxxx01',
 		name: 'Car01',
 		license_plate: 'AB 0001',
 		model: 'Model01',
-		camera: 'temp',
+		cameras: { name: 'Cam01', position: 'Front' },
 		driver: 'Driver01',
 	},
 	{
@@ -19,7 +19,7 @@ export const MockedCarsTableContent: CarsTableRowProps[] = [
 		name: 'Car02',
 		license_plate: 'AB 0002',
 		model: 'Model02',
-		camera: 'temp',
+		cameras: { name: 'Cam01', position: 'Front' },
 		driver: 'Driver02',
 	},
 	{
@@ -27,7 +27,7 @@ export const MockedCarsTableContent: CarsTableRowProps[] = [
 		name: 'Car03',
 		license_plate: 'AB 0003',
 		model: 'Model03',
-		camera: 'temp',
+		cameras: { name: 'Cam01', position: 'Front' },
 		driver: 'Driver03',
 	},
 	{
@@ -35,7 +35,7 @@ export const MockedCarsTableContent: CarsTableRowProps[] = [
 		name: 'Car04',
 		license_plate: 'AB 0004',
 		model: 'Model04',
-		camera: 'temp',
+		cameras: { name: 'Cam01', position: 'Front' },
 		driver: 'Driver04',
 	},
 	{
@@ -43,7 +43,7 @@ export const MockedCarsTableContent: CarsTableRowProps[] = [
 		name: 'Car05',
 		license_plate: 'AB 0005',
 		model: 'Model05',
-		camera: 'temp',
+		cameras: { name: 'Cam01', position: 'Front' },
 		driver: 'Driver05',
 	},
 	{
@@ -51,7 +51,7 @@ export const MockedCarsTableContent: CarsTableRowProps[] = [
 		name: 'Car06',
 		license_plate: 'AB 0006',
 		model: 'Model06',
-		camera: 'temp',
+		cameras: { name: 'Cam01', position: 'Front' },
 		driver: 'Driver06',
 	},
 	{
@@ -59,11 +59,11 @@ export const MockedCarsTableContent: CarsTableRowProps[] = [
 		name: 'Car07',
 		license_plate: 'AB 0007',
 		model: 'Model07',
-		camera: 'temp',
+		cameras: { name: 'Cam01', position: 'Front' },
 		driver: 'Driver07',
 	},
 ];
-export const MockedDriversTableContent: DriversTableRowProps[] = [
+export const MockedDriversTableContent: DriversTableProps[] = [
 	{
 		id: 'driverxxx01',
 		name: 'Driver01',
@@ -107,7 +107,7 @@ export const MockedDriversTableContent: DriversTableRowProps[] = [
 		phone_no: '098xxxx007',
 	},
 ];
-export const MockedCamerasTableContent: CamerasTableRowProps[] = [
+export const MockedCamerasTableContent: CamerasTableProps[] = [
 	{
 		id: 'cameraxxx01',
 		name: 'Camera01',
@@ -152,40 +152,40 @@ export const MockedCamerasTableContent: CamerasTableRowProps[] = [
 	},
 ];
 
-export const MockedRSUsTableContent: RSUsTableRowProps[] = [
+export const MockedRSUsTableContent: RSUsTableProps[] = [
 	{
 		id: 'rsuxxx01',
 		name: 'RSU01',
-		rec_speed: 50,
+		rec_speed: '50',
 	},
 	{
 		id: 'rsuxxx02',
 		name: 'RSU02',
-		rec_speed: 70,
+		rec_speed: '70',
 	},
 	{
 		id: 'rsuxxx03',
 		name: 'RSU03',
-		rec_speed: 30,
+		rec_speed: '30',
 	},
 	{
 		id: 'rsuxxx04',
 		name: 'RSU04',
-		rec_speed: 90,
+		rec_speed: '90',
 	},
 	{
 		id: 'rsuxxx05',
 		name: 'RSU05',
-		rec_speed: 80,
+		rec_speed: '80',
 	},
 	{
 		id: 'rsuxxx06',
 		name: 'RSU06',
-		rec_speed: 20,
+		rec_speed: '20',
 	},
 	{
 		id: 'rsuxxx07',
 		name: 'RSU07',
-		rec_speed: 40,
+		rec_speed: '40',
 	},
 ];

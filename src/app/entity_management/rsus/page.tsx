@@ -11,7 +11,7 @@ import { MockedRSUsTableContent } from '@/mock/ENTITY_TABLE';
 import { RSUActionModalTemplate } from '@/templates/ACTION_MODAL';
 import { RSUsTableTemplate } from '@/templates/ENTITY_TABLE';
 import { RSUFilterTemplate } from '@/templates/FILTER';
-import { RSUsTableRowProps } from '@/types/ENTITY_TABLE';
+import { RSUsTableProps } from '@/types/ENTITY_TABLE';
 import { Card, Divider, Stack } from '@mui/material';
 import { useState } from 'react';
 
@@ -49,7 +49,7 @@ export default function Home() {
 								variant="outlined"
 							/>
 						</Stack>
-						<TableCV2X<RSUsTableRowProps>
+						<TableCV2X<RSUsTableProps>
 							columns={RSUsTableTemplate}
 							rows={MockedRSUsTableContent}
 						/>
