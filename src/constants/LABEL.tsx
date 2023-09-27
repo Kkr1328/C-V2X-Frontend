@@ -15,6 +15,7 @@ export enum NAVBAR_LABEL {
 
 export enum INPUT_LABEL {
 	ID = 'ID',
+	CAMERAS = 'Cameras',
 	FRONT_CAMERA = 'Front Camera',
 	BACK_CAMERA = 'Back Camera',
 	NAME = 'Name',
@@ -29,6 +30,7 @@ export enum INPUT_LABEL {
 	CAR = 'Car',
 	POSITION = 'Position',
 	RECOMENDED_SPEED = 'Recommended Speed (km/h)',
+	ACTION = 'Action',
 }
 
 export enum BUTTON_LABEL {
