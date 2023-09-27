@@ -104,6 +104,13 @@ export default function SelectCV2X(props: SelectCV2XProp) {
 							}}
 						/>
 					)}
+					renderOption={(props, option) => {
+						return (
+							<li {...props} key={option.value}>
+								{option.label}
+							</li>
+						);
+					}}
 					sx={{
 						'& .MuiInputBase-root': {
 							height: '44px',
