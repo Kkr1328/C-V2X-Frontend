@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 
 import { Stack } from '@mui/material';
 
@@ -11,15 +11,48 @@ import ButtonCV2X from '../common/ButtonCV2X';
 import { InputFieldProp } from '@/types/COMMON';
 import { BUTTON_LABEL } from '@/constants/LABEL';
 
-interface FilterProp {
-	template: InputFieldProp[];
+interface FilterProp<T> {
+	template: InputFieldProp<T>[];
 }
 
-export default function Filter(props: FilterProp) {
-	const [textfieldvalue, settextfieldvalue] = React.useState<string>('');
-	const [selectvalue, setselectvalue] = React.useState<SelectOption | null>(
-		null
+const options = [
+	{
+		value: 'Front',
+		label: 'Front',
+	},
+	{
+		value: 'Back',
+		label: 'Back',
+	},
+];
+
+export default function Filter<T>(props: FilterProp<T>) {
+	const defaultSearch = props.template.reduce(
+		(acc, item) => ({ ...acc, [item.id]: '' as T[keyof T] }),
+		{} as T
 	);
+
+	const [search, setSearch] = useState<T>(defaultSearch);
+
+	const getSearch = (id: keyof T) => {
+		if (search) {
+			return search[id] as string;
+		}
+		return '';
+	};
+	const handleSearchChange = (id: keyof T, value: string) => {
+		setSearch({
+			...search,
+			[id]: value,
+		} as T);
+		console.log({
+			...search,
+			[id]: value,
+		} as T);
+	};
+	const handleClearSearch = () => {
+		setSearch(defaultSearch);
+	};
 
 	const maxRow =
 		Math.max(...props.template.map((item) => item.row), 0) +
@@ -41,11 +74,10 @@ export default function Filter(props: FilterProp) {
 									key={inputField.label}
 									title={inputField.label}
 									placeholder={inputField.placeholder}
-									value={textfieldvalue}
-									onChange={(event) => {
-										settextfieldvalue(event.target.value);
-										console.log(event.target.value);
-									}}
+									value={getSearch(inputField.id)}
+									onChange={(event) =>
+										handleSearchChange(inputField.id, event.target.value)
+									}
 								/>
 							) : (
 								inputField.type === 'Select' && (
@@ -53,25 +85,15 @@ export default function Filter(props: FilterProp) {
 										key={inputField.label}
 										title={inputField.label}
 										placeholder={inputField.placeholder}
-										value={selectvalue}
+										value={
+											options.find(
+												(option) => option.value === getSearch(inputField.id)
+											) || null
+										}
 										onChange={(_, value) => {
-											setselectvalue(value);
-											console.log(value?.label, value?.value);
+											value && handleSearchChange(inputField.id, value.value);
 										}}
-										options={[
-											{
-												value: '1',
-												label: 'one',
-											},
-											{
-												value: '2',
-												label: 'two',
-											},
-											{
-												value: '3',
-												label: 'three',
-											},
-										]}
+										options={options}
 									/>
 								)
 							)
@@ -83,6 +105,7 @@ export default function Filter(props: FilterProp) {
 								icon={BUTTON_LABEL.CLEAR}
 								label={BUTTON_LABEL.CLEAR}
 								variant="outlined"
+								onClick={handleClearSearch}
 							/>
 							<ButtonCV2X
 								icon={BUTTON_LABEL.SEARCH}
