@@ -67,4 +67,11 @@ export enum MODAL_LABEL {
 	REGISTER_DRIVER = 'Register a new driver',
 	REGISTER_CAMERA = 'Register a new camera',
 	REGISTER_RSU = 'Register a new RSU',
+	UPDATE_CAR = "Update car's ID : ",
+	UPDATE_DRIVER = "Update driver's ID : ",
+	UPDATE_CAMERA = "Update camera's ID : ",
+	UPDATE_RSU = "Update RSU's ID : ",
+	ARE_YOU_SURE = 'Are you sure?',
+	DO_YOU_REALLY_DELETE = 'Do you really to delete ',
+	THIS_PROCESS_CANNOT_UNDONE = ' record? This process cannot be undone.',
 }
