@@ -45,10 +45,6 @@ export default function Filter<T>(props: FilterProp<T>) {
 			...search,
 			[id]: value,
 		} as T);
-		console.log({
-			...search,
-			[id]: value,
-		} as T);
 	};
 	const handleClearSearch = () => {
 		setSearch(defaultSearch);
