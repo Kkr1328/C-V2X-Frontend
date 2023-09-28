@@ -14,22 +14,22 @@ import {
 import IconMapper from '@/utils/IconMapper';
 
 import { BUTTON_LABEL } from '@/constants/LABEL';
-import { TableHeaderProps, TableRowProps } from '@/types/ENTITY_TABLE';
+import { TableHeaderProps, TableRowProps } from '@/types/ENTITY';
 
 interface TableCV2XProps<T extends TableRowProps> {
 	columns: TableHeaderProps<T>[];
 	rows: T[];
 	handleOnClickLocation?: () => void;
-	handleOnClickInformation?: () => void;
-	handleOnClickEdit?: () => void;
-	handleOnClickDelete?: () => void;
+	handleOnClickInformation?: (informData: T) => void;
+	handleOnClickUpdate?: (updateData: T) => void;
+	handleOnClickDelete?: (deleteData: T) => void;
 }
 
 export default function TableCV2X<T extends TableRowProps>(
 	props: TableCV2XProps<T>
 ) {
 	return (
-		<TableContainer sx={{ maxHeight: 440 }}>
+		<TableContainer className="grow overflow-y-scroll">
 			<Table stickyHeader>
 				<TableHead>
 					<TableRow>
@@ -43,17 +43,13 @@ export default function TableCV2X<T extends TableRowProps>(
 									<p className="inline-block align-baseline font-istok text-black text-h5">
 										{column.label}
 									</p>
-									{/* <Divider
-										orientation="vertical"
-										className="text-error_red border-error_red bg-error_red"
-									/> */}
 								</TableCell>
 							</React.Fragment>
 						))}
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{props.rows.map((row) => {
+					{props.rows.map((row: T) => {
 						return (
 							<TableRow hover tabIndex={-1} key={row.id}>
 								{props.columns.map((column, index) => {
@@ -76,21 +72,30 @@ export default function TableCV2X<T extends TableRowProps>(
 													<IconButton
 														disableRipple
 														className="p-none text-primary_blue"
-														onClick={props.handleOnClickInformation}
+														onClick={() => {
+															props.handleOnClickInformation &&
+																props.handleOnClickInformation(row);
+														}}
 													>
 														<IconMapper icon={BUTTON_LABEL.SEARCH} />
 													</IconButton>
 													<IconButton
 														disableRipple
 														className="p-none text-black"
-														onClick={props.handleOnClickEdit}
+														onClick={() => {
+															props.handleOnClickUpdate &&
+																props.handleOnClickUpdate(row);
+														}}
 													>
 														<IconMapper icon={BUTTON_LABEL.UPDATE} />
 													</IconButton>
 													<IconButton
 														disableRipple
 														className="p-none text-error_red"
-														onClick={props.handleOnClickDelete}
+														onClick={() => {
+															props.handleOnClickDelete &&
+																props.handleOnClickDelete(row);
+														}}
 													>
 														<IconMapper icon={BUTTON_LABEL.DELETE} />
 													</IconButton>
