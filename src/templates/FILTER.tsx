@@ -1,13 +1,13 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
 import { InputFieldProp } from '@/types/COMMON';
 import {
-	CamerasTableProps,
-	CarsTableProps,
-	DriversTableProps,
-	RSUsTableProps,
-} from '@/types/ENTITY_TABLE';
+	CamerasProps,
+	CarsProps,
+	DriversProps,
+	RSUsProps,
+} from '@/types/ENTITY';
 
-export const CarFilterTemplate: InputFieldProp<CarsTableProps>[] = [
+export const CarFilterTemplate: InputFieldProp<CarsProps>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
@@ -51,7 +51,7 @@ export const CarFilterTemplate: InputFieldProp<CarsTableProps>[] = [
 		row: 2,
 	},
 	{
-		id: 'driver',
+		id: 'driver_id',
 		label: INPUT_LABEL.DRIVER,
 		type: 'Select',
 		placeholder: 'ex. สมชาย สวัสดี',
@@ -59,7 +59,7 @@ export const CarFilterTemplate: InputFieldProp<CarsTableProps>[] = [
 	},
 ];
 
-export const DriverFilterTemplate: InputFieldProp<DriversTableProps>[] = [
+export const DriverFilterTemplate: InputFieldProp<DriversProps>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
@@ -90,7 +90,7 @@ export const DriverFilterTemplate: InputFieldProp<DriversTableProps>[] = [
 	},
 ];
 
-export const CameraFilterTemplate: InputFieldProp<CamerasTableProps>[] = [
+export const CameraFilterTemplate: InputFieldProp<CamerasProps>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
@@ -113,7 +113,7 @@ export const CameraFilterTemplate: InputFieldProp<CamerasTableProps>[] = [
 		row: 1,
 	},
 	{
-		id: 'car',
+		id: 'car_id',
 		label: INPUT_LABEL.CAR,
 		type: 'Select',
 		placeholder: 'ex. Car01',
@@ -121,7 +121,7 @@ export const CameraFilterTemplate: InputFieldProp<CamerasTableProps>[] = [
 	},
 ];
 
-export const RSUFilterTemplate: InputFieldProp<RSUsTableProps>[] = [
+export const RSUFilterTemplate: InputFieldProp<RSUsProps>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,

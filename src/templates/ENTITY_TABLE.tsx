@@ -1,13 +1,13 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
 import {
+	CamerasProps,
+	CarsProps,
+	DriversProps,
+	RSUsProps,
 	TableHeaderProps,
-	CarsTableProps,
-	DriversTableProps,
-	CamerasTableProps,
-	RSUsTableProps,
-} from '@/types/ENTITY_TABLE';
+} from '@/types/ENTITY';
 
-export const CarsTableTemplate: TableHeaderProps<CarsTableProps>[] = [
+export const CarsTableTemplate: TableHeaderProps<CarsProps>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
@@ -39,7 +39,7 @@ export const CarsTableTemplate: TableHeaderProps<CarsTableProps>[] = [
 		isSorted: true,
 	},
 	{
-		id: 'driver',
+		id: 'driver_id',
 		label: INPUT_LABEL.DRIVER,
 		align: 'left',
 		isSorted: true,
@@ -52,7 +52,7 @@ export const CarsTableTemplate: TableHeaderProps<CarsTableProps>[] = [
 	},
 ];
 
-export const DriversTableTemplate: TableHeaderProps<DriversTableProps>[] = [
+export const DriversTableTemplate: TableHeaderProps<DriversProps>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
@@ -85,7 +85,7 @@ export const DriversTableTemplate: TableHeaderProps<DriversTableProps>[] = [
 	},
 ];
 
-export const CamerasTableTemplate: TableHeaderProps<CamerasTableProps>[] = [
+export const CamerasTableTemplate: TableHeaderProps<CamerasProps>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
@@ -105,7 +105,7 @@ export const CamerasTableTemplate: TableHeaderProps<CamerasTableProps>[] = [
 		isSorted: true,
 	},
 	{
-		id: 'car',
+		id: 'car_id',
 		label: INPUT_LABEL.CAR,
 		align: 'left',
 		isSorted: true,
@@ -118,7 +118,7 @@ export const CamerasTableTemplate: TableHeaderProps<CamerasTableProps>[] = [
 	},
 ];
 
-export const RSUsTableTemplate: TableHeaderProps<RSUsTableProps>[] = [
+export const RSUsTableTemplate: TableHeaderProps<RSUsProps>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
