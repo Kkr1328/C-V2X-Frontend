@@ -2,8 +2,9 @@ import { Tab, Tabs } from '@mui/material';
 
 interface TabCV2XProps {
 	value: number;
-	onChange: (newValue: number) => void;
 	options: string[];
+	onChange: (newValue: number) => void;
+	size?: 'small' | 'large';
 }
 
 export default function TabCV2X(props: TabCV2XProps) {
@@ -14,14 +15,14 @@ export default function TabCV2X(props: TabCV2XProps) {
 				props.onChange(newValue)
 			}
 			variant="fullWidth"
-			className="rounded-t-sm px-8 bg-white min-h-24"
+			className="rounded-t-sm px-8 bg-white"
 			sx={{
-				minHeight: '24px !important',
+				minHeight: props.size === 'large' ? '32px' : '24px',
 				'& .MuiTab-root': {
-					minHeight: '24px !important',
+					minHeight: props.size === 'large' ? '32px' : '24px',
 				},
 				'& .MuiTabs-indicator': {
-					backgroundColor: '#17A5D3 !important',
+					backgroundColor: '#17A5D3',
 				},
 			}}
 		>
@@ -30,9 +31,10 @@ export default function TabCV2X(props: TabCV2XProps) {
 					key={option}
 					className="p-none m-none"
 					sx={{
+						minWidth: 0,
 						fontFamily: ['var(--font-istok-web)'],
 						fontWeight: '400px',
-						fontSize: '10px',
+						fontSize: props.size === 'large' ? '16px' : '10px',
 						'&:hover': {
 							color: '#17A5D3',
 							opacity: 1,
