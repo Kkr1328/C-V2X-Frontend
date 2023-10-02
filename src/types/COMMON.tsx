@@ -7,5 +7,7 @@ export interface InputFieldProp<T> {
 	label: string;
 	type: 'TextField' | 'Select';
 	placeholder?: string;
+	isRequired?: boolean;
+	isPassword?: boolean;
 	row: number;
 }

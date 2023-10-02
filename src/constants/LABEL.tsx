@@ -26,6 +26,7 @@ export enum INPUT_LABEL {
 	LAST_NAME = 'Last Name',
 	USERNAME = 'Username',
 	PASSWORD = 'Password',
+	CONFIRMED_PASSWORD = 'Confirmed Password',
 	PHONE_NO = 'Phone NO.',
 	CAR = 'Car',
 	POSITION = 'Position',

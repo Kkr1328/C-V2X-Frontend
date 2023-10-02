@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Stack } from '@mui/material';
 
@@ -9,63 +9,84 @@ import TextFieldCV2X from '@/components/common/TextFieldCV2X';
 
 import { InputFieldProp } from '@/types/COMMON';
 
-interface ModalInputsProp {
-	template: InputFieldProp[];
-
+interface ModalInputsProp<T> {
+	template: InputFieldProp<T>[];
+	initiateValue?: T;
+	isReadOnly?: boolean;
 	isLoading?: boolean;
 }
 
-export default function ModalInputs(props: ModalInputsProp) {
-	const [textfieldvalue, settextfieldvalue] = React.useState<string>('');
-	const [selectvalue, setselectvalue] = React.useState<SelectOption | null>(
-		null
+const options = [
+	{
+		value: 'Front',
+		label: 'Front',
+	},
+	{
+		value: 'Back',
+		label: 'Back',
+	},
+];
+
+export default function ModalInputs<T>(props: ModalInputsProp<T>) {
+	const maxRow = Math.max(...props.template.map((item) => item.row), 0);
+	const defaultData = props.template.reduce(
+		(acc, item) => ({ ...acc, [item.id]: '' as T[keyof T] }),
+		{} as T
 	);
 
-	const maxRow = Math.max(...props.template.map((item) => item.row), 0);
+	const [data, setData] = useState<T>(props.initiateValue || defaultData);
+
+	const getSearch = (id: keyof T) => {
+		if (data) {
+			return data[id] as string;
+		}
+		return '';
+	};
+	const handleSearchChange = (id: keyof T, value: string) => {
+		setData({
+			...data,
+			[id]: value,
+		} as T);
+	};
 
 	return (
 		<Stack className="w-full gap-16">
 			{Array.from({ length: maxRow }, (_, index) => (
-				<Stack direction="row" className="gap-16">
+				<Stack key={index} direction="row" className="gap-16">
 					{props.template
 						.filter((inputField) => inputField.row === index + 1)
 						.map((inputField) =>
-							inputField.type === 'TextField' ? (
+							props.isReadOnly || inputField.type === 'TextField' ? (
 								<TextFieldCV2X
+									key={inputField.label}
 									title={inputField.label}
 									placeholder={inputField.placeholder}
+									isRequired={inputField.isRequired}
+									isPassword={inputField.isPassword}
+									isReadOnly={props.isReadOnly}
 									isLoading={props.isLoading}
-									value={textfieldvalue}
-									onChange={(event) => {
-										settextfieldvalue(event.target.value);
-										console.log(event.target.value);
-									}}
+									value={getSearch(inputField.id)}
+									onChange={(event) =>
+										handleSearchChange(inputField.id, event.target.value)
+									}
 								/>
 							) : (
 								inputField.type === 'Select' && (
 									<SelectCV2X
+										key={inputField.label}
 										title={inputField.label}
 										placeholder={inputField.placeholder}
+										isRequired={inputField.isRequired}
 										isLoading={props.isLoading}
-										value={selectvalue}
+										value={
+											options.find(
+												(option) => option.value === getSearch(inputField.id)
+											) || null
+										}
 										onChange={(_, value) => {
-											setselectvalue(value);
-											console.log(value?.label, value?.value);
+											value && handleSearchChange(inputField.id, value.value);
 										}}
-										options={[
-											{
-												value: '1',
-												label: 'one',
-											},
-											{
-												value: '2',
-												label: 'two',
-											},
-											{
-												value: '3',
-												label: 'three',
-											},
-										]}
+										options={options}
 									/>
 								)
 							)
