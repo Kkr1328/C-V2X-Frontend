@@ -75,3 +75,7 @@ export enum MODAL_LABEL {
 	DO_YOU_REALLY_DELETE = 'Do you really to delete ',
 	THIS_PROCESS_CANNOT_UNDONE = ' record? This process cannot be undone.',
 }
+
+export enum EMERGENCY_CARD_LABEL {
+	DRIVER_CONTACT = 'Driver contract: ',
+}
