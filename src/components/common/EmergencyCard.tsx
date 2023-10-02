@@ -21,7 +21,7 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 		/>
 	) : (
 		<Card
-			className={`w-300 rounded-l-none rounded-r-lg border-l-8 p-16 ${
+			className={`w-300 rounded-l-none rounded-r-lg border-l-8 p-16 bg-dark_background_grey ${
 				props.state === 'PENDING'
 					? 'border-error_red'
 					: props.state === 'IN PROGRESS'
