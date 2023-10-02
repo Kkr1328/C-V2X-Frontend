@@ -9,11 +9,11 @@ import ModalCV2X from '@/components/common/ModalCV2X';
 import ModalInputs from '@/components/module/ModalInputs';
 import { useState } from 'react';
 import TableCV2X from '@/components/module/TableCV2X';
-import { CarsTableRowProps } from '@/types/ENTITY_TABLE';
 import { CarsTableTemplate } from '@/templates/ENTITY_TABLE';
 import { MockedCarsTableContent } from '@/mock/ENTITY_TABLE';
 import { CarFilterTemplate } from '@/templates/FILTER';
 import { CarActionModalTemplate } from '@/templates/ACTION_MODAL';
+import { CarsProps } from '@/types/ENTITY';
 
 export default function Home() {
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
@@ -49,10 +49,10 @@ export default function Home() {
 								variant="outlined"
 							/>
 						</Stack>
-						<TableCV2X<CarsTableRowProps>
+						{/* <TableCV2X<CarsProps>
 							columns={CarsTableTemplate}
 							rows={MockedCarsTableContent}
-						/>
+						/> */}
 					</Stack>
 				</Card>
 			</Stack>
