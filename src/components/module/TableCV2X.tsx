@@ -14,7 +14,7 @@ import {
 import IconMapper from '@/utils/IconMapper';
 
 import { BUTTON_LABEL } from '@/constants/LABEL';
-import { TableHeaderProps, TableRowProps } from '@/types/ENTITY';
+import { CameraType, TableHeaderProps, TableRowProps } from '@/types/ENTITY';
 
 interface TableCV2XProps<T extends TableRowProps> {
 	columns: TableHeaderProps<T>[];
@@ -56,9 +56,23 @@ export default function TableCV2X<T extends TableRowProps>(
 									if (column.id !== 'action') {
 										return (
 											<TableCell key={`row_item_${index}`} align={column.align}>
-												<p className="inline-block align-baseline font-istok text-black text-p1">
-													{row[column.id] as React.ReactNode}
-												</p>
+												{column.id === 'cameras' ? (
+													(row[column.id] as CameraType[]).map((camera) => (
+														<Stack direction="row">
+															<p className="inline-block align-baseline font-istok text-black text-p1">
+																{camera.name as React.ReactNode}
+															</p>
+															<p className="inline-block align-baseline font-istok text-light_text_grey text-p1">
+																&nbsp;-&nbsp;
+																{camera.position as React.ReactNode}
+															</p>
+														</Stack>
+													))
+												) : (
+													<p className="inline-block align-baseline font-istok text-black text-p1">
+														{row[column.id] as React.ReactNode}
+													</p>
+												)}
 											</TableCell>
 										);
 									} else {

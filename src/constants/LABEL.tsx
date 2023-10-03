@@ -26,6 +26,7 @@ export enum INPUT_LABEL {
 	LAST_NAME = 'Last Name',
 	USERNAME = 'Username',
 	PASSWORD = 'Password',
+	CONFIRMED_PASSWORD = 'Confirmed Password',
 	PHONE_NO = 'Phone NO.',
 	CAR = 'Car',
 	POSITION = 'Position',
@@ -74,4 +75,8 @@ export enum MODAL_LABEL {
 	ARE_YOU_SURE = 'Are you sure?',
 	DO_YOU_REALLY_DELETE = 'Do you really to delete ',
 	THIS_PROCESS_CANNOT_UNDONE = ' record? This process cannot be undone.',
+}
+
+export enum EMERGENCY_CARD_LABEL {
+	DRIVER_CONTACT = 'Driver contract: ',
 }
