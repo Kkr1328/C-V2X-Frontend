@@ -1,6 +1,7 @@
 import { Tab, Tabs } from '@mui/material';
 
 interface TabCV2XProps {
+	children?: React.ReactElement;
 	value: number;
 	options: string[];
 	onChange: (newValue: number) => void;
@@ -11,11 +12,9 @@ export default function TabCV2X(props: TabCV2XProps) {
 	return (
 		<Tabs
 			value={props.value}
-			onChange={(_: React.SyntheticEvent, newValue: number) =>
-				props.onChange(newValue)
-			}
+			onChange={(_: React.SyntheticEvent, newValue: number) => props.onChange(newValue)}
 			variant="fullWidth"
-			className="rounded-t-sm px-8 bg-white"
+			className="rounded-t-sm px-8 bg-light_background_grey"
 			sx={{
 				minHeight: props.size === 'large' ? '32px' : '24px',
 				'& .MuiTab-root': {
