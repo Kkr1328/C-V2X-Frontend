@@ -80,3 +80,9 @@ export enum MODAL_LABEL {
 export enum EMERGENCY_CARD_LABEL {
 	DRIVER_CONTACT = 'Driver contract: ',
 }
+
+export enum TAB_LABEL {
+	ORIGINAL = 'ORIGINAL',
+	OBJECT = 'OBJ DETECTION',
+	PANOPTIC = 'PANAOPTIC',
+}
