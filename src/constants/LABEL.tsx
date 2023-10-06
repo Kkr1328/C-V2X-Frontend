@@ -57,6 +57,7 @@ export enum BUTTON_LABEL {
 }
 
 export enum PILL_LABEL {
+	ALL = 'ALL',
 	ACTIVE = 'ACTIVE',
 	INACTIVE = 'INACTIVE',
 	EMERGENCY = 'EMERGENCY',
@@ -79,4 +80,11 @@ export enum MODAL_LABEL {
 
 export enum EMERGENCY_CARD_LABEL {
 	DRIVER_CONTACT = 'Driver contract: ',
+}
+
+export enum OVERVIEW_SUMMARY_CARD_LABEL {
+	ACTIVE_CAR = 'Active car(s)',
+	ACTIVE_DRIVER = 'Active driver(s)',
+	PENDING_EMERGENCY = 'PENDING emergency',
+	IN_PROGRESS_EMERGENCY = 'IN PROGRESS emergency'
 }
