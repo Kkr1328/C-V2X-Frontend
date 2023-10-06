@@ -8,7 +8,7 @@ interface NoDataProps {
 
 export default function NoData(props: NoDataProps) {
 	return (
-		<Stack className="gap-4 text-black">
+		<Stack className="w-full gap-4 text-black">
 			<div className="self-center">
 				<IconMapper
 					icon={BUTTON_LABEL.NO_DATA}
