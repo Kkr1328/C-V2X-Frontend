@@ -15,6 +15,7 @@ import IconMapper from '@/utils/IconMapper';
 
 import { BUTTON_LABEL } from '@/constants/LABEL';
 import { CameraType, TableHeaderProps, TableRowProps } from '@/types/ENTITY';
+import Loading from '../common/Loading';
 
 interface TableCV2XProps<T extends TableRowProps> {
 	columns: TableHeaderProps<T>[];
@@ -23,6 +24,7 @@ interface TableCV2XProps<T extends TableRowProps> {
 	handleOnClickInformation?: (informData: T) => void;
 	handleOnClickUpdate?: (updateData: T) => void;
 	handleOnClickDelete?: (deleteData: T) => void;
+	isLoading?: boolean;
 }
 
 export default function TableCV2X<T extends TableRowProps>(
