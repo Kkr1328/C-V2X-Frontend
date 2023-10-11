@@ -6,6 +6,7 @@ import { SnackbarProvider } from 'notistack';
 
 import Header from '../common/Header';
 import Navbar from './Navbar';
+import StoreProvider from '@/context/StoreProvider';
 
 export default function LayoutWrapper({
 	children,
@@ -14,14 +15,16 @@ export default function LayoutWrapper({
 }) {
 	return (
 		<SnackbarProvider maxSnack={3}>
-			<Box className="w-screen h-screen flex bg-dark_background_grey">
-				<Header />
-				<Navbar />
-				<Box className="grow px-32 py-32">
-					<Toolbar />
-					{children}
+			<StoreProvider>
+				<Box className="w-screen h-screen flex bg-dark_background_grey">
+					<Header />
+					<Navbar />
+					<Box className="grow px-32 py-32">
+						<Toolbar />
+						{children}
+					</Box>
 				</Box>
-			</Box>
+			</StoreProvider>
 		</SnackbarProvider>
 	);
 }
