@@ -23,8 +23,9 @@ export interface ICreateCameraRequest extends ICameraRequest {}
 export interface IUpdateCameraRequest extends ICameraRequest {}
 
 export interface ICamera {
-	_id: string;
+	id: string;
 	name: string;
 	position: string;
+	car_id: string;
 	car: string;
 }
