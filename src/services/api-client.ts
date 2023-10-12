@@ -33,6 +33,8 @@ class ApiClient extends HttpClient {
 	get CAR() {
 		return {
 			GET_CARS: () => this.get<ResponseDataT<ICar[]>>(API_CONTEXT.CAR.GET_CARS),
+			GET_CARS_LIST: () =>
+				this.get<ResponseDataT<IResponseList[]>>(API_CONTEXT.CAR.GET_CARS_LIST),
 			GET_CAR: (query: IQuerry) =>
 				this.get<ResponseDataT<ICar>>(API_CONTEXT.CAR.GET_CAR(query)),
 			CREATE_CAR: (request: ICreateCarRequest) =>
