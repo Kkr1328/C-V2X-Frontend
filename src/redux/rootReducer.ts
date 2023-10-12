@@ -21,6 +21,7 @@ import getCarReducer from './get-car/get-car-reducer';
 import getDriverReducer from './get-driver/get-driver-reducer';
 import getRSUsListReducer from './get-rsus-list/get-rsus-list-reducer';
 import getCarsListReducer from './get-cars-list/get-cars-list-reducer';
+import getDriversListReducer from './get-drivers-list/get-drivers-list-reducer';
 
 export const rootReducer = combineReducers({
 	getCars: getCarsReducer,
@@ -30,7 +31,7 @@ export const rootReducer = combineReducers({
 	updateCar: updateCarReducer,
 	deleteCar: deleteCarReducer,
 	getDrivers: getDriversReducer,
-	// getDriversList: getDriversListReducer,
+	getDriversList: getDriversListReducer,
 	getDriver: getDriverReducer,
 	createDriver: createDriverReducer,
 	updateDriver: updateDriverReducer,

@@ -79,6 +79,10 @@ class ApiClient extends HttpClient {
 		return {
 			GET_DRIVERS: () =>
 				this.get<ResponseDataT<IDriver[]>>(API_CONTEXT.DRIVER.GET_DRIVERS),
+			GET_DRIVERS_LIST: () =>
+				this.get<ResponseDataT<IResponseList[]>>(
+					API_CONTEXT.DRIVER.GET_DRIVERS_LIST
+				),
 			GET_DRIVER: (query: IQuerry) =>
 				this.get<ResponseDataT<IDriver>>(API_CONTEXT.DRIVER.GET_DRIVER(query)),
 			CREATE_DRIVER: (request: ICreateDriverRequest) =>
