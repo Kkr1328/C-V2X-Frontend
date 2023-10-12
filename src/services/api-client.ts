@@ -56,6 +56,10 @@ class ApiClient extends HttpClient {
 		return {
 			GET_CAMERAS: () =>
 				this.get<ResponseDataT<ICamera[]>>(API_CONTEXT.CAMERA.GET_CAMERAS),
+			GET_CAMERAS_LIST: () =>
+				this.get<ResponseDataT<IResponseList[]>>(
+					API_CONTEXT.CAMERA.GET_CAMERAS_LIST
+				),
 			GET_CAMERA: (query: IQuerry) =>
 				this.get<ResponseDataT<ICamera>>(API_CONTEXT.CAMERA.GET_CAMERA(query)),
 			CREATE_CAMERA: (request: ICreateCameraRequest) =>
