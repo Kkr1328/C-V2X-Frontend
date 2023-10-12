@@ -12,7 +12,7 @@ import ModalCV2X from '@/components/common/ModalCV2X';
 import ModalInputs from '@/components/module/ModalInputs';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
-//types
+// types
 import { RSUsProps } from '@/types/ENTITY';
 // templates
 import { RSUFilterTemplate } from '@/templates/FILTER';
@@ -20,12 +20,12 @@ import { RSUsTableTemplate } from '@/templates/ENTITY_TABLE';
 import { RSUInfoModalTemplate } from '@/templates/INFO_MODAL';
 import { RSUActionModalTemplate } from '@/templates/ACTION_MODAL';
 // redux
-import { FETCH_CREATE_RSU } from '@/redux/create-rsu/create-rsu-action';
-import { FETCH_DELETE_RSU } from '@/redux/delete-rsu/delete-rsu-action';
-import { FETCH_GET_RSUS } from '@/redux/get-rsus/get-rsus-action';
-import { selectGetRSUs } from '@/redux/get-rsus/get-rsus-selector';
 import { useDispatch, useSelector } from '@/redux/store';
+import { selectGetRSUs } from '@/redux/get-rsus/get-rsus-selector';
+import { FETCH_GET_RSUS } from '@/redux/get-rsus/get-rsus-action';
+import { FETCH_CREATE_RSU } from '@/redux/create-rsu/create-rsu-action';
 import { FETCH_UPDATE_RSU } from '@/redux/update-rsu/update-rsu-action';
+import { FETCH_DELETE_RSU } from '@/redux/delete-rsu/delete-rsu-action';
 
 export default function Home() {
 	const dispatch = useDispatch();

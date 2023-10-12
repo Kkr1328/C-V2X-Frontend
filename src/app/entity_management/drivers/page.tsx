@@ -1,26 +1,31 @@
 'use client';
-
-import ButtonCV2X from '@/components/common/ButtonCV2X';
-import ModalCV2X from '@/components/common/ModalCV2X';
+// react
+import { Fragment, useEffect, useState } from 'react';
+// material ui
+import { Card, Divider, Stack } from '@mui/material';
+// components
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter';
-import ModalInputs from '@/components/module/ModalInputs';
+import ButtonCV2X from '@/components/common/ButtonCV2X';
 import TableCV2X from '@/components/module/TableCV2X';
+import ModalCV2X from '@/components/common/ModalCV2X';
+import ModalInputs from '@/components/module/ModalInputs';
+// consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
-import { MockedDriversTableContent } from '@/mock/ENTITY_TABLE';
-import { FETCH_CREATE_DRIVER } from '@/redux/create-driver/create-driver-action';
-import { FETCH_DELETE_DRIVER } from '@/redux/delete-driver/delete-driver-action';
-import { FETCH_GET_DRIVERS } from '@/redux/get-drivers/get-drivers-action';
-import { selectGetDrivers } from '@/redux/get-drivers/get-drivers-selector';
-import { useDispatch, useSelector } from '@/redux/store';
-import { FETCH_UPDATE_DRIVER } from '@/redux/update-driver/update-driver-action';
-import { DriverActionModalTemplate } from '@/templates/ACTION_MODAL';
-import { DriversTableTemplate } from '@/templates/ENTITY_TABLE';
-import { DriverFilterTemplate } from '@/templates/FILTER';
-import { DriverInfoModalTemplate } from '@/templates/INFO_MODAL';
+// types
 import { DriversProps } from '@/types/ENTITY';
-import { Card, Divider, Stack } from '@mui/material';
-import { useEffect, useState } from 'react';
+// templates
+import { DriverFilterTemplate } from '@/templates/FILTER';
+import { DriversTableTemplate } from '@/templates/ENTITY_TABLE';
+import { DriverInfoModalTemplate } from '@/templates/INFO_MODAL';
+import { DriverActionModalTemplate } from '@/templates/ACTION_MODAL';
+// redux
+import { useDispatch, useSelector } from '@/redux/store';
+import { selectGetDrivers } from '@/redux/get-drivers/get-drivers-selector';
+import { FETCH_GET_DRIVERS } from '@/redux/get-drivers/get-drivers-action';
+import { FETCH_CREATE_DRIVER } from '@/redux/create-driver/create-driver-action';
+import { FETCH_UPDATE_DRIVER } from '@/redux/update-driver/update-driver-action';
+import { FETCH_DELETE_DRIVER } from '@/redux/delete-driver/delete-driver-action';
 
 export default function Home() {
 	const dispatch = useDispatch();
@@ -100,7 +105,7 @@ export default function Home() {
 	}, []);
 
 	return (
-		<>
+		<Fragment>
 			<ModalCV2X
 				title={MODAL_LABEL.REGISTER_DRIVER}
 				variant={BUTTON_LABEL.REGISTER}
@@ -173,6 +178,7 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={BUTTON_LABEL.REFRESH}
 								variant="outlined"
+								onClick={refetchData}
 							/>
 						</Stack>
 						<TableCV2X<DriversProps>
@@ -206,6 +212,6 @@ export default function Home() {
 					</Stack>
 				</Card>
 			</Stack>
-		</>
+		</Fragment>
 	);
 }
