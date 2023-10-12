@@ -191,7 +191,7 @@ export default function Home() {
 							rows={
 								rsus?.map((rsu) => {
 									return {
-										id: rsu._id,
+										id: rsu.id,
 										name: rsu.name,
 										recommended_speed: rsu.recommended_speed,
 									};
