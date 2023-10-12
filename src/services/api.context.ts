@@ -8,7 +8,7 @@ const API_CONTEXT = {
 		GET_CARS_LIST: `${PREFIX}/cars/list`,
 		GET_CAR: ({ id }: IQuerry) => `${PREFIX}/cars/${id}`,
 		CREATE_CAR: `${PREFIX}/cars`,
-		UADATE_CAR: ({ id }: IQuerry) => `${PREFIX}/cars/${id}`,
+		UPDATE_CAR: ({ id }: IQuerry) => `${PREFIX}/cars/${id}`,
 		DELETE_CAR: ({ id }: IQuerry) => `${PREFIX}/cars/${id}`,
 	},
 	DRIVER: {
@@ -16,7 +16,7 @@ const API_CONTEXT = {
 		GET_DRIVERS_LIST: `${PREFIX}/drivers/list`,
 		GET_DRIVER: ({ id }: IQuerry) => `${PREFIX}/drivers/${id}`,
 		CREATE_DRIVER: `${PREFIX}/drivers`,
-		UADATE_DRIVER: ({ id }: IQuerry) => `${PREFIX}/drivers/${id}`,
+		UPDATE_DRIVER: ({ id }: IQuerry) => `${PREFIX}/drivers/${id}`,
 		DELETE_DRIVER: ({ id }: IQuerry) => `${PREFIX}/drivers/${id}`,
 	},
 	CAMERA: {
@@ -24,7 +24,7 @@ const API_CONTEXT = {
 		GET_CAMERAS_LIST: `${PREFIX}/cameras/list`,
 		GET_CAMERA: ({ id }: IQuerry) => `${PREFIX}/cameras/${id}`,
 		CREATE_CAMERA: `${PREFIX}/cameras`,
-		UADATE_CAMERA: ({ id }: IQuerry) => `${PREFIX}/cameras/${id}`,
+		UPDATE_CAMERA: ({ id }: IQuerry) => `${PREFIX}/cameras/${id}`,
 		DELETE_CAMERA: ({ id }: IQuerry) => `${PREFIX}/cameras/${id}`,
 	},
 	RSU: {
@@ -32,7 +32,7 @@ const API_CONTEXT = {
 		GET_RSUS_LIST: `${PREFIX}/rsus/list`,
 		GET_RSU: ({ id }: IQuerry) => `${PREFIX}/rsus/${id}`,
 		CREATE_RSU: `${PREFIX}/rsus`,
-		UADATE_RSU: ({ id }: IQuerry) => `${PREFIX}/rsus/${id}`,
+		UPDATE_RSU: ({ id }: IQuerry) => `${PREFIX}/rsus/${id}`,
 		DELETE_RSU: ({ id }: IQuerry) => `${PREFIX}/rsus/${id}`,
 	},
 };
