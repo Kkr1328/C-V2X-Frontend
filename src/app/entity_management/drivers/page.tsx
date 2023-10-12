@@ -8,15 +8,25 @@ import ModalInputs from '@/components/module/ModalInputs';
 import TableCV2X from '@/components/module/TableCV2X';
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 import { MockedDriversTableContent } from '@/mock/ENTITY_TABLE';
+import { FETCH_CREATE_DRIVER } from '@/redux/create-driver/create-driver-action';
+import { FETCH_DELETE_DRIVER } from '@/redux/delete-driver/delete-driver-action';
+import { FETCH_GET_DRIVERS } from '@/redux/get-drivers/get-drivers-action';
+import { selectGetDrivers } from '@/redux/get-drivers/get-drivers-selector';
+import { useDispatch, useSelector } from '@/redux/store';
+import { FETCH_UPDATE_DRIVER } from '@/redux/update-driver/update-driver-action';
 import { DriverActionModalTemplate } from '@/templates/ACTION_MODAL';
 import { DriversTableTemplate } from '@/templates/ENTITY_TABLE';
 import { DriverFilterTemplate } from '@/templates/FILTER';
 import { DriverInfoModalTemplate } from '@/templates/INFO_MODAL';
 import { DriversProps } from '@/types/ENTITY';
 import { Card, Divider, Stack } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+	const dispatch = useDispatch();
+
+	const { data: drivers } = useSelector(selectGetDrivers);
+
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
 	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
@@ -32,10 +42,62 @@ export default function Home() {
 
 	const [informModalData, setInformModalData] =
 		useState<DriversProps>(defaultData);
+	const [registerModalData, setRegisterModalData] =
+		useState<DriversProps>(defaultData);
 	const [updateModalData, setUpdateModalData] =
 		useState<DriversProps>(defaultData);
 	const [deleteModalData, setDeleteModalData] =
 		useState<DriversProps>(defaultData);
+
+	const handleCloseInformModal = () => setOpenInformModal(false);
+	const handleCloseRegisterModal = () => {
+		setOpenRegisterModal(false);
+		setRegisterModalData(defaultData);
+	};
+	const handleSubmitRegisterModal = () => {
+		dispatch(
+			FETCH_CREATE_DRIVER({
+				first_name: registerModalData.first_name,
+				last_name: registerModalData.last_name,
+				phone_no: registerModalData.phone_no,
+				username: registerModalData.username,
+				password: registerModalData.password || '',
+			})
+		).then(refetchData);
+		handleCloseRegisterModal();
+	};
+	const handleCloseUpdateModal = () => {
+		setOpenUpdateModal(false);
+		setUpdateModalData(defaultData);
+	};
+	const handleSubmitUpdateModal = () => {
+		dispatch(
+			FETCH_UPDATE_DRIVER({
+				query: { id: updateModalData.id },
+				request: {
+					first_name: updateModalData.first_name,
+					last_name: updateModalData.last_name,
+					phone_no: updateModalData.phone_no,
+					username: updateModalData.username,
+					password: updateModalData.password || '',
+				},
+			})
+		).then(refetchData);
+		handleCloseUpdateModal();
+	};
+	const handleCloseDeleteModal = () => {
+		setOpenDeleteModal(false);
+		setDeleteModalData(defaultData);
+	};
+	const handleSubmitDeleteModal = () => {
+		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id })).then(refetchData);
+		handleCloseDeleteModal();
+	};
+	const refetchData = () => dispatch(FETCH_GET_DRIVERS());
+
+	useEffect(() => {
+		refetchData();
+	}, []);
 
 	return (
 		<>
@@ -43,19 +105,25 @@ export default function Home() {
 				title={MODAL_LABEL.REGISTER_DRIVER}
 				variant={BUTTON_LABEL.REGISTER}
 				open={openRegisterModal}
-				handleOnClose={() => setOpenRegisterModal(false)}
+				handleOnClose={handleCloseRegisterModal}
+				onSubmit={handleSubmitRegisterModal}
 			>
-				<ModalInputs template={DriverActionModalTemplate} />
+				<ModalInputs
+					template={DriverActionModalTemplate}
+					data={registerModalData}
+					onDataChange={setRegisterModalData}
+				/>
 			</ModalCV2X>
 			<ModalCV2X
 				title={informModalData.name}
 				variant={'Inform'}
 				open={openInformModal}
-				handleOnClose={() => setOpenInformModal(false)}
+				handleOnClose={handleCloseInformModal}
 			>
 				<ModalInputs
 					template={DriverInfoModalTemplate}
-					initiateValue={informModalData}
+					data={informModalData}
+					onDataChange={setInformModalData}
 					isReadOnly={true}
 				/>
 			</ModalCV2X>
@@ -63,18 +131,21 @@ export default function Home() {
 				title={MODAL_LABEL.UPDATE_DRIVER + updateModalData.id}
 				variant={BUTTON_LABEL.UPDATE}
 				open={openUpdateModal}
-				handleOnClose={() => setOpenUpdateModal(false)}
+				handleOnClose={handleCloseUpdateModal}
+				onSubmit={handleSubmitUpdateModal}
 			>
 				<ModalInputs
 					template={DriverActionModalTemplate}
-					initiateValue={updateModalData}
+					data={updateModalData}
+					onDataChange={setUpdateModalData}
 				/>
 			</ModalCV2X>
 			<ModalCV2X
 				title={MODAL_LABEL.ARE_YOU_SURE}
 				variant={BUTTON_LABEL.DELETE}
 				open={openDeleteModal}
-				handleOnClose={() => setOpenDeleteModal(false)}
+				handleOnClose={handleCloseDeleteModal}
+				onSubmit={handleSubmitDeleteModal}
 			>
 				<p>
 					{MODAL_LABEL.DO_YOU_REALLY_DELETE +
@@ -106,7 +177,18 @@ export default function Home() {
 						</Stack>
 						<TableCV2X<DriversProps>
 							columns={DriversTableTemplate}
-							rows={MockedDriversTableContent}
+							rows={
+								drivers?.map((driver) => {
+									return {
+										id: driver._id,
+										name: driver.first_name + ' ' + driver.last_name,
+										first_name: driver.first_name,
+										last_name: driver.last_name,
+										phone_no: driver.phone_no,
+										username: driver.username,
+									};
+								}) || []
+							}
 							handleOnClickInformation={(informData: DriversProps) => {
 								setInformModalData(informData);
 								setOpenInformModal(true);
