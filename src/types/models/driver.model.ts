@@ -25,7 +25,8 @@ export interface ICreateDriverRequest extends IDriverRequest {}
 export interface IUpdateDriverRequest extends IDriverRequest {}
 
 export interface IDriver {
-	_id: string;
+	id: string;
+	name: string;
 	first_name: string;
 	last_name: string;
 	phone_no: string;

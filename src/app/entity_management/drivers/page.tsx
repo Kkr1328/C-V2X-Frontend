@@ -183,18 +183,7 @@ export default function Home() {
 						</Stack>
 						<TableCV2X<DriversProps>
 							columns={DriversTableTemplate}
-							rows={
-								drivers?.map((driver) => {
-									return {
-										id: driver._id,
-										name: driver.first_name + ' ' + driver.last_name,
-										first_name: driver.first_name,
-										last_name: driver.last_name,
-										phone_no: driver.phone_no,
-										username: driver.username,
-									};
-								}) || []
-							}
+							rows={drivers ?? []}
 							handleOnClickInformation={(informData: DriversProps) => {
 								setInformModalData(informData);
 								setOpenInformModal(true);
