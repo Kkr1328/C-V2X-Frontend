@@ -1,3 +1,4 @@
+import { CameraType } from '../ENTITY';
 import { IQuerry } from '../common/query.model';
 
 export interface IGetCarQuery extends IQuerry {}
@@ -25,11 +26,10 @@ export interface ICreateCarRequest extends ICarRequest {}
 export interface IUpdateCarRequest extends ICarRequest {}
 
 export interface ICar {
-	_id: string;
+	id: string;
 	name: string;
 	license_plate: string;
 	model: string;
-	front_camera: string;
-	back_camera: string;
+	cameras: CameraType[];
 	driver: string;
 }
