@@ -19,6 +19,7 @@ import getRSUReducer from './get-rsu/get-rsu-reducer';
 import getCameraReducer from './get-camera/get-camera-reducer';
 import getCarReducer from './get-car/get-car-reducer';
 import getDriverReducer from './get-driver/get-driver-reducer';
+import getRSUsListReducer from './get-rsus-list/get-rsus-list-reducer';
 
 export const rootReducer = combineReducers({
 	getCars: getCarsReducer,
@@ -40,7 +41,7 @@ export const rootReducer = combineReducers({
 	updateCamera: updateCameraReducer,
 	deleteCamera: deleteCameraReducer,
 	getRSUs: getRSUsReducer,
-	// getRSUsList: getRSUsListReducer,
+	getRSUsList: getRSUsListReducer,
 	getRSU: getRSUReducer,
 	createRSU: createRSUReducer,
 	updateRSU: updateRSUReducer,

@@ -23,6 +23,7 @@ import {
 	IDriver,
 	IUpdateDriverRequest,
 } from '@/types/models/driver.model';
+import { IResponseList } from '@/types/common/responseList.model';
 
 class ApiClient extends HttpClient {
 	constructor() {
@@ -98,6 +99,8 @@ class ApiClient extends HttpClient {
 	get RSU() {
 		return {
 			GET_RSUS: () => this.get<ResponseDataT<IRSU[]>>(API_CONTEXT.RSU.GET_RSUS),
+			GET_RSUS_LIST: () =>
+				this.get<ResponseDataT<IResponseList[]>>(API_CONTEXT.RSU.GET_RSUS_LIST),
 			GET_RSU: (query: IQuerry) =>
 				this.get<ResponseDataT<IRSU>>(API_CONTEXT.RSU.GET_RSU(query)),
 			CREATE_RSU: (request: ICreateRSURequest) =>
