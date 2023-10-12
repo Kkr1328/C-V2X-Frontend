@@ -21,7 +21,7 @@ export interface ICreateRSURequest extends IRSURequest {}
 export interface IUpdateRSURequest extends IRSURequest {}
 
 export interface IRSU {
-	_id: string;
+	id: string;
 	name: string;
 	recommended_speed: string;
 }
