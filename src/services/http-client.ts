@@ -61,6 +61,18 @@ class HttpClient {
 			.then((res: any) => res.data);
 	}
 
+	async put<T, R>(endpoint: string, body: T, options: AxiosRequestConfig = {}) {
+		return await this.initHttp()
+			.put<R>(endpoint, body, options)
+			.then((res: any) => res.data);
+	}
+
+	async delete<R>(endpoint: string, options: AxiosRequestConfig = {}) {
+		return await this.initHttp()
+			.delete<R>(endpoint, options)
+			.then((res: any) => res.data);
+	}
+
 	async formData<R>(
 		endpoint: string,
 		body: FormData,
