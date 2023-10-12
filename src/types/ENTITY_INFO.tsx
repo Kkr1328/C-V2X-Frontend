@@ -17,11 +17,11 @@ export interface DriverInformation {
 export interface CameraInformation {
 	id: string;
 	name: string;
-	rec_speed: string;
+	recommended_speed: string;
 }
 
 export interface RSUInformation {
 	id: string;
 	name: string;
-	rec_speed: string;
+	recommended_speed: string;
 }

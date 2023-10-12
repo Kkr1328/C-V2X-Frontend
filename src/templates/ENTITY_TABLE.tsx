@@ -132,7 +132,7 @@ export const RSUsTableTemplate: TableHeaderProps<RSUsProps>[] = [
 		isSorted: true,
 	},
 	{
-		id: 'rec_speed',
+		id: 'recommended_speed',
 		label: INPUT_LABEL.RECOMENDED_SPEED,
 		align: 'left',
 		isSorted: true,

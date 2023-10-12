@@ -49,5 +49,5 @@ export interface CamerasProps {
 export interface RSUsProps {
 	id: string;
 	name: string;
-	rec_speed: string;
+	recommended_speed: string;
 }

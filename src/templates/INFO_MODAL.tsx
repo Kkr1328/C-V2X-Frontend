@@ -72,7 +72,7 @@ export const CameraInfoModalTemplate: InputFieldProp<CamerasProps>[] = [
 
 export const RSUInfoModalTemplate: InputFieldProp<RSUsProps>[] = [
 	{
-		id: 'rec_speed',
+		id: 'recommended_speed',
 		label: INPUT_LABEL.RECOMENDED_SPEED,
 		type: 'TextField',
 		row: 1,

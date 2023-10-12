@@ -137,7 +137,7 @@ export const RSUFilterTemplate: InputFieldProp<RSUsProps>[] = [
 		row: 1,
 	},
 	{
-		id: 'rec_speed',
+		id: 'recommended_speed',
 		label: INPUT_LABEL.RECOMENDED_SPEED,
 		type: 'TextField',
 		placeholder: '50',
