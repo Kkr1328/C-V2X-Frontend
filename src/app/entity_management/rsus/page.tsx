@@ -26,11 +26,15 @@ import { FETCH_GET_RSUS } from '@/redux/get-rsus/get-rsus-action';
 import { FETCH_CREATE_RSU } from '@/redux/create-rsu/create-rsu-action';
 import { FETCH_UPDATE_RSU } from '@/redux/update-rsu/update-rsu-action';
 import { FETCH_DELETE_RSU } from '@/redux/delete-rsu/delete-rsu-action';
+import { selectCreateRSU } from '@/redux/create-rsu/create-rsu-selector';
+import { useSnackbar } from 'notistack';
 
 export default function Home() {
 	const dispatch = useDispatch();
+	const { enqueueSnackbar } = useSnackbar();
 
 	const { data: rsus } = useSelector(selectGetRSUs);
+	const { error: createRSUError } = useSelector(selectCreateRSU);
 
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
@@ -78,7 +82,17 @@ export default function Home() {
 					recommended_speed: updateModalData.recommended_speed,
 				},
 			})
-		).then(refetchData);
+		)
+			.then(refetchData)
+			.then(() => {
+				if (!createRSUError) {
+					enqueueSnackbar('Update a RSU sucessfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to update a RSU', { variant: 'error' });
+				}
+			});
 		handleCloseUpdateModal();
 	};
 	const handleCloseDeleteModal = () => {
