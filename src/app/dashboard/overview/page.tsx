@@ -71,6 +71,7 @@ export default function Home() {
 							<RSUMarker
 								location={RSU.location}
 								radius={RSU.radius}
+								isFocus={theFocus === RSU.id}
 								onClick={() => changeFocusRSU(RSU)}
 							/>
 						) 

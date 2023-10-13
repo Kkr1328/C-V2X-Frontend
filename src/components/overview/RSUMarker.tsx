@@ -4,6 +4,7 @@ import { ASSETS_PATH } from "@/constants/ROUTE";
 interface RSUMarkerProps {
     location: google.maps.LatLngLiteral,
     radius: number | undefined,
+    isFocus: boolean,
 	onClick: () => void
 }
 
@@ -14,7 +15,7 @@ export default function RSUMarker(props: RSUMarkerProps) {
             <Marker 
                 icon={{
                     url: ASSETS_PATH.RSU_PIN,
-                    scaledSize: new google.maps.Size(64, 64)
+                    scaledSize: props.isFocus ? new google.maps.Size(84, 84) : new google.maps.Size(64, 64)
                 }}
                 onClick={props.onClick} 
                 position={props.location}
