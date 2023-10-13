@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 
 import { Stack } from '@mui/material';
 
 import TextFieldCV2X from '../common/TextFieldCV2X';
-import SelectCV2X, { SelectOption } from '../common/SelectCV2X';
+import SelectCV2X from '../common/SelectCV2X';
 import ButtonCV2X from '../common/ButtonCV2X';
 
 import { InputFieldProp } from '@/types/COMMON';
@@ -95,22 +95,31 @@ export default function Filter<T>(props: FilterProp<T>) {
 								)
 							)
 						)}
+
 					{index + 1 === maxRow && (
-						<Stack direction="row" className="w-full gap-8">
-							<div className="grow " />
-							<ButtonCV2X
-								icon={BUTTON_LABEL.CLEAR}
-								label={BUTTON_LABEL.CLEAR}
-								variant="outlined"
-								onClick={handleClearSearch}
-							/>
-							<ButtonCV2X
-								icon={BUTTON_LABEL.SEARCH}
-								label={BUTTON_LABEL.SEARCH}
-								variant="contained"
-								onClick={() => props.handleSubmitSearch(search)}
-							/>
-						</Stack>
+						<Fragment>
+							{Array.from(
+								{ length: (props.template.length + 1) % 4 },
+								(_, index) => (
+									<div className="w-full" key={index} />
+								)
+							)}
+							<Stack direction="row" className="w-full gap-8">
+								<div className="grow" />
+								<ButtonCV2X
+									icon={BUTTON_LABEL.CLEAR}
+									label={BUTTON_LABEL.CLEAR}
+									variant="outlined"
+									onClick={handleClearSearch}
+								/>
+								<ButtonCV2X
+									icon={BUTTON_LABEL.SEARCH}
+									label={BUTTON_LABEL.SEARCH}
+									variant="contained"
+									onClick={() => props.handleSubmitSearch(search)}
+								/>
+							</Stack>
+						</Fragment>
 					)}
 				</Stack>
 			))}
