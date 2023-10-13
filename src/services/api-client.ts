@@ -22,6 +22,7 @@ import {
 import {
 	ICreateDriverRequest,
 	IDriver,
+	IGetDriversRequest,
 	IUpdateDriverRequest,
 } from '@/types/models/driver.model';
 import { IResponseList } from '@/types/common/responseList.model';
@@ -82,8 +83,11 @@ class ApiClient extends HttpClient {
 
 	get DRIVER() {
 		return {
-			GET_DRIVERS: () =>
-				this.get<ResponseDataT<IDriver[]>>(API_CONTEXT.DRIVER.GET_DRIVERS),
+			GET_DRIVERS: (request: IGetDriversRequest) =>
+				this.put<IGetDriversRequest, ResponseDataT<IDriver[]>>(
+					API_CONTEXT.DRIVER.GET_DRIVERS,
+					request
+				),
 			GET_DRIVERS_LIST: () =>
 				this.get<ResponseDataT<IResponseList[]>>(
 					API_CONTEXT.DRIVER.GET_DRIVERS_LIST

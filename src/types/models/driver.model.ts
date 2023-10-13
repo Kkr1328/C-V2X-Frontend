@@ -17,7 +17,8 @@ export interface IDriverRequest {
 
 export interface IGetDriversRequest {
 	id?: string;
-	name?: string;
+	first_name?: string;
+	last_name?: string;
 	username?: string;
 	phone_no?: string;
 }
