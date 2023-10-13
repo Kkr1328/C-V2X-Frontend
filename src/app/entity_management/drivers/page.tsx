@@ -98,7 +98,7 @@ export default function Home() {
 		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id })).then(refetchData);
 		handleCloseDeleteModal();
 	};
-	const refetchData = () => dispatch(FETCH_GET_DRIVERS());
+	const refetchData = () => dispatch(FETCH_GET_DRIVERS({}));
 
 	useEffect(() => {
 		refetchData();
@@ -163,7 +163,12 @@ export default function Home() {
 				<PageTitle title={NAVBAR_LABEL.DRIVERS} />
 				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Stack className="h-full flex flex-col gap-16">
-						<Filter template={DriverFilterTemplate} />
+						<Filter
+							template={DriverFilterTemplate}
+							handleSubmitSearch={(search) =>
+								dispatch(FETCH_GET_DRIVERS(search))
+							}
+						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
 							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
