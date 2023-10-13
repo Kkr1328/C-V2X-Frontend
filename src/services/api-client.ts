@@ -4,6 +4,7 @@ import API_CONTEXT from './api.context';
 import { ResponseDataT } from '@/types/common/responseT.model';
 import {
 	ICreateRSURequest,
+	IGetRSUsRequest,
 	IRSU,
 	IUpdateRSURequest,
 } from '@/types/models/rsu.model';
@@ -108,7 +109,11 @@ class ApiClient extends HttpClient {
 
 	get RSU() {
 		return {
-			GET_RSUS: () => this.get<ResponseDataT<IRSU[]>>(API_CONTEXT.RSU.GET_RSUS),
+			GET_RSUS: (request: IGetRSUsRequest) =>
+				this.put<IGetRSUsRequest, ResponseDataT<IRSU[]>>(
+					API_CONTEXT.RSU.GET_RSUS,
+					request
+				),
 			GET_RSUS_LIST: () =>
 				this.get<ResponseDataT<IResponseList[]>>(API_CONTEXT.RSU.GET_RSUS_LIST),
 			GET_RSU: (query: IQuerry) =>
