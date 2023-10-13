@@ -1,5 +1,4 @@
-// OVERVIEW PAGE
-export enum MAP_OBJECT {
+export enum MAP_OBJECT_CONFIG {
     NORMAL_PIN_SIZE = 64,
     FOCUS_PIN_SIZE = 84,
     IMAGE_PROFILE_SIZE = 32

@@ -6,7 +6,7 @@ import Image from 'next/image'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Pill from "../common/Pill";
-import { ASSETS_PATH } from "@/constants/ROUTE";
+import { MAP_ASSETS } from "@/constants/ASSETS";
 
 interface CarCardProps {
   car: CarCard,
@@ -53,7 +53,7 @@ function InCard(car: CarCard) {
       <div className="text-h4 font-bold flex items-center gap-16 mb-12">
         <div className="flex gap-8">
           <Image 
-            src={`${ASSETS_PATH.MAP_CAR_PROFILE}${car.status}.svg`} 
+            src={`${MAP_ASSETS.CAR_PROFILE}${car.status}.svg`} 
             width="32" height="32" 
             alt={"CAR_PROFILE"}
           />

@@ -7,8 +7,8 @@ import CarCardDetail from '@/components/overview/CarCardDetail';
 import RSUMarker from '@/components/overview/RSUMarker';
 
 import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
-import { ASSETS_PATH } from '@/constants/ROUTE';
-import { MAP_OBJECT } from '@/constants/OVERVIEW';
+import { MAP_ASSETS } from '@/constants/ASSETS';
+import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 import { MockedCars, MockedCarLocation, MockedRSU } from '@/mock/ENTITY_OVERVIEW';
 import { StuffLocation, RSUInformation } from '@/types/OVERVIEW';
 
@@ -79,10 +79,10 @@ export default function Home() {
 						MockedCarLocation.map((CAR) =>
 							<Marker
 								icon={{
-									url: `${ASSETS_PATH.CAR_PIN}${CAR.status}.svg`,
+									url: `${MAP_ASSETS.CAR_PIN}${CAR.status}.svg`,
 									scaledSize: theFocus === CAR.id ? 
-										new google.maps.Size(MAP_OBJECT.FOCUS_PIN_SIZE, MAP_OBJECT.FOCUS_PIN_SIZE) : 
-										new google.maps.Size(MAP_OBJECT.NORMAL_PIN_SIZE, MAP_OBJECT.NORMAL_PIN_SIZE)
+										new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) : 
+										new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
 								}}
 								onClick={() => changeFocus(CAR)}
 								position={CAR.location}
@@ -124,13 +124,13 @@ export default function Home() {
 							MockedRSU
 								.filter(all => all.id === theFocus)
 								.map((RSU) =>
-									<Card className='bg-light_background_grey rounded-lg my-8 p-8 flex flex-col gap-8'>
+									<Card className='bg-light_background_grey rounded-lg my-16 p-8 flex flex-col gap-8'>
 										<div className='flex items-center gap-8'>
 											<Image 
-												src={ASSETS_PATH.MAP_RSU_PROFILE} 
+												src={MAP_ASSETS.RSU_PROFILE} 
 												alt={'RSU profile'} 
-												width={MAP_OBJECT.IMAGE_PROFILE_SIZE}
-												height={MAP_OBJECT.IMAGE_PROFILE_SIZE}
+												width={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
+												height={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
 											/>
 											<div className='text-h4 font-bold'>{RSU.name}</div>
 										</div>
