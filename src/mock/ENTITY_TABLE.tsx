@@ -11,7 +11,10 @@ export const MockedCarsTableContent: CarsProps[] = [
 		name: 'Car01',
 		license_plate: 'AB 0001',
 		model: 'Model01',
-		cameras: [{ name: 'Cam01', position: 'Front' }],
+		cameras: [
+			{ name: 'Cam01', position: 'Front' },
+			{ name: 'Cam02', position: 'Back' },
+		],
 		driver_id: 'Driver01',
 	},
 	{
@@ -19,7 +22,10 @@ export const MockedCarsTableContent: CarsProps[] = [
 		name: 'Car02',
 		license_plate: 'AB 0002',
 		model: 'Model02',
-		cameras: [{ name: 'Cam01', position: 'Front' }],
+		cameras: [
+			{ name: 'Cam01', position: 'Front' },
+			{ name: 'Cam02', position: 'Back' },
+		],
 		driver_id: 'Driver02',
 	},
 	{
@@ -27,7 +33,10 @@ export const MockedCarsTableContent: CarsProps[] = [
 		name: 'Car03',
 		license_plate: 'AB 0003',
 		model: 'Model03',
-		cameras: [{ name: 'Cam01', position: 'Front' }],
+		cameras: [
+			{ name: 'Cam01', position: 'Front' },
+			{ name: 'Cam02', position: 'Back' },
+		],
 		driver_id: 'Driver03',
 	},
 	{
@@ -35,7 +44,10 @@ export const MockedCarsTableContent: CarsProps[] = [
 		name: 'Car04',
 		license_plate: 'AB 0004',
 		model: 'Model04',
-		cameras: [{ name: 'Cam01', position: 'Front' }],
+		cameras: [
+			{ name: 'Cam01', position: 'Front' },
+			{ name: 'Cam02', position: 'Back' },
+		],
 		driver_id: 'Driver04',
 	},
 	{
@@ -43,7 +55,10 @@ export const MockedCarsTableContent: CarsProps[] = [
 		name: 'Car05',
 		license_plate: 'AB 0005',
 		model: 'Model05',
-		cameras: [{ name: 'Cam01', position: 'Front' }],
+		cameras: [
+			{ name: 'Cam01', position: 'Front' },
+			{ name: 'Cam02', position: 'Back' },
+		],
 		driver_id: 'Driver05',
 	},
 	{
@@ -51,7 +66,10 @@ export const MockedCarsTableContent: CarsProps[] = [
 		name: 'Car06',
 		license_plate: 'AB 0006',
 		model: 'Model06',
-		cameras: [{ name: 'Cam01', position: 'Front' }],
+		cameras: [
+			{ name: 'Cam01', position: 'Front' },
+			{ name: 'Cam02', position: 'Back' },
+		],
 		driver_id: 'Driver06',
 	},
 	{
@@ -59,7 +77,10 @@ export const MockedCarsTableContent: CarsProps[] = [
 		name: 'Car07',
 		license_plate: 'AB 0007',
 		model: 'Model07',
-		cameras: [{ name: 'Cam01', position: 'Front' }],
+		cameras: [
+			{ name: 'Cam01', position: 'Front' },
+			{ name: 'Cam02', position: 'Back' },
+		],
 		driver_id: 'Driver07',
 	},
 ];

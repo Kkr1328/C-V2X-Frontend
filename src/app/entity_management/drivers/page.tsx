@@ -119,6 +119,7 @@ export default function Home() {
 								setDeleteModalData(deleteData);
 								setOpenDeleteModal(true);
 							}}
+							isLoading={true}
 						/>
 					</Stack>
 				</Card>
