@@ -8,6 +8,7 @@ import RSUMarker from '@/components/overview/RSUMarker';
 
 import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
 import { ASSETS_PATH } from '@/constants/ROUTE';
+import { MAP_OBJECT } from '@/constants/SIZE';
 import { MockedCars, MockedCarLocation, MockedRSU } from '@/mock/ENTITY_OVERVIEW';
 import { StuffLocation, RSUInformation } from '@/types/OVERVIEW';
 
@@ -79,7 +80,9 @@ export default function Home() {
 							<Marker
 								icon={{
 									url: `${ASSETS_PATH.CAR_PIN}${CAR.status}.svg`,
-									scaledSize: theFocus === CAR.id ? new google.maps.Size(84, 84) : new google.maps.Size(64, 64)
+									scaledSize: theFocus === CAR.id ? 
+										new google.maps.Size(MAP_OBJECT.FOCUS_PIN_SIZE, MAP_OBJECT.FOCUS_PIN_SIZE) : 
+										new google.maps.Size(MAP_OBJECT.NORMAL_PIN_SIZE, MAP_OBJECT.NORMAL_PIN_SIZE)
 								}}
 								onClick={() => changeFocus(CAR)}
 								position={CAR.location}
@@ -126,10 +129,10 @@ export default function Home() {
 											<Image 
 												src={ASSETS_PATH.MAP_RSU_PROFILE} 
 												alt={'RSU profile'} 
-												width="32" 
-												height="32"
+												width={MAP_OBJECT.IMAGE_PROFILE_SIZE}
+												height={MAP_OBJECT.IMAGE_PROFILE_SIZE}
 											/>
-											<div className='text-[20px] font-bold'>{RSU.name}</div>
+											<div className='text-h4 font-bold'>{RSU.name}</div>
 										</div>
 										<div>Recommended speed: {RSU.recommendSpeed}</div>
 										<Divider />

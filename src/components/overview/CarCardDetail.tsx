@@ -48,9 +48,9 @@ function InCard(car: CarCard) {
   const [expand, setExpand] = useState<boolean>(false)
 
   return (
-    <>
+    <div className="text-p1">
       {/* head */}
-      <div className="text-[20px] font-bold flex items-center gap-16 mb-12">
+      <div className="text-h4 font-bold flex items-center gap-16 mb-12">
         <div className="flex gap-8">
           <Image 
             src={`${ASSETS_PATH.MAP_CAR_PROFILE}${car.status}.svg`} 
@@ -76,6 +76,6 @@ function InCard(car: CarCard) {
           expand ? <ExpandLessIcon /> : <ExpandMoreIcon />
         }
       </button>
-    </>
+    </div>
   )
 }

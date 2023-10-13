@@ -1,5 +1,6 @@
 import { Circle, Marker } from "@react-google-maps/api";
 import { ASSETS_PATH } from "@/constants/ROUTE";
+import { MAP_OBJECT } from "@/constants/SIZE";
 
 interface RSUMarkerProps {
     location: google.maps.LatLngLiteral,
@@ -15,7 +16,9 @@ export default function RSUMarker(props: RSUMarkerProps) {
             <Marker 
                 icon={{
                     url: ASSETS_PATH.RSU_PIN,
-                    scaledSize: props.isFocus ? new google.maps.Size(84, 84) : new google.maps.Size(64, 64)
+                    scaledSize: props.isFocus ? 
+                        new google.maps.Size(MAP_OBJECT.FOCUS_PIN_SIZE, MAP_OBJECT.FOCUS_PIN_SIZE) 
+                        : new google.maps.Size(MAP_OBJECT.NORMAL_PIN_SIZE, MAP_OBJECT.NORMAL_PIN_SIZE)
                 }}
                 onClick={props.onClick} 
                 position={props.location}
