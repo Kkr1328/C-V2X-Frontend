@@ -8,7 +8,7 @@ import RSUMarker from '@/components/overview/RSUMarker';
 
 import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
 import { ASSETS_PATH } from '@/constants/ROUTE';
-import { MAP_OBJECT } from '@/constants/SIZE';
+import { MAP_OBJECT } from '@/constants/OVERVIEW';
 import { MockedCars, MockedCarLocation, MockedRSU } from '@/mock/ENTITY_OVERVIEW';
 import { StuffLocation, RSUInformation } from '@/types/OVERVIEW';
 
@@ -134,7 +134,7 @@ export default function Home() {
 											/>
 											<div className='text-h4 font-bold'>{RSU.name}</div>
 										</div>
-										<div>Recommended speed: {RSU.recommendSpeed}</div>
+										<div className='text-p1'>Recommended speed: {RSU.recommendSpeed}</div>
 										<Divider />
 									</Card>
 								)

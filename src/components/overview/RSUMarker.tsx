@@ -1,6 +1,6 @@
 import { Circle, Marker } from "@react-google-maps/api";
 import { ASSETS_PATH } from "@/constants/ROUTE";
-import { MAP_OBJECT } from "@/constants/SIZE";
+import { MAP_OBJECT } from "@/constants/OVERVIEW";
 
 interface RSUMarkerProps {
     location: google.maps.LatLngLiteral,
