@@ -31,5 +31,6 @@ export interface ICar {
 	license_plate: string;
 	model: string;
 	cameras: CameraType[];
+	driver_id: string;
 	driver: string;
 }

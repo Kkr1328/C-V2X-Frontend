@@ -13,6 +13,7 @@ export interface TableRowProps {
 }
 
 export interface CameraType {
+	id: string;
 	name: string;
 	position: Position;
 }
