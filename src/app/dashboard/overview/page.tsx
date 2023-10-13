@@ -19,6 +19,7 @@ export default function Home() {
 	const [theFocus, setTheFocus] = useState<String>()
 	const [focusMode, setFocusMode] = useState<"RSU" | "CAR">("CAR")
 	const [map, setMap] = useState<google.maps.Map>()
+	const [pillMode, setPillMode] = useState<PILL_LABEL>(PILL_LABEL.ALL)
 
 	const { isLoaded } = useLoadScript({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "<GOOGLE-MAP-KEY>",
@@ -79,24 +80,33 @@ export default function Home() {
 				</GoogleMap>
 				<Divider className='border mx-24' orientation='vertical' />
 				<div className='flex flex-col w-[30%]'>
-					<ToggleButtonCV2X options={[PILL_LABEL.ALL, PILL_LABEL.EMERGENCY, PILL_LABEL.WARNING]} value={PILL_LABEL.ALL} onChange={() => {console.log()}} />
+					<ToggleButtonCV2X 
+						options={[PILL_LABEL.ALL, PILL_LABEL.EMERGENCY, PILL_LABEL.WARNING]} 
+						value={pillMode} 
+						onChange={(event, value) => { setPillMode(value) }}
+					/>
 					<List className='grow overflow-y-scroll'>
 						{ focusMode == "CAR" ?
-							MockedCars.sort((car) => (car.id === theFocus ? -1 : 1)).map((car) =>
-								<CarCardDetail 
-									key={car.id}
-									car={car} 
-									isFocus={car.id === theFocus}									
-								/>
-							)
+							MockedCars
+								.filter((car) => car.status === pillMode || pillMode === PILL_LABEL.ALL)
+								.sort((car) => (car.id === theFocus ? -1 : 1))
+								.map((car) =>
+									<CarCardDetail 
+										key={car.id}
+										car={car} 
+										isFocus={car.id === theFocus}									
+									/>
+								)
 							:
-							MockedRSU.filter(all => all.id === theFocus).map((RSU) =>
-								<Card className='bg-light_background_grey rounded-lg my-8 p-8'>
-									<div className='text-[20px] font-bold'>{RSU.name}</div>
-									<div>Recommended speed: {RSU.recommendSpeed}</div>
-									<Divider />
-								</Card>
-							)
+							MockedRSU
+								.filter(all => all.id === theFocus)
+								.map((RSU) =>
+									<Card className='bg-light_background_grey rounded-lg my-8 p-8'>
+										<div className='text-[20px] font-bold'>{RSU.name}</div>
+										<div>Recommended speed: {RSU.recommendSpeed}</div>
+										<Divider />
+									</Card>
+								)
 						}
 					</List>
 				</div>
