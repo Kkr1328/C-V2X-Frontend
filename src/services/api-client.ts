@@ -12,6 +12,7 @@ import { IQuerry } from '@/types/common/query.model';
 import {
 	ICamera,
 	ICreateCameraRequest,
+	IGetCamerasRequest,
 	IUpdateCameraRequest,
 } from '@/types/models/camera.model';
 import {
@@ -56,8 +57,11 @@ class ApiClient extends HttpClient {
 
 	get CAMERA() {
 		return {
-			GET_CAMERAS: () =>
-				this.get<ResponseDataT<ICamera[]>>(API_CONTEXT.CAMERA.GET_CAMERAS),
+			GET_CAMERAS: (request: IGetCamerasRequest) =>
+				this.put<IGetCamerasRequest, ResponseDataT<ICamera[]>>(
+					API_CONTEXT.CAMERA.GET_CAMERAS,
+					request
+				),
 			GET_CAMERAS_LIST: () =>
 				this.get<ResponseDataT<IResponseList[]>>(
 					API_CONTEXT.CAMERA.GET_CAMERAS_LIST

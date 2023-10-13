@@ -42,6 +42,7 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 			...props.data,
 			[id]: value,
 		} as T);
+		console.log(props.data);
 	};
 
 	return (
