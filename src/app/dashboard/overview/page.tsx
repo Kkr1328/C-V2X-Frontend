@@ -28,6 +28,10 @@ export default function Home() {
 	function changeFocus(node: StuffLocation) {
 		setTheFocus(node.id)
 		setFocusMode("CAR")
+		setPillMode(
+			node.status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : 
+			node.status ?? PILL_LABEL.ALL
+		)
 		map?.panTo(node.location)
 	}
 
@@ -35,6 +39,13 @@ export default function Home() {
 		setTheFocus(node.id)
 		setFocusMode("RSU")
 		map?.panTo(node.location)
+	}
+
+	function changePillMode(value: PILL_LABEL) {
+		setFocusMode("CAR")
+		if (value !== null) {
+			setPillMode(value)
+		}
 	}
 
 	if(!isLoaded) return <div>Loading...</div>
@@ -83,10 +94,10 @@ export default function Home() {
 					<ToggleButtonCV2X 
 						options={[PILL_LABEL.ALL, PILL_LABEL.EMERGENCY, PILL_LABEL.WARNING]} 
 						value={pillMode} 
-						onChange={(event, value) => { setPillMode(value) }}
+						onChange={(_event, value) => changePillMode(value)}
 					/>
 					<List className='grow overflow-y-scroll'>
-						{ focusMode == "CAR" ?
+						{ focusMode === "CAR" ?
 							MockedCars
 								.filter((car) => car.status === pillMode || pillMode === PILL_LABEL.ALL)
 								.sort((car) => (car.id === theFocus ? -1 : 1))
