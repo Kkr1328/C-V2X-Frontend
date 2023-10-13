@@ -1,3 +1,4 @@
+import { PILL_LABEL } from "@/constants/LABEL";
 import { Position } from "./COMMON";
 
 export interface CameraType {
@@ -16,27 +17,23 @@ export interface CarCard {
 	cameras: CameraType[];
     speed: string;
     driver: DriverProps;
-    status: 'EMERGENCY' | 'WARNING' | 'NORMAL'
+    status: PILL_LABEL;
 }
-export interface CarLocation {
+export interface StuffLocation {
     id: string;
     name: string;
     location: Location;
+    status?: PILL_LABEL;
 }
 
-
+export interface RSUInformation extends StuffLocation {
+    radius: number;
+    recommendSpeed: string;
+}
 
 export interface DriverProps {
 	id: string;
 	first_name: string;
 	last_name: string;
 	phone_no: string;
-}
-
-export interface RSUInformation {
-    id: string;
-    name: string;
-    location: Location;
-    radius: number;
-    recommendSpeed: string;
 }

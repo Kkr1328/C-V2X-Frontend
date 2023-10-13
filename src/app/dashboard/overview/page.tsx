@@ -7,8 +7,9 @@ import CarCardDetail from '@/components/overview/CarCardDetail';
 import RSUMarker from '@/components/overview/RSUMarker';
 
 import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
+import { ASSETS_PATH } from '@/constants/ROUTE';
 import { MockedCars, MockedCarLocation, MockedRSU } from '@/mock/ENTITY_OVERVIEW';
-import { CarLocation, RSUInformation } from '@/types/OVERVIEW';
+import { StuffLocation, RSUInformation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
@@ -17,21 +18,22 @@ import { useState } from 'react';
 export default function Home() {
 	const [theFocus, setTheFocus] = useState<String>()
 	const [focusMode, setFocusMode] = useState<"RSU" | "CAR">("CAR")
-	const [centerLoc, setCenterLoc] = useState(MockedCarLocation[0].location)
+	const [map, setMap] = useState<google.maps.Map>()
 
 	const { isLoaded } = useLoadScript({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "<GOOGLE-MAP-KEY>",
 	})
 
-	function changeFocusCar(node: CarLocation) {
+	function changeFocus(node: StuffLocation) {
 		setTheFocus(node.id)
 		setFocusMode("CAR")
+		map?.panTo(node.location)
 	}
 
 	function changeFocusRSU(node: RSUInformation) {
 		setTheFocus(node.id)
 		setFocusMode("RSU")
-
+		map?.panTo(node.location)
 	}
 
 	if(!isLoaded) return <div>Loading...</div>
@@ -48,13 +50,18 @@ export default function Home() {
 				<GoogleMap 
 					options={{ disableDefaultUI : true }} 
 					zoom={14} 
-					center={centerLoc} 
+					center={MockedCarLocation[0].location}
 					mapContainerClassName="w-[70%]"
+					onLoad={ map => setMap(map) }
 				>
 					{
 						MockedCarLocation.map((CAR) =>
 							<Marker
-								onClick={() => changeFocusCar(CAR)}
+								icon={{
+									url: `${ASSETS_PATH.CAR_PIN}${CAR.status}.svg`,
+									scaledSize: theFocus === CAR.id ? new google.maps.Size(84, 84) : new google.maps.Size(64, 64)
+								}}
+								onClick={() => changeFocus(CAR)}
 								position={CAR.location}
 							/>
 						)
@@ -70,19 +77,20 @@ export default function Home() {
 					}
 				</GoogleMap>
 				<Divider className='border mx-24' orientation='vertical' />
-				<div className='flex flex-col w-[30%] gap-8'>
+				<div className='flex flex-col w-[30%]'>
 					<ToggleButtonCV2X options={[PILL_LABEL.ALL, PILL_LABEL.EMERGENCY, PILL_LABEL.WARNING]} value={PILL_LABEL.ALL} onChange={() => {console.log()}} />
 					<List className='grow overflow-y-scroll'>
 						{ focusMode == "CAR" ?
 							MockedCars.sort((car) => (car.id === theFocus ? -1 : 1)).map((car) =>
 								<CarCardDetail 
+									key={car.id}
 									car={car} 
 									isFocus={car.id === theFocus}									
 								/>
 							)
 							:
 							MockedRSU.filter(all => all.id === theFocus).map((RSU) =>
-								<Card className='rounded-lg my-8 p-8'>
+								<Card className='bg-light_background_grey rounded-lg my-8 p-8'>
 									<div className='text-[20px] font-bold'>{RSU.name}</div>
 									<div>Recommended speed: {RSU.recommendSpeed}</div>
 									<Divider />

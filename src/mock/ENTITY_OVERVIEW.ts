@@ -1,6 +1,7 @@
+import { PILL_LABEL } from '@/constants/LABEL';
 import {
     CarCard,
-	CarLocation, 
+	StuffLocation, 
 	RSUInformation
 } from '@/types/OVERVIEW';
 
@@ -25,7 +26,7 @@ export const MockedCars: CarCard[] = [
 			last_name: 'cool',
 			phone_no: '08xxxxxxxx'
 		},
-		status: 'NORMAL'
+		status: PILL_LABEL.EMERGENCY
 	} ,
 	{
 		id: 'carxxx02',
@@ -47,7 +48,7 @@ export const MockedCars: CarCard[] = [
 			last_name: 'drink',
 			phone_no: '08xxxxxxxx'
 		},
-		status: 'NORMAL'
+		status: PILL_LABEL.WARNING
 	},
 	{
 		id: 'carxxx03',
@@ -69,18 +70,19 @@ export const MockedCars: CarCard[] = [
 			last_name: 'cu',
 			phone_no: '08xxxxxxxx'
 		},
-		status: 'NORMAL'
+		status: PILL_LABEL.ACTIVE
 	}
 ]
 
-export const MockedCarLocation: CarLocation[] = [
+export const MockedCarLocation: StuffLocation[] = [
 	{
 		id: 'carxxx01',
 		name: 'Car 01',
 		location: {
 			lat : 13.787528639832523,
 			lng: 100.54476506712641
-		}
+		},
+		status: PILL_LABEL.EMERGENCY
 	}, 
 	{
 		id: 'carxxx02',
@@ -88,7 +90,8 @@ export const MockedCarLocation: CarLocation[] = [
 		location: {
 			lat : 13.787528639832523,
 			lng: 100.53476506712641
-		}
+		},
+		status: PILL_LABEL.WARNING
 	},
 	{
 		id: 'carxxx03',
@@ -96,7 +99,8 @@ export const MockedCarLocation: CarLocation[] = [
 		location: {
 			lat : 13.798528639832523,
 			lng: 100.55176506712641
-		}
+		},
+		status: PILL_LABEL.ACTIVE
 	}
 ]
 

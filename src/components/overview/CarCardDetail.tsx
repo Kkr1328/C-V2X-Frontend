@@ -1,6 +1,12 @@
 import { CarCard } from "@/types/OVERVIEW";
 import { Card, Collapse } from "@mui/material";
 import { useState } from "react";
+import Image from 'next/image'
+
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import Pill from "../common/Pill";
+import { ASSETS_PATH } from "@/constants/ROUTE";
 
 interface CarCardProps {
   car: CarCard,
@@ -13,7 +19,7 @@ export default function CarCard(props: CarCardProps) {
 
   return (
     isFocus ?
-      <Card className="border-2 border-primary_blue rounded-lg my-8 p-8">
+      <Card className="bg-light_background_grey border-2 border-primary_blue rounded-lg my-16 p-8">
         <InCard 
             id={car.id} 
             name={car.name} 
@@ -24,7 +30,7 @@ export default function CarCard(props: CarCardProps) {
         />
       </Card>
       :
-      <Card className='rounded-lg my-8 p-8'>
+      <Card className='bg-light_background_grey rounded-lg my-16 p-8'>
         <InCard 
             id={car.id} 
             name={car.name} 
@@ -42,7 +48,21 @@ function InCard(car: CarCard) {
 
   return (
     <>
-      <div className="text-[20px] font-bold">{car.name}</div>
+      {/* head */}
+      <div className="text-[20px] font-bold flex items-center gap-16 mb-8">
+        <div className="flex gap-8">
+          <Image 
+            className="fill-red" 
+            src={`${ASSETS_PATH.MAP_CAR_PROFILE}${car.status}.svg`} 
+            width="32" height="32" 
+            alt={""}
+          />
+          {car.name}
+        </div> 
+        <Pill variant={car.status} />
+      </div>
+
+      {/* properties */}
       <div>Speed: {car.speed ?? "null"}</div>
       <Collapse in={expand} timeout="auto">
           <div>
@@ -55,7 +75,11 @@ function InCard(car: CarCard) {
             </div>
           ))}
       </Collapse>
-      <button onClick={() => { setExpand(!expand) }}>v</button>
+      <button className="float-right mt-16" onClick={() => { setExpand(!expand) }}>
+        { 
+          expand ? <ExpandLessIcon /> : <ExpandMoreIcon />
+        }
+      </button>
     </>
   )
 }
