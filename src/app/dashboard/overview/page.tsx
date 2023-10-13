@@ -13,13 +13,14 @@ import { StuffLocation, RSUInformation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
+import Image from 'next/image';
 import { useState } from 'react';
 
 export default function Home() {
 	const [theFocus, setTheFocus] = useState<String>()
 	const [focusMode, setFocusMode] = useState<"RSU" | "CAR">("CAR")
 	const [map, setMap] = useState<google.maps.Map>()
-	const [pillMode, setPillMode] = useState<PILL_LABEL>(PILL_LABEL.ALL)
+	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
 
 	const { isLoaded } = useLoadScript({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "<GOOGLE-MAP-KEY>",
@@ -38,6 +39,7 @@ export default function Home() {
 	function changeFocusRSU(node: RSUInformation) {
 		setTheFocus(node.id)
 		setFocusMode("RSU")
+		setPillMode(null)
 		map?.panTo(node.location)
 	}
 
@@ -93,7 +95,7 @@ export default function Home() {
 				<div className='flex flex-col w-[30%]'>
 					<ToggleButtonCV2X 
 						options={[PILL_LABEL.ALL, PILL_LABEL.EMERGENCY, PILL_LABEL.WARNING]} 
-						value={pillMode} 
+						value={pillMode ?? ""} 
 						onChange={(_event, value) => changePillMode(value)}
 					/>
 					<List className='grow overflow-y-scroll'>
@@ -105,17 +107,26 @@ export default function Home() {
 									<CarCardDetail 
 										key={car.id}
 										car={car} 
-										isFocus={car.id === theFocus}									
+										isFocus={car.id === theFocus}								
 									/>
 								)
 							:
 							MockedRSU
 								.filter(all => all.id === theFocus)
 								.map((RSU) =>
-									<Card className='bg-light_background_grey rounded-lg my-8 p-8'>
-										<div className='text-[20px] font-bold'>{RSU.name}</div>
+									<Card className='bg-light_background_grey rounded-lg my-8 p-8 flex flex-col gap-8'>
+										<div className='flex items-center gap-8'>
+											<Image 
+												src={ASSETS_PATH.MAP_RSU_PROFILE} 
+												alt={'RSU profile'} 
+												width="32" 
+												height="32"
+											/>
+											<div className='text-[20px] font-bold'>{RSU.name}</div>
+										</div>
 										<div>Recommended speed: {RSU.recommendSpeed}</div>
 										<Divider />
+
 									</Card>
 								)
 						}

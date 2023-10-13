@@ -14,7 +14,8 @@ export enum ROUTE {
 export enum ASSETS_PATH {
 	MAP_ASSETS = '/mapAssets',
 	MAP_PIN = MAP_ASSETS + '/PIN',
-	MAP_CAR_PROFILE = MAP_ASSETS + '/PROFILE/car_profile_',
 	CAR_PIN = MAP_PIN + '/car_pin_',
 	RSU_PIN = MAP_PIN + '/rsu_pin.svg',
+	MAP_CAR_PROFILE = MAP_ASSETS + '/PROFILE/car_profile_',
+	MAP_RSU_PROFILE = MAP_ASSETS + '/PROFILE/rsu_profile.svg'
 }

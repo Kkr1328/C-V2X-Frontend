@@ -49,13 +49,12 @@ function InCard(car: CarCard) {
   return (
     <>
       {/* head */}
-      <div className="text-[20px] font-bold flex items-center gap-16 mb-8">
+      <div className="text-[20px] font-bold flex items-center gap-16 mb-12">
         <div className="flex gap-8">
           <Image 
-            className="fill-red" 
             src={`${ASSETS_PATH.MAP_CAR_PROFILE}${car.status}.svg`} 
             width="32" height="32" 
-            alt={""}
+            alt={"CAR_PROFILE"}
           />
           {car.name}
         </div> 
@@ -65,17 +64,13 @@ function InCard(car: CarCard) {
       {/* properties */}
       <div>Speed: {car.speed ?? "null"}</div>
       <Collapse in={expand} timeout="auto">
-          <div>
-            Driver: {`${car.driver.first_name} ${car.driver.last_name}`}
-          </div>
-          <div>Phone No. : {car.driver.phone_no ?? "null"}</div>
+          <div className='my-4'>Driver: {`${car.driver.first_name} ${car.driver.last_name}`}</div>
+          <div className='my-4'>Phone No. : {car.driver.phone_no ?? "null"}</div>
           {car.cameras.map((camera) => (
-            <div>
-              {camera.position + " camera"} : {camera.name}
-            </div>
+            <div className='my-4'>{camera.position + " camera"} : {camera.name}</div>
           ))}
       </Collapse>
-      <button className="float-right mt-16" onClick={() => { setExpand(!expand) }}>
+      <button className="float-right mt-4" onClick={() => { setExpand(!expand) }}>
         { 
           expand ? <ExpandLessIcon /> : <ExpandMoreIcon />
         }
