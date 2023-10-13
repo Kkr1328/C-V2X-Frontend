@@ -2,16 +2,15 @@
 
 import { useState } from 'react';
 
-import { Stack, Box, IconButton } from '@mui/material';
+import { Stack, Box } from '@mui/material';
 
 import TabCameraPanel from '@/components/module/TabCameraPanel';
 import ModalCamera from '@/components/common/ModalCamera';
 
 import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
 
-import IconMapper from '@/utils/IconMapper';
-
 import Pill from '../common/Pill';
+import ButtonCV2X from '../common/ButtonCV2X';
 
 interface CameraCardProps {
 	carName: String;
@@ -51,21 +50,14 @@ export default function CameraCard(props: CameraCardProps) {
 					<TabCameraPanel size="small" />
 					{/* Zoom Button */}
 					{!openModal && (
-						<IconButton
-							disableRipple
-							onClick={() => setOpenModal(true)}
-							sx={{
-								position: 'absolute',
-								bottom: 20,
-								right: 20,
-								color: '#17A5D3',
-								bgcolor: 'white !important',
-								border: '2px solid #17A5D3',
-								borderRadius: 3,
-							}}
-						>
-							<IconMapper icon={BUTTON_LABEL.ZOOM}></IconMapper>
-						</IconButton>
+						<Box sx={{ position: 'absolute', bottom: 20, right: 20 }}>
+							<ButtonCV2X
+								icon={BUTTON_LABEL.ZOOM}
+								onClick={() => setOpenModal(true)}
+								variant="outlined"
+								color="primary"
+							/>
+						</Box>
 					)}
 				</Box>
 			</Box>
