@@ -10,7 +10,8 @@ import { ASSETS_PATH } from "@/constants/ROUTE";
 
 interface CarCardProps {
   car: CarCard,
-  isFocus: Boolean
+  isFocus: Boolean,
+  onClick: () => void
 }
 
 export default function CarCard(props: CarCardProps) {
@@ -19,7 +20,7 @@ export default function CarCard(props: CarCardProps) {
 
   return (
     isFocus ?
-      <Card className="bg-light_background_grey border-2 border-primary_blue rounded-lg my-16 p-8">
+      <Card onClick={props.onClick} className="bg-light_background_grey border-2 border-primary_blue cursor-zoom-out rounded-lg my-16 p-8">
         <InCard 
             id={car.id} 
             name={car.name} 
@@ -30,7 +31,7 @@ export default function CarCard(props: CarCardProps) {
         />
       </Card>
       :
-      <Card className='bg-light_background_grey rounded-lg my-16 p-8'>
+      <Card onClick={props.onClick} className='bg-light_background_grey cursor-zoom-in rounded-lg my-16 p-8'>
         <InCard 
             id={car.id} 
             name={car.name} 

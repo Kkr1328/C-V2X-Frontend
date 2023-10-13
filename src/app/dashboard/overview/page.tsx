@@ -49,6 +49,12 @@ export default function Home() {
 			setPillMode(value)
 		}
 	}
+	
+	function clickCarCard(carID: string) {
+		let index = MockedCarLocation.findIndex((value) => value.id === carID)
+		let target = MockedCarLocation[index]
+		changeFocus(target)
+	}
 
 	if(!isLoaded) return <div>Loading...</div>
 	return (
@@ -107,7 +113,8 @@ export default function Home() {
 									<CarCardDetail 
 										key={car.id}
 										car={car} 
-										isFocus={car.id === theFocus}								
+										isFocus={car.id === theFocus}
+										onClick={() => clickCarCard(car.id)}							
 									/>
 								)
 							:
@@ -126,7 +133,6 @@ export default function Home() {
 										</div>
 										<div>Recommended speed: {RSU.recommendSpeed}</div>
 										<Divider />
-
 									</Card>
 								)
 						}
