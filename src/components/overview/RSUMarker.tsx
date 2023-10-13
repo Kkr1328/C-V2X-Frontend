@@ -12,7 +12,15 @@ interface RSUMarkerProps {
 export default function RSUMarker(props: RSUMarkerProps) {
     return (
         <>
-            <Circle center={props.location} radius={props.radius} options={{ fillColor: "#17A5D3", fillOpacity: 0.1, strokeColor: "#17A5D3" }} />
+            <Circle 
+                center={props.location} 
+                radius={props.radius} 
+                options={{ 
+                    fillColor: MAP_OBJECT_CONFIG.COVER_AREA_COLOR, 
+                    strokeColor: MAP_OBJECT_CONFIG.COVER_AREA_COLOR,
+                    fillOpacity: 0.1, 
+                }}
+            />
             <Marker 
                 icon={{
                     url: MAP_ASSETS.RSU_PIN,
