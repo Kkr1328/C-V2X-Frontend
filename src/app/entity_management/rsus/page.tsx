@@ -103,7 +103,7 @@ export default function Home() {
 		dispatch(FETCH_DELETE_RSU({ id: deleteModalData.id })).then(refetchData);
 		handleCloseDeleteModal();
 	};
-	const refetchData = () => dispatch(FETCH_GET_RSUS());
+	const refetchData = () => dispatch(FETCH_GET_RSUS({}));
 
 	useEffect(() => {
 		refetchData();
@@ -168,7 +168,10 @@ export default function Home() {
 				<PageTitle title={NAVBAR_LABEL.RSUS} />
 				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Stack className="h-full flex flex-col gap-16">
-						<Filter template={RSUFilterTemplate} />
+						<Filter
+							template={RSUFilterTemplate}
+							handleSubmitSearch={(search) => dispatch(FETCH_GET_RSUS(search))}
+						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
 							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>

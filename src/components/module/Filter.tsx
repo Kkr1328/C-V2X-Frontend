@@ -13,6 +13,7 @@ import { BUTTON_LABEL } from '@/constants/LABEL';
 
 interface FilterProp<T> {
 	template: InputFieldProp<T>[];
+	handleSubmitSearch: (search: T) => void;
 }
 
 const options = [
@@ -107,6 +108,7 @@ export default function Filter<T>(props: FilterProp<T>) {
 								icon={BUTTON_LABEL.SEARCH}
 								label={BUTTON_LABEL.SEARCH}
 								variant="contained"
+								onClick={() => props.handleSubmitSearch(search)}
 							/>
 						</Stack>
 					)}
