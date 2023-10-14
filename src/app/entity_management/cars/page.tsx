@@ -16,6 +16,7 @@ import ModalInputs from '@/components/module/ModalInputs';
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
 import { CarsProps } from '@/types/ENTITY';
+import { IGetCarsRequest } from '@/types/models/car.model';
 // templates
 import { CarFilterTemplate } from '@/templates/FILTER';
 import { CarsTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -31,7 +32,6 @@ import { FETCH_GET_CARS } from '@/redux/get-cars/get-cars-action';
 import { FETCH_CREATE_CAR } from '@/redux/create-car/create-car-action';
 import { FETCH_UPDATE_CAR } from '@/redux/update-car/update-car-action';
 import { FETCH_DELETE_CAR } from '@/redux/delete-car/delete-car-action';
-import { IGetCarsRequest } from '@/types/models/car.model';
 
 export default function Home() {
 	const dispatch = useDispatch();
