@@ -14,18 +14,8 @@ import { BUTTON_LABEL } from '@/constants/LABEL';
 interface FilterProp<T> {
 	template: InputFieldProp<T>[];
 	handleSubmitSearch: (search: T) => void;
+	options?: any;
 }
-
-const options = [
-	{
-		value: 'Front',
-		label: 'Front',
-	},
-	{
-		value: 'Back',
-		label: 'Back',
-	},
-];
 
 export default function Filter<T>(props: FilterProp<T>) {
 	const defaultSearch = props.template.reduce(
@@ -83,14 +73,21 @@ export default function Filter<T>(props: FilterProp<T>) {
 										title={inputField.label}
 										placeholder={inputField.placeholder}
 										value={
-											options.find(
-												(option) => option.value === getSearch(inputField.id)
-											) || null
+											props.options
+												.filter((item: any) => item.id === inputField.id)[0]
+												.option.find(
+													(option: any) =>
+														option.value === getSearch(inputField.id)
+												) || null
 										}
 										onChange={(_, value) => {
 											value && handleSearchChange(inputField.id, value.value);
 										}}
-										options={options}
+										options={
+											props.options.filter(
+												(item: any) => item.id === inputField.id
+											)[0].option
+										}
 									/>
 								)
 							)
