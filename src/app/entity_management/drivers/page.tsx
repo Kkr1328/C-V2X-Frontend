@@ -1,6 +1,8 @@
 'use client';
 // react
 import { Fragment, useEffect, useState } from 'react';
+// notisnack
+import { useSnackbar } from 'notistack';
 // material ui
 import { Card, Divider, Stack } from '@mui/material';
 // components
@@ -14,6 +16,7 @@ import ModalInputs from '@/components/module/ModalInputs';
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
 import { DriversProps } from '@/types/ENTITY';
+import { IGetDriversRequest } from '@/types/models/driver.model';
 // templates
 import { DriverFilterTemplate } from '@/templates/FILTER';
 import { DriversTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -26,12 +29,21 @@ import { FETCH_GET_DRIVERS } from '@/redux/get-drivers/get-drivers-action';
 import { FETCH_CREATE_DRIVER } from '@/redux/create-driver/create-driver-action';
 import { FETCH_UPDATE_DRIVER } from '@/redux/update-driver/update-driver-action';
 import { FETCH_DELETE_DRIVER } from '@/redux/delete-driver/delete-driver-action';
+import { selectCreateDriver } from '@/redux/create-driver/create-driver-selector';
+import { selectUpdateDriver } from '@/redux/update-driver/update-driver-selector';
+import { selectDeleteDriver } from '@/redux/delete-driver/delete-driver-selector';
 
 export default function Home() {
 	const dispatch = useDispatch();
+	const { enqueueSnackbar } = useSnackbar();
 
 	const { data: drivers } = useSelector(selectGetDrivers);
+	const { error: createDriverError } = useSelector(selectCreateDriver);
+	const { error: updateDriverError, loading: updateDriverLoading } =
+		useSelector(selectUpdateDriver);
+	const { error: deleteDriverError } = useSelector(selectDeleteDriver);
 
+	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
 	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
@@ -45,6 +57,7 @@ export default function Home() {
 		{} as DriversProps
 	);
 
+	// Modal data state
 	const [informModalData, setInformModalData] =
 		useState<DriversProps>(defaultData);
 	const [registerModalData, setRegisterModalData] =
@@ -54,10 +67,27 @@ export default function Home() {
 	const [deleteModalData, setDeleteModalData] =
 		useState<DriversProps>(defaultData);
 
+	// Inform modal
+	const handleOpenInformModal = (informData: DriversProps) => {
+		setInformModalData(informData);
+		setOpenInformModal(true);
+	};
 	const handleCloseInformModal = () => setOpenInformModal(false);
+
+	// Register modal
+	const handleOpenRegisterModel = () => setOpenRegisterModal(true);
 	const handleCloseRegisterModal = () => {
 		setOpenRegisterModal(false);
 		setRegisterModalData(defaultData);
+	};
+	const handleRegisterNotification = () => {
+		if (!createDriverError) {
+			enqueueSnackbar('Register a driver sucessfully', {
+				variant: 'success',
+			});
+		} else {
+			enqueueSnackbar('Fail to register a driver', { variant: 'error' });
+		}
 	};
 	const handleSubmitRegisterModal = () => {
 		dispatch(
@@ -68,12 +98,29 @@ export default function Home() {
 				username: registerModalData.username,
 				password: registerModalData.password || '',
 			})
-		).then(refetchData);
+		)
+			.then(refetchData)
+			.then(handleRegisterNotification);
 		handleCloseRegisterModal();
+	};
+
+	// Update modal
+	const handleOpenUpdateModal = (updateData: DriversProps) => {
+		setUpdateModalData(updateData);
+		setOpenUpdateModal(true);
 	};
 	const handleCloseUpdateModal = () => {
 		setOpenUpdateModal(false);
 		setUpdateModalData(defaultData);
+	};
+	const handleUpdateNotification = () => {
+		if (!updateDriverError) {
+			enqueueSnackbar('Update a driver sucessfully', {
+				variant: 'success',
+			});
+		} else {
+			enqueueSnackbar('Fail to update a driver', { variant: 'error' });
+		}
 	};
 	const handleSubmitUpdateModal = () => {
 		dispatch(
@@ -87,18 +134,40 @@ export default function Home() {
 					password: updateModalData.password || '',
 				},
 			})
-		).then(refetchData);
+		)
+			.then(refetchData)
+			.then(handleUpdateNotification);
 		handleCloseUpdateModal();
+	};
+
+	// Delete modal
+	const handleOpenDeleteModal = (deleteData: DriversProps) => {
+		setDeleteModalData(deleteData);
+		setOpenDeleteModal(true);
 	};
 	const handleCloseDeleteModal = () => {
 		setOpenDeleteModal(false);
 		setDeleteModalData(defaultData);
 	};
+	const handleDeleteNotification = () => {
+		if (!deleteDriverError) {
+			enqueueSnackbar('Delete a driver sucessfully', {
+				variant: 'success',
+			});
+		} else {
+			enqueueSnackbar('Fail to delete a driver', { variant: 'error' });
+		}
+	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id })).then(refetchData);
+		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id }))
+			.then(refetchData)
+			.then(handleDeleteNotification);
 		handleCloseDeleteModal();
 	};
+
 	const refetchData = () => dispatch(FETCH_GET_DRIVERS({}));
+	const handleOnSearch = (search: IGetDriversRequest) =>
+		dispatch(FETCH_GET_DRIVERS(search));
 
 	useEffect(() => {
 		refetchData();
@@ -165,9 +234,7 @@ export default function Home() {
 					<Stack className="h-full flex flex-col gap-16">
 						<Filter
 							template={DriverFilterTemplate}
-							handleSubmitSearch={(search) =>
-								dispatch(FETCH_GET_DRIVERS(search))
-							}
+							handleSubmitSearch={handleOnSearch}
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
@@ -177,7 +244,7 @@ export default function Home() {
 								icon={BUTTON_LABEL.REGISTER}
 								label={BUTTON_LABEL.REGISTER_DRIVER}
 								variant="contained"
-								onClick={() => setOpenRegisterModal(true)}
+								onClick={handleOpenRegisterModel}
 							/>
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REFRESH}
@@ -189,19 +256,9 @@ export default function Home() {
 						<TableCV2X<DriversProps>
 							columns={DriversTableTemplate}
 							rows={drivers ?? []}
-							handleOnClickInformation={(informData: DriversProps) => {
-								setInformModalData(informData);
-								setOpenInformModal(true);
-							}}
-							handleOnClickUpdate={(updateData: DriversProps) => {
-								setUpdateModalData(updateData);
-								setOpenUpdateModal(true);
-							}}
-							handleOnClickDelete={(deleteData: DriversProps) => {
-								setDeleteModalData(deleteData);
-								setOpenDeleteModal(true);
-							}}
-							isLoading={true}
+							handleOnClickInformation={handleOpenInformModal}
+							handleOnClickUpdate={handleOpenUpdateModal}
+							handleOnClickDelete={handleOpenDeleteModal}
 						/>
 					</Stack>
 				</Card>
