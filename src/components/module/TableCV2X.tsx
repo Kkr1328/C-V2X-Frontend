@@ -59,17 +59,19 @@ export default function TableCV2X<T extends TableRowProps>(
 										return (
 											<TableCell key={`row_item_${index}`} align={column.align}>
 												{column.id === 'cameras' ? (
-													(row[column.id] as CameraType[]).map((camera) => (
-														<Stack direction="row">
-															<p className="inline-block align-baseline font-istok text-black text-p1">
-																{camera.name as React.ReactNode}
-															</p>
-															<p className="inline-block align-baseline font-istok text-light_text_grey text-p1">
-																&nbsp;-&nbsp;
-																{camera.position as React.ReactNode}
-															</p>
-														</Stack>
-													))
+													(row[column.id] as CameraType[]).map(
+														(camera, index) => (
+															<Stack direction="row" key={index}>
+																<p className="inline-block align-baseline font-istok text-black text-p1">
+																	{camera.name as React.ReactNode}
+																</p>
+																<p className="inline-block align-baseline font-istok text-light_text_grey text-p1">
+																	&nbsp;-&nbsp;
+																	{camera.position as React.ReactNode}
+																</p>
+															</Stack>
+														)
+													)
 												) : (
 													<p className="inline-block align-baseline font-istok text-black text-p1">
 														{row[column.id] as React.ReactNode}

@@ -13,20 +13,10 @@ interface ModalInputsProp<T> {
 	template: InputFieldProp<T>[];
 	data: T;
 	onDataChange: React.Dispatch<React.SetStateAction<T>>;
+	options?: any;
 	isReadOnly?: boolean;
 	isLoading?: boolean;
 }
-
-const options = [
-	{
-		value: 'Front',
-		label: 'Front',
-	},
-	{
-		value: 'Back',
-		label: 'Back',
-	},
-];
 
 export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 	const maxRow = Math.max(...props.template.map((item) => item.row), 0);
@@ -75,14 +65,21 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 										isRequired={inputField.isRequired}
 										isLoading={props.isLoading}
 										value={
-											options.find(
-												(option) => option.value === getSearch(inputField.id)
-											) || null
+											props.options
+												.filter((item: any) => item.id === inputField.id)[0]
+												.option.find(
+													(option: any) =>
+														option.value === getSearch(inputField.id)
+												) || null
 										}
 										onChange={(_, value) => {
 											value && handleSearchChange(inputField.id, value.value);
 										}}
-										options={options}
+										options={
+											props.options.filter(
+												(item: any) => item.id === inputField.id
+											)[0].option
+										}
 									/>
 								)
 							)
