@@ -1,34 +1,50 @@
 'use client';
-
-import ButtonCV2X from '@/components/common/ButtonCV2X';
-import ModalCV2X from '@/components/common/ModalCV2X';
+// react
+import { useEffect, useState } from 'react';
+// notisnack
+import { useSnackbar } from 'notistack';
+// material ui
+import { Card, Divider, Stack } from '@mui/material';
+// components
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter';
-import ModalInputs from '@/components/module/ModalInputs';
+import ButtonCV2X from '@/components/common/ButtonCV2X';
 import TableCV2X from '@/components/module/TableCV2X';
+import ModalCV2X from '@/components/common/ModalCV2X';
+import ModalInputs from '@/components/module/ModalInputs';
+// consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
-import { MockedCamerasTableContent } from '@/mock/ENTITY_TABLE';
-import { FETCH_CREATE_CAMERA } from '@/redux/create-camera/create-camera-action';
-import { FETCH_DELETE_CAMERA } from '@/redux/delete-camera/delete-camera-action';
-import { FETCH_GET_CAMERAS } from '@/redux/get-cameras/get-cameras-action';
-import { selectGetCameras } from '@/redux/get-cameras/get-cameras-selector';
-import { useDispatch, useSelector } from '@/redux/store';
-import { FETCH_UPDATE_CAMERA } from '@/redux/update-camera/update-camera-action';
-import { CameraActionModalTemplate } from '@/templates/ACTION_MODAL';
-import { CamerasTableTemplate } from '@/templates/ENTITY_TABLE';
-import { CameraFilterTemplate } from '@/templates/FILTER';
-import { CameraInfoModalTemplate } from '@/templates/INFO_MODAL';
+// types
 import { CamerasProps } from '@/types/ENTITY';
-import { Card, Divider, Stack } from '@mui/material';
-import { useEffect, useState } from 'react';
+// templates
+import { CameraFilterTemplate } from '@/templates/FILTER';
+import { CamerasTableTemplate } from '@/templates/ENTITY_TABLE';
+import { CameraInfoModalTemplate } from '@/templates/INFO_MODAL';
+import { CameraActionModalTemplate } from '@/templates/ACTION_MODAL';
+// redux
+import { useDispatch, useSelector } from '@/redux/store';
+import { selectGetCameras } from '@/redux/get-cameras/get-cameras-selector';
+import { selectCreateCamera } from '@/redux/create-camera/create-camera-selector';
+import { selectUpdateCamera } from '@/redux/update-camera/update-camera-selector';
+import { selectDeleteCamera } from '@/redux/delete-camera/delete-camera-selector';
+import { FETCH_GET_CAMERAS } from '@/redux/get-cameras/get-cameras-action';
+import { FETCH_CREATE_CAMERA } from '@/redux/create-camera/create-camera-action';
+import { FETCH_UPDATE_CAMERA } from '@/redux/update-camera/update-camera-action';
+import { FETCH_DELETE_CAMERA } from '@/redux/delete-camera/delete-camera-action';
+import { IGetCamerasRequest } from '@/types/models/camera.model';
 
 export default function Home() {
 	const dispatch = useDispatch();
+	const { enqueueSnackbar } = useSnackbar();
 
 	const { data: cameras } = useSelector(selectGetCameras);
+	const { error: createCameraError } = useSelector(selectCreateCamera);
+	const { error: updateCameraError } = useSelector(selectUpdateCamera);
+	const { error: deleteCameraError } = useSelector(selectDeleteCamera);
 
-	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
+	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
+	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
@@ -40,21 +56,37 @@ export default function Home() {
 		{} as CamerasProps
 	);
 
+	// Modal data state
 	const [informModalData, setInformModalData] =
 		useState<CamerasProps>(defaultData);
 	const [registerModalData, setRegisterModalData] =
 		useState<CamerasProps>(defaultData);
-	const [updateModalData, setUpdateModalData] = useState<CamerasProps>({
-		...defaultData,
-		car_id: '6528b8df9417d272c4ef49ad',
-	});
+	const [updateModalData, setUpdateModalData] =
+		useState<CamerasProps>(defaultData);
 	const [deleteModalData, setDeleteModalData] =
 		useState<CamerasProps>(defaultData);
 
+	// Inform modal
+	const handleOpenInformModal = (informData: CamerasProps) => {
+		setInformModalData(informData);
+		setOpenInformModal(true);
+	};
 	const handleCloseInformModal = () => setOpenInformModal(false);
+
+	// Register modal
+	const handleOpenRegisterModel = () => setOpenRegisterModal(true);
 	const handleCloseRegisterModal = () => {
 		setOpenRegisterModal(false);
 		setRegisterModalData(defaultData);
+	};
+	const handleRegisterNotification = () => {
+		if (!createCameraError) {
+			enqueueSnackbar('Register a camera sucessfully', {
+				variant: 'success',
+			});
+		} else {
+			enqueueSnackbar('Fail to register a camera', { variant: 'error' });
+		}
 	};
 	const handleSubmitRegisterModal = () => {
 		dispatch(
@@ -63,12 +95,29 @@ export default function Home() {
 				position: registerModalData.position,
 				car_id: registerModalData.car_id,
 			})
-		).then(refetchData);
+		)
+			.then(refetchData)
+			.then(handleRegisterNotification);
 		handleCloseRegisterModal();
+	};
+
+	// Update modal
+	const handleOpenUpdateModal = (updateData: CamerasProps) => {
+		setUpdateModalData(updateData);
+		setOpenUpdateModal(true);
 	};
 	const handleCloseUpdateModal = () => {
 		setOpenUpdateModal(false);
 		setUpdateModalData(defaultData);
+	};
+	const handleUpdateNotification = () => {
+		if (!updateCameraError) {
+			enqueueSnackbar('Update a camera sucessfully', {
+				variant: 'success',
+			});
+		} else {
+			enqueueSnackbar('Fail to update a camera', { variant: 'error' });
+		}
 	};
 	const handleSubmitUpdateModal = () => {
 		dispatch(
@@ -80,18 +129,40 @@ export default function Home() {
 					car_id: updateModalData.car_id,
 				},
 			})
-		).then(refetchData);
+		)
+			.then(refetchData)
+			.then(handleUpdateNotification);
 		handleCloseUpdateModal();
+	};
+
+	// Delete modal
+	const handleOpenDeleteModal = (deleteData: CamerasProps) => {
+		setDeleteModalData(deleteData);
+		setOpenDeleteModal(true);
 	};
 	const handleCloseDeleteModal = () => {
 		setOpenDeleteModal(false);
 		setDeleteModalData(defaultData);
 	};
+	const handleDeleteNotification = () => {
+		if (!deleteCameraError) {
+			enqueueSnackbar('Delete a camera sucessfully', {
+				variant: 'success',
+			});
+		} else {
+			enqueueSnackbar('Fail to delete a camera', { variant: 'error' });
+		}
+	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_CAMERA({ id: deleteModalData.id })).then(refetchData);
+		dispatch(FETCH_DELETE_CAMERA({ id: deleteModalData.id }))
+			.then(refetchData)
+			.then(handleDeleteNotification);
 		handleCloseDeleteModal();
 	};
+
 	const refetchData = () => dispatch(FETCH_GET_CAMERAS({}));
+	const handleOnSearch = (search: IGetCamerasRequest) =>
+		dispatch(FETCH_GET_CAMERAS(search));
 
 	useEffect(() => {
 		refetchData();
@@ -156,7 +227,10 @@ export default function Home() {
 				<PageTitle title={NAVBAR_LABEL.CAMERAS} />
 				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Stack className="h-full flex flex-col gap-16">
-						{/* <Filter template={CameraFilterTemplate} /> */}
+						<Filter
+							template={CameraFilterTemplate}
+							handleSubmitSearch={handleOnSearch}
+						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
 							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
@@ -165,30 +239,21 @@ export default function Home() {
 								icon={BUTTON_LABEL.REGISTER}
 								label={BUTTON_LABEL.REGISTER_CAMERA}
 								variant="contained"
-								onClick={() => setOpenRegisterModal(true)}
+								onClick={handleOpenRegisterModel}
 							/>
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REFRESH}
 								label={BUTTON_LABEL.REFRESH}
 								variant="outlined"
+								onClick={refetchData}
 							/>
 						</Stack>
 						<TableCV2X<CamerasProps>
 							columns={CamerasTableTemplate}
 							rows={(cameras as CamerasProps[]) ?? []}
-							handleOnClickInformation={(informData: CamerasProps) => {
-								setInformModalData(informData);
-								setOpenInformModal(true);
-								console.log(cameras);
-							}}
-							handleOnClickUpdate={(updateData: CamerasProps) => {
-								setUpdateModalData(updateData);
-								setOpenUpdateModal(true);
-							}}
-							handleOnClickDelete={(deleteData: CamerasProps) => {
-								setDeleteModalData(deleteData);
-								setOpenDeleteModal(true);
-							}}
+							handleOnClickInformation={handleOpenInformModal}
+							handleOnClickUpdate={handleOpenUpdateModal}
+							handleOnClickDelete={handleOpenDeleteModal}
 						/>
 					</Stack>
 				</Card>
