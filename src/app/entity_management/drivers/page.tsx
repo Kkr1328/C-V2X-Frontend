@@ -25,13 +25,13 @@ import { DriverActionModalTemplate } from '@/templates/ACTION_MODAL';
 // redux
 import { useDispatch, useSelector } from '@/redux/store';
 import { selectGetDrivers } from '@/redux/get-drivers/get-drivers-selector';
+import { selectCreateDriver } from '@/redux/create-driver/create-driver-selector';
+import { selectUpdateDriver } from '@/redux/update-driver/update-driver-selector';
+import { selectDeleteDriver } from '@/redux/delete-driver/delete-driver-selector';
 import { FETCH_GET_DRIVERS } from '@/redux/get-drivers/get-drivers-action';
 import { FETCH_CREATE_DRIVER } from '@/redux/create-driver/create-driver-action';
 import { FETCH_UPDATE_DRIVER } from '@/redux/update-driver/update-driver-action';
 import { FETCH_DELETE_DRIVER } from '@/redux/delete-driver/delete-driver-action';
-import { selectCreateDriver } from '@/redux/create-driver/create-driver-selector';
-import { selectUpdateDriver } from '@/redux/update-driver/update-driver-selector';
-import { selectDeleteDriver } from '@/redux/delete-driver/delete-driver-selector';
 
 export default function Home() {
 	const dispatch = useDispatch();
