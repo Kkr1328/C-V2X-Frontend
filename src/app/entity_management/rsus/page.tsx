@@ -15,7 +15,7 @@ import ModalInputs from '@/components/module/ModalInputs';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
-import { IRSU } from '@/types/models/rsu.model';
+import { IGetRSUsRequest, IRSU } from '@/types/models/rsu.model';
 // templates
 import { RSUFilterTemplate } from '@/templates/FILTER';
 import { RSUsTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -81,12 +81,7 @@ export default function Home() {
 		}
 	};
 	const handleSubmitRegisterModal = () => {
-		dispatch(
-			FETCH_CREATE_RSU({
-				name: registerModalData.name,
-				recommended_speed: registerModalData.recommended_speed,
-			})
-		)
+		dispatch(FETCH_CREATE_RSU(registerModalData))
 			.then(refetchData)
 			.then(handleRegisterNotification);
 		handleCloseRegisterModal();
@@ -113,11 +108,8 @@ export default function Home() {
 	const handleSubmitUpdateModal = () => {
 		dispatch(
 			FETCH_UPDATE_RSU({
-				query: { id: updateModalData.id },
-				request: {
-					name: updateModalData.name,
-					recommended_speed: updateModalData.recommended_speed,
-				},
+				query: updateModalData,
+				request: updateModalData,
 			})
 		)
 			.then(refetchData)
@@ -144,14 +136,15 @@ export default function Home() {
 		}
 	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_RSU({ id: deleteModalData.id }))
+		dispatch(FETCH_DELETE_RSU(deleteModalData))
 			.then(refetchData)
 			.then(handleDeleteNotification);
 		handleCloseDeleteModal();
 	};
 
 	const refetchData = () => dispatch(FETCH_GET_RSUS({}));
-	const handleOnSearch = (search: IRSU) => dispatch(FETCH_GET_RSUS(search));
+	const handleOnSearch = (search: IGetRSUsRequest) =>
+		dispatch(FETCH_GET_RSUS(search));
 
 	useEffect(() => {
 		refetchData();
