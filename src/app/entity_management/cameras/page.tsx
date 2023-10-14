@@ -16,6 +16,7 @@ import ModalInputs from '@/components/module/ModalInputs';
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
 import { CamerasProps } from '@/types/ENTITY';
+import { IGetCamerasRequest } from '@/types/models/camera.model';
 // templates
 import { CameraFilterTemplate } from '@/templates/FILTER';
 import { CamerasTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -27,17 +28,19 @@ import { selectGetCameras } from '@/redux/get-cameras/get-cameras-selector';
 import { selectCreateCamera } from '@/redux/create-camera/create-camera-selector';
 import { selectUpdateCamera } from '@/redux/update-camera/update-camera-selector';
 import { selectDeleteCamera } from '@/redux/delete-camera/delete-camera-selector';
+import { selectGetCarsList } from '@/redux/get-cars-list/get-cars-list-selector';
 import { FETCH_GET_CAMERAS } from '@/redux/get-cameras/get-cameras-action';
 import { FETCH_CREATE_CAMERA } from '@/redux/create-camera/create-camera-action';
 import { FETCH_UPDATE_CAMERA } from '@/redux/update-camera/update-camera-action';
 import { FETCH_DELETE_CAMERA } from '@/redux/delete-camera/delete-camera-action';
-import { IGetCamerasRequest } from '@/types/models/camera.model';
+import { FETCH_GET_CARS_LIST } from '@/redux/get-cars-list/get-cars-list-action';
 
 export default function Home() {
 	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 
 	const { data: cameras } = useSelector(selectGetCameras);
+	const { data: carsList } = useSelector(selectGetCarsList);
 	const { error: createCameraError } = useSelector(selectCreateCamera);
 	const { error: updateCameraError } = useSelector(selectUpdateCamera);
 	const { error: deleteCameraError } = useSelector(selectDeleteCamera);
@@ -160,9 +163,35 @@ export default function Home() {
 		handleCloseDeleteModal();
 	};
 
-	const refetchData = () => dispatch(FETCH_GET_CAMERAS({}));
+	const refetchData = () => {
+		dispatch(FETCH_GET_CAMERAS({}));
+		dispatch(FETCH_GET_CARS_LIST());
+	};
 	const handleOnSearch = (search: IGetCamerasRequest) =>
 		dispatch(FETCH_GET_CAMERAS(search));
+	const generateOptions = () => {
+		const positionOption = [
+			{
+				value: 'Front',
+				label: 'Front',
+			},
+			{
+				value: 'Back',
+				label: 'Back',
+			},
+		];
+		const carOption =
+			carsList?.map((car) => {
+				return { value: car.id, label: car.name };
+			}) || [];
+		return [
+			{ id: 'position', option: positionOption },
+			{
+				id: 'car_id',
+				option: carOption,
+			},
+		];
+	};
 
 	useEffect(() => {
 		refetchData();
@@ -181,6 +210,7 @@ export default function Home() {
 					template={CameraActionModalTemplate}
 					data={registerModalData}
 					onDataChange={setRegisterModalData}
+					options={generateOptions()}
 				/>
 			</ModalCV2X>
 			<ModalCV2X
@@ -207,6 +237,7 @@ export default function Home() {
 					template={CameraActionModalTemplate}
 					data={updateModalData}
 					onDataChange={setUpdateModalData}
+					options={generateOptions()}
 				/>
 			</ModalCV2X>
 			<ModalCV2X
@@ -230,6 +261,7 @@ export default function Home() {
 						<Filter
 							template={CameraFilterTemplate}
 							handleSubmitSearch={handleOnSearch}
+							options={generateOptions()}
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">

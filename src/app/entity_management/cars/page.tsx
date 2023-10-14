@@ -28,16 +28,22 @@ import { selectGetCars } from '@/redux/get-cars/get-cars-selector';
 import { selectCreateCar } from '@/redux/create-car/create-car-selector';
 import { selectUpdateCar } from '@/redux/update-car/update-car-selector';
 import { selectDeleteCar } from '@/redux/delete-car/delete-car-selector';
+import { selectGetCamerasList } from '@/redux/get-cameras-list/get-cameras-list-selector';
+import { selectGetDriversList } from '@/redux/get-drivers-list/get-drivers-list-selector';
 import { FETCH_GET_CARS } from '@/redux/get-cars/get-cars-action';
 import { FETCH_CREATE_CAR } from '@/redux/create-car/create-car-action';
 import { FETCH_UPDATE_CAR } from '@/redux/update-car/update-car-action';
 import { FETCH_DELETE_CAR } from '@/redux/delete-car/delete-car-action';
+import { FETCH_GET_CAMERAS_LIST } from '@/redux/get-cameras-list/get-cameras-list-action';
+import { FETCH_GET_DRIVERS_LIST } from '@/redux/get-drivers-list/get-drivers-list-action';
 
 export default function Home() {
 	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 
 	const { data: cars } = useSelector(selectGetCars);
+	const { data: camerasList } = useSelector(selectGetCamerasList);
+	const { data: driversList } = useSelector(selectGetDriversList);
 	const { error: createCarError } = useSelector(selectCreateCar);
 	const { error: updateCarError } = useSelector(selectUpdateCar);
 	const { error: deleteCarError } = useSelector(selectDeleteCar);
@@ -166,9 +172,37 @@ export default function Home() {
 		handleCloseDeleteModal();
 	};
 
-	const refetchData = () => dispatch(FETCH_GET_CARS({}));
+	const refetchData = () => {
+		dispatch(FETCH_GET_CARS({}));
+		dispatch(FETCH_GET_CAMERAS_LIST());
+		dispatch(FETCH_GET_DRIVERS_LIST());
+	};
 	const handleOnSearch = (search: IGetCarsRequest) =>
 		dispatch(FETCH_GET_CARS(search));
+	const generateOptions = () => {
+		const cameraOption =
+			camerasList?.map((camera) => {
+				return { value: camera.id, label: camera.name };
+			}) || [];
+		const driverOption =
+			driversList?.map((driver) => {
+				return { value: driver.id, label: driver.name };
+			}) || [];
+		return [
+			{
+				id: 'front_camera',
+				option: cameraOption,
+			},
+			{
+				id: 'back_camera',
+				option: cameraOption,
+			},
+			{
+				id: 'driver_id',
+				option: driverOption,
+			},
+		];
+	};
 
 	useEffect(() => {
 		refetchData();
@@ -187,6 +221,7 @@ export default function Home() {
 					template={CarActionModalTemplate}
 					data={registerModalData}
 					onDataChange={setRegisterModalData}
+					options={generateOptions()}
 				/>
 			</ModalCV2X>
 			<ModalCV2X
@@ -213,6 +248,7 @@ export default function Home() {
 					template={CarActionModalTemplate}
 					data={updateModalData}
 					onDataChange={setUpdateModalData}
+					options={generateOptions()}
 				/>
 			</ModalCV2X>
 			<ModalCV2X
@@ -236,6 +272,7 @@ export default function Home() {
 						<Filter
 							template={CarFilterTemplate}
 							handleSubmitSearch={handleOnSearch}
+							options={generateOptions()}
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
@@ -258,10 +295,7 @@ export default function Home() {
 							rows={(cars as CarsProps[]) ?? []}
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
-							handleOnClickDelete={(deleteData: CarsProps) => {
-								setDeleteModalData(deleteData);
-								setOpenDeleteModal(true);
-							}}
+							handleOnClickDelete={handleOpenDeleteModal}
 						/>
 					</Stack>
 				</Card>
