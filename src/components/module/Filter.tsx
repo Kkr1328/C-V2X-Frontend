@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 
 import { Stack } from '@mui/material';
 
 import TextFieldCV2X from '../common/TextFieldCV2X';
-import SelectCV2X, { SelectOption } from '../common/SelectCV2X';
+import SelectCV2X from '../common/SelectCV2X';
 import ButtonCV2X from '../common/ButtonCV2X';
 
 import { InputFieldProp } from '@/types/COMMON';
@@ -13,18 +13,9 @@ import { BUTTON_LABEL } from '@/constants/LABEL';
 
 interface FilterProp<T> {
 	template: InputFieldProp<T>[];
+	handleSubmitSearch: (search: T) => void;
+	options?: any;
 }
-
-const options = [
-	{
-		value: 'Front',
-		label: 'Front',
-	},
-	{
-		value: 'Back',
-		label: 'Back',
-	},
-];
 
 export default function Filter<T>(props: FilterProp<T>) {
 	const defaultSearch = props.template.reduce(
@@ -82,33 +73,50 @@ export default function Filter<T>(props: FilterProp<T>) {
 										title={inputField.label}
 										placeholder={inputField.placeholder}
 										value={
-											options.find(
-												(option) => option.value === getSearch(inputField.id)
-											) || null
+											props.options
+												.filter((item: any) => item.id === inputField.id)[0]
+												.option.find(
+													(option: any) =>
+														option.value === getSearch(inputField.id)
+												) || null
 										}
 										onChange={(_, value) => {
 											value && handleSearchChange(inputField.id, value.value);
 										}}
-										options={options}
+										options={
+											props.options.filter(
+												(item: any) => item.id === inputField.id
+											)[0].option
+										}
 									/>
 								)
 							)
 						)}
+
 					{index + 1 === maxRow && (
-						<Stack direction="row" className="w-full gap-8">
-							<div className="grow " />
-							<ButtonCV2X
-								icon={BUTTON_LABEL.CLEAR}
-								label={BUTTON_LABEL.CLEAR}
-								variant="outlined"
-								onClick={handleClearSearch}
-							/>
-							<ButtonCV2X
-								icon={BUTTON_LABEL.SEARCH}
-								label={BUTTON_LABEL.SEARCH}
-								variant="contained"
-							/>
-						</Stack>
+						<Fragment>
+							{Array.from(
+								{ length: (props.template.length + 1) % 4 },
+								(_, index) => (
+									<div className="w-full" key={index} />
+								)
+							)}
+							<Stack direction="row" className="w-full gap-8">
+								<div className="grow" />
+								<ButtonCV2X
+									icon={BUTTON_LABEL.CLEAR}
+									label={BUTTON_LABEL.CLEAR}
+									variant="outlined"
+									onClick={handleClearSearch}
+								/>
+								<ButtonCV2X
+									icon={BUTTON_LABEL.SEARCH}
+									label={BUTTON_LABEL.SEARCH}
+									variant="contained"
+									onClick={() => props.handleSubmitSearch(search)}
+								/>
+							</Stack>
+						</Fragment>
 					)}
 				</Stack>
 			))}

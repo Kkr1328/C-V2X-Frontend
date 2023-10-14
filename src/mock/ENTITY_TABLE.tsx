@@ -1,9 +1,5 @@
-import {
-	CamerasProps,
-	CarsProps,
-	DriversProps,
-	RSUsProps,
-} from '@/types/ENTITY';
+import { CamerasProps, CarsProps, DriversProps } from '@/types/ENTITY';
+import { IRSU } from '@/types/models/rsu.model';
 
 export const MockedCarsTableContent: CarsProps[] = [
 	{
@@ -187,40 +183,40 @@ export const MockedCamerasTableContent: CamerasProps[] = [
 	},
 ];
 
-export const MockedRSUsTableContent: RSUsProps[] = [
+export const MockedRSUsTableContent: IRSU[] = [
 	{
 		id: 'rsuxxx01',
 		name: 'RSU01',
-		rec_speed: '50',
+		recommended_speed: '50',
 	},
 	{
 		id: 'rsuxxx02',
 		name: 'RSU02',
-		rec_speed: '70',
+		recommended_speed: '70',
 	},
 	{
 		id: 'rsuxxx03',
 		name: 'RSU03',
-		rec_speed: '30',
+		recommended_speed: '30',
 	},
 	{
 		id: 'rsuxxx04',
 		name: 'RSU04',
-		rec_speed: '90',
+		recommended_speed: '90',
 	},
 	{
 		id: 'rsuxxx05',
 		name: 'RSU05',
-		rec_speed: '80',
+		recommended_speed: '80',
 	},
 	{
 		id: 'rsuxxx06',
 		name: 'RSU06',
-		rec_speed: '20',
+		recommended_speed: '20',
 	},
 	{
 		id: 'rsuxxx07',
 		name: 'RSU07',
-		rec_speed: '40',
+		recommended_speed: '40',
 	},
 ];

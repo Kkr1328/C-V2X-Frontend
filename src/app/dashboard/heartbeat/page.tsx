@@ -13,10 +13,10 @@ export default function Home() {
 				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Stack className="h-full flex flex-col gap-16">
 						<Stack direction="row" className="gap-16 items-center">
-							{StatusDotType.map((hi) => (
-								<Stack direction="row">
-									<StatusDot variant={hi} />
-									<p>&nbsp;-&nbsp;{hi}</p>
+							{StatusDotType.map((status, index) => (
+								<Stack direction="row" key={index}>
+									<StatusDot variant={status} />
+									<p>&nbsp;-&nbsp;{status}</p>
 								</Stack>
 							))}
 							<div className="grow" />

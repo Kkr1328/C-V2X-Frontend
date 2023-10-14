@@ -1,11 +1,7 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
 import { InputFieldProp } from '@/types/COMMON';
-import {
-	CamerasProps,
-	CarsProps,
-	DriversProps,
-	RSUsProps,
-} from '@/types/ENTITY';
+import { CamerasProps, CarsProps, DriversProps } from '@/types/ENTITY';
+import { IGetRSUsRequest } from '@/types/models/rsu.model';
 
 export const CarFilterTemplate: InputFieldProp<CarsProps>[] = [
 	{
@@ -68,10 +64,17 @@ export const DriverFilterTemplate: InputFieldProp<DriversProps>[] = [
 		row: 1,
 	},
 	{
-		id: 'name',
-		label: INPUT_LABEL.NAME,
+		id: 'first_name',
+		label: INPUT_LABEL.FIRST_NAME,
 		type: 'TextField',
-		placeholder: 'ex. สมชาย สวัสดี',
+		placeholder: 'ex. สมชาย',
+		row: 1,
+	},
+	{
+		id: 'last_name',
+		label: INPUT_LABEL.LAST_NAME,
+		type: 'TextField',
+		placeholder: 'ex. สมชาย',
 		row: 1,
 	},
 	{
@@ -86,7 +89,7 @@ export const DriverFilterTemplate: InputFieldProp<DriversProps>[] = [
 		label: INPUT_LABEL.PHONE_NO,
 		type: 'TextField',
 		placeholder: 'ex. 0993336666',
-		row: 1,
+		row: 2,
 	},
 ];
 
@@ -121,7 +124,7 @@ export const CameraFilterTemplate: InputFieldProp<CamerasProps>[] = [
 	},
 ];
 
-export const RSUFilterTemplate: InputFieldProp<RSUsProps>[] = [
+export const RSUFilterTemplate: InputFieldProp<IGetRSUsRequest>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
@@ -137,7 +140,7 @@ export const RSUFilterTemplate: InputFieldProp<RSUsProps>[] = [
 		row: 1,
 	},
 	{
-		id: 'rec_speed',
+		id: 'recommended_speed',
 		label: INPUT_LABEL.RECOMENDED_SPEED,
 		type: 'TextField',
 		placeholder: '50',
