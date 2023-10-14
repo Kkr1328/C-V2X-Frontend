@@ -84,7 +84,7 @@ export default function Home() {
 	};
 	const handleRegisterNotification = () => {
 		if (!createCameraError) {
-			enqueueSnackbar('Register a camera sucessfully', {
+			enqueueSnackbar('Register a camera successfully', {
 				variant: 'success',
 			});
 		} else {
@@ -115,7 +115,7 @@ export default function Home() {
 	};
 	const handleUpdateNotification = () => {
 		if (!updateCameraError) {
-			enqueueSnackbar('Update a camera sucessfully', {
+			enqueueSnackbar('Update a camera successfully', {
 				variant: 'success',
 			});
 		} else {
@@ -149,7 +149,7 @@ export default function Home() {
 	};
 	const handleDeleteNotification = () => {
 		if (!deleteCameraError) {
-			enqueueSnackbar('Delete a camera sucessfully', {
+			enqueueSnackbar('Delete a camera successfully', {
 				variant: 'success',
 			});
 		} else {

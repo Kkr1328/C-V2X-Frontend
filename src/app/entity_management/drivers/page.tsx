@@ -82,7 +82,7 @@ export default function Home() {
 	};
 	const handleRegisterNotification = () => {
 		if (!createDriverError) {
-			enqueueSnackbar('Register a driver sucessfully', {
+			enqueueSnackbar('Register a driver successfully', {
 				variant: 'success',
 			});
 		} else {
@@ -115,7 +115,7 @@ export default function Home() {
 	};
 	const handleUpdateNotification = () => {
 		if (!updateDriverError) {
-			enqueueSnackbar('Update a driver sucessfully', {
+			enqueueSnackbar('Update a driver successfully', {
 				variant: 'success',
 			});
 		} else {
@@ -151,7 +151,7 @@ export default function Home() {
 	};
 	const handleDeleteNotification = () => {
 		if (!deleteDriverError) {
-			enqueueSnackbar('Delete a driver sucessfully', {
+			enqueueSnackbar('Delete a driver successfully', {
 				variant: 'success',
 			});
 		} else {

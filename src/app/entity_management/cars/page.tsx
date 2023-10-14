@@ -87,7 +87,7 @@ export default function Home() {
 	};
 	const handleRegisterNotification = () => {
 		if (!createCarError) {
-			enqueueSnackbar('Register a RSU sucessfully', {
+			enqueueSnackbar('Register a RSU successfully', {
 				variant: 'success',
 			});
 		} else {
@@ -121,7 +121,7 @@ export default function Home() {
 	};
 	const handleUpdateNotification = () => {
 		if (!updateCarError) {
-			enqueueSnackbar('Update a RSU sucessfully', {
+			enqueueSnackbar('Update a RSU successfully', {
 				variant: 'success',
 			});
 		} else {
@@ -158,7 +158,7 @@ export default function Home() {
 	};
 	const handleDeleteNotification = () => {
 		if (!deleteCarError) {
-			enqueueSnackbar('Delete a RSU sucessfully', {
+			enqueueSnackbar('Delete a RSU successfully', {
 				variant: 'success',
 			});
 		} else {
