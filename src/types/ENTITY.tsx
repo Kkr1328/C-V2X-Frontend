@@ -46,9 +46,3 @@ export interface CamerasProps {
 	position: Position;
 	car_id: string;
 }
-
-export interface RSUsProps {
-	id: string;
-	name: string;
-	recommended_speed: string;
-}

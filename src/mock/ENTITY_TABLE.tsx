@@ -1,9 +1,5 @@
-import {
-	CamerasProps,
-	CarsProps,
-	DriversProps,
-	RSUsProps,
-} from '@/types/ENTITY';
+import { CamerasProps, CarsProps, DriversProps } from '@/types/ENTITY';
+import { IRSU } from '@/types/models/rsu.model';
 
 export const MockedCarsTableContent: CarsProps[] = [
 	{
@@ -187,7 +183,7 @@ export const MockedCamerasTableContent: CamerasProps[] = [
 	},
 ];
 
-export const MockedRSUsTableContent: RSUsProps[] = [
+export const MockedRSUsTableContent: IRSU[] = [
 	{
 		id: 'rsuxxx01',
 		name: 'RSU01',

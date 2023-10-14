@@ -19,9 +19,3 @@ export interface CameraInformation {
 	name: string;
 	recommended_speed: string;
 }
-
-export interface RSUInformation {
-	id: string;
-	name: string;
-	recommended_speed: string;
-}

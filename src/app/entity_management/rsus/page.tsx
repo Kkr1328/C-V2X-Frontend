@@ -1,6 +1,8 @@
 'use client';
 // react
 import { useEffect, useState } from 'react';
+// notisnack
+import { useSnackbar } from 'notistack';
 // material ui
 import { Card, Divider, Stack } from '@mui/material';
 // components
@@ -13,7 +15,7 @@ import ModalInputs from '@/components/module/ModalInputs';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
-import { RSUsProps } from '@/types/ENTITY';
+import { IRSU } from '@/types/models/rsu.model';
 // templates
 import { RSUFilterTemplate } from '@/templates/FILTER';
 import { RSUsTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -27,7 +29,8 @@ import { FETCH_CREATE_RSU } from '@/redux/create-rsu/create-rsu-action';
 import { FETCH_UPDATE_RSU } from '@/redux/update-rsu/update-rsu-action';
 import { FETCH_DELETE_RSU } from '@/redux/delete-rsu/delete-rsu-action';
 import { selectCreateRSU } from '@/redux/create-rsu/create-rsu-selector';
-import { useSnackbar } from 'notistack';
+import { selectUpdateRSU } from '@/redux/update-rsu/update-rsu-selector';
+import { selectDeleteRSU } from '@/redux/delete-rsu/delete-rsu-selector';
 
 export default function Home() {
 	const dispatch = useDispatch();
@@ -35,30 +38,47 @@ export default function Home() {
 
 	const { data: rsus } = useSelector(selectGetRSUs);
 	const { error: createRSUError } = useSelector(selectCreateRSU);
+	const { error: updateRSUError } = useSelector(selectUpdateRSU);
+	const { error: deleteRSUError } = useSelector(selectDeleteRSU);
 
-	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
+	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
+	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
 	const defaultData = RSUActionModalTemplate.reduce(
-		(acc, item) => ({ ...acc, [item.id]: '' as RSUsProps[keyof RSUsProps] }),
-		{} as RSUsProps
+		(acc, item) => ({ ...acc, [item.id]: '' as IRSU[keyof IRSU] }),
+		{} as IRSU
 	);
 
-	const [informModalData, setInformModalData] =
-		useState<RSUsProps>(defaultData);
-	const [registerModalData, setRegisterModalData] =
-		useState<RSUsProps>(defaultData);
-	const [updateModalData, setUpdateModalData] =
-		useState<RSUsProps>(defaultData);
-	const [deleteModalData, setDeleteModalData] =
-		useState<RSUsProps>(defaultData);
+	// Modal data state
+	const [informModalData, setInformModalData] = useState<IRSU>(defaultData);
+	const [registerModalData, setRegisterModalData] = useState<IRSU>(defaultData);
+	const [updateModalData, setUpdateModalData] = useState<IRSU>(defaultData);
+	const [deleteModalData, setDeleteModalData] = useState<IRSU>(defaultData);
 
+	// Inform modal
+	const handleOpenInformModal = (informData: IRSU) => {
+		setInformModalData(informData);
+		setOpenInformModal(true);
+	};
 	const handleCloseInformModal = () => setOpenInformModal(false);
+
+	// Register modal
+	const handleOpenRegisterModel = () => setOpenRegisterModal(true);
 	const handleCloseRegisterModal = () => {
 		setOpenRegisterModal(false);
 		setRegisterModalData(defaultData);
+	};
+	const handleRegisterNotification = () => {
+		if (!createRSUError) {
+			enqueueSnackbar('Register a RSU sucessfully', {
+				variant: 'success',
+			});
+		} else {
+			enqueueSnackbar('Fail to register a RSU', { variant: 'error' });
+		}
 	};
 	const handleSubmitRegisterModal = () => {
 		dispatch(
@@ -66,12 +86,29 @@ export default function Home() {
 				name: registerModalData.name,
 				recommended_speed: registerModalData.recommended_speed,
 			})
-		).then(refetchData);
+		)
+			.then(refetchData)
+			.then(handleRegisterNotification);
 		handleCloseRegisterModal();
+	};
+
+	// Update modal
+	const handleOpenUpdateModal = (updateData: IRSU) => {
+		setUpdateModalData(updateData);
+		setOpenUpdateModal(true);
 	};
 	const handleCloseUpdateModal = () => {
 		setOpenUpdateModal(false);
 		setUpdateModalData(defaultData);
+	};
+	const handleUpdateNotification = () => {
+		if (!updateRSUError) {
+			enqueueSnackbar('Update a RSU sucessfully', {
+				variant: 'success',
+			});
+		} else {
+			enqueueSnackbar('Fail to update a RSU', { variant: 'error' });
+		}
 	};
 	const handleSubmitUpdateModal = () => {
 		dispatch(
@@ -84,26 +121,37 @@ export default function Home() {
 			})
 		)
 			.then(refetchData)
-			.then(() => {
-				if (!createRSUError) {
-					enqueueSnackbar('Update a RSU sucessfully', {
-						variant: 'success',
-					});
-				} else {
-					enqueueSnackbar('Fail to update a RSU', { variant: 'error' });
-				}
-			});
+			.then(handleUpdateNotification);
 		handleCloseUpdateModal();
+	};
+
+	// Delete modal
+	const handleOpenDeleteModal = (deleteData: IRSU) => {
+		setDeleteModalData(deleteData);
+		setOpenDeleteModal(true);
 	};
 	const handleCloseDeleteModal = () => {
 		setOpenDeleteModal(false);
 		setDeleteModalData(defaultData);
 	};
+	const handleDeleteNotification = () => {
+		if (!deleteRSUError) {
+			enqueueSnackbar('Delete a RSU sucessfully', {
+				variant: 'success',
+			});
+		} else {
+			enqueueSnackbar('Fail to delete a RSU', { variant: 'error' });
+		}
+	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_RSU({ id: deleteModalData.id })).then(refetchData);
+		dispatch(FETCH_DELETE_RSU({ id: deleteModalData.id }))
+			.then(refetchData)
+			.then(handleDeleteNotification);
 		handleCloseDeleteModal();
 	};
+
 	const refetchData = () => dispatch(FETCH_GET_RSUS({}));
+	const handleOnSearch = (search: IRSU) => dispatch(FETCH_GET_RSUS(search));
 
 	useEffect(() => {
 		refetchData();
@@ -170,7 +218,7 @@ export default function Home() {
 					<Stack className="h-full flex flex-col gap-16">
 						<Filter
 							template={RSUFilterTemplate}
-							handleSubmitSearch={(search) => dispatch(FETCH_GET_RSUS(search))}
+							handleSubmitSearch={handleOnSearch}
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
@@ -180,7 +228,7 @@ export default function Home() {
 								icon={BUTTON_LABEL.REGISTER}
 								label={BUTTON_LABEL.REGISTER_RSU}
 								variant="contained"
-								onClick={() => setOpenRegisterModal(true)}
+								onClick={handleOpenRegisterModel}
 							/>
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REFRESH}
@@ -189,29 +237,12 @@ export default function Home() {
 								onClick={refetchData}
 							/>
 						</Stack>
-						<TableCV2X<RSUsProps>
+						<TableCV2X<IRSU>
 							columns={RSUsTableTemplate}
-							rows={
-								rsus?.map((rsu) => {
-									return {
-										id: rsu.id,
-										name: rsu.name,
-										recommended_speed: rsu.recommended_speed,
-									};
-								}) || []
-							}
-							handleOnClickInformation={(informData: RSUsProps) => {
-								setInformModalData(informData);
-								setOpenInformModal(true);
-							}}
-							handleOnClickUpdate={(updateData: RSUsProps) => {
-								setUpdateModalData(updateData);
-								setOpenUpdateModal(true);
-							}}
-							handleOnClickDelete={(deleteData: RSUsProps) => {
-								setDeleteModalData(deleteData);
-								setOpenDeleteModal(true);
-							}}
+							rows={rsus ?? []}
+							handleOnClickInformation={handleOpenInformModal}
+							handleOnClickUpdate={handleOpenUpdateModal}
+							handleOnClickDelete={handleOpenDeleteModal}
 						/>
 					</Stack>
 				</Card>
