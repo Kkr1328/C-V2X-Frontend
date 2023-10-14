@@ -13,6 +13,8 @@ export interface ICarRequest {
 	license_plate: string;
 	model: string;
 	driver_id: string;
+	front_cam_id: string;
+	back_cam_id: string;
 }
 
 export interface IGetCarsRequest {
@@ -21,6 +23,8 @@ export interface IGetCarsRequest {
 	license_plate?: string;
 	model?: string;
 	driver_id?: string;
+	front_cam_id?: string;
+	back_cam_id?: string;
 }
 export interface ICreateCarRequest extends ICarRequest {}
 export interface IUpdateCarRequest extends ICarRequest {}
