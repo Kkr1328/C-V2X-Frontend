@@ -37,7 +37,8 @@ export default function Home() {
 	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 
-	const { data: drivers } = useSelector(selectGetDrivers);
+	const { data: drivers, loading: driversLoading } =
+		useSelector(selectGetDrivers);
 	const { error: createDriverError } = useSelector(selectCreateDriver);
 	const { error: updateDriverError, loading: updateDriverLoading } =
 		useSelector(selectUpdateDriver);
@@ -259,6 +260,7 @@ export default function Home() {
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
 							handleOnClickDelete={handleOpenDeleteModal}
+							isLoading={driversLoading}
 						/>
 					</Stack>
 				</Card>

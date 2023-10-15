@@ -39,7 +39,8 @@ export default function Home() {
 	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 
-	const { data: cameras } = useSelector(selectGetCameras);
+	const { data: cameras, loading: camerasLoading } =
+		useSelector(selectGetCameras);
 	const { data: carsList } = useSelector(selectGetCarsList);
 	const { error: createCameraError } = useSelector(selectCreateCamera);
 	const { error: updateCameraError } = useSelector(selectUpdateCamera);
@@ -286,6 +287,7 @@ export default function Home() {
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
 							handleOnClickDelete={handleOpenDeleteModal}
+							isLoading={camerasLoading}
 						/>
 					</Stack>
 				</Card>

@@ -41,7 +41,7 @@ export default function Home() {
 	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 
-	const { data: cars } = useSelector(selectGetCars);
+	const { data: cars, loading: carsLoading } = useSelector(selectGetCars);
 	const { data: camerasList } = useSelector(selectGetCamerasList);
 	const { data: driversList } = useSelector(selectGetDriversList);
 	const { error: createCarError } = useSelector(selectCreateCar);
@@ -296,6 +296,7 @@ export default function Home() {
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
 							handleOnClickDelete={handleOpenDeleteModal}
+							isLoading={carsLoading}
 						/>
 					</Stack>
 				</Card>
