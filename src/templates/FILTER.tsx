@@ -1,6 +1,7 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
 import { InputFieldProp } from '@/types/COMMON';
-import { CamerasProps, CarsProps, DriversProps } from '@/types/ENTITY';
+import { CarsProps, DriversProps } from '@/types/ENTITY';
+import { ICamera } from '@/types/models/camera.model';
 import { IGetRSUsRequest } from '@/types/models/rsu.model';
 
 export const CarFilterTemplate: InputFieldProp<CarsProps>[] = [
@@ -93,7 +94,7 @@ export const DriverFilterTemplate: InputFieldProp<DriversProps>[] = [
 	},
 ];
 
-export const CameraFilterTemplate: InputFieldProp<CamerasProps>[] = [
+export const CameraFilterTemplate: InputFieldProp<ICamera>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,

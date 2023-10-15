@@ -15,8 +15,7 @@ import ModalInputs from '@/components/module/ModalInputs';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
-import { CamerasProps } from '@/types/ENTITY';
-import { IGetCamerasRequest } from '@/types/models/camera.model';
+import { ICamera, IGetCamerasRequest } from '@/types/models/camera.model';
 // templates
 import { CameraFilterTemplate } from '@/templates/FILTER';
 import { CamerasTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -55,23 +54,20 @@ export default function Home() {
 	const defaultData = CameraActionModalTemplate.reduce(
 		(acc, item) => ({
 			...acc,
-			[item.id]: '' as CamerasProps[keyof CamerasProps],
+			[item.id]: '' as ICamera[keyof ICamera],
 		}),
-		{} as CamerasProps
+		{} as ICamera
 	);
 
 	// Modal data state
-	const [informModalData, setInformModalData] =
-		useState<CamerasProps>(defaultData);
+	const [informModalData, setInformModalData] = useState<ICamera>(defaultData);
 	const [registerModalData, setRegisterModalData] =
-		useState<CamerasProps>(defaultData);
-	const [updateModalData, setUpdateModalData] =
-		useState<CamerasProps>(defaultData);
-	const [deleteModalData, setDeleteModalData] =
-		useState<CamerasProps>(defaultData);
+		useState<ICamera>(defaultData);
+	const [updateModalData, setUpdateModalData] = useState<ICamera>(defaultData);
+	const [deleteModalData, setDeleteModalData] = useState<ICamera>(defaultData);
 
 	// Inform modal
-	const handleOpenInformModal = (informData: CamerasProps) => {
+	const handleOpenInformModal = (informData: ICamera) => {
 		setInformModalData(informData);
 		setOpenInformModal(true);
 	};
@@ -106,7 +102,7 @@ export default function Home() {
 	};
 
 	// Update modal
-	const handleOpenUpdateModal = (updateData: CamerasProps) => {
+	const handleOpenUpdateModal = (updateData: ICamera) => {
 		setUpdateModalData(updateData);
 		setOpenUpdateModal(true);
 	};
@@ -140,7 +136,7 @@ export default function Home() {
 	};
 
 	// Delete modal
-	const handleOpenDeleteModal = (deleteData: CamerasProps) => {
+	const handleOpenDeleteModal = (deleteData: ICamera) => {
 		setDeleteModalData(deleteData);
 		setOpenDeleteModal(true);
 	};
@@ -283,9 +279,9 @@ export default function Home() {
 								onClick={refetchData}
 							/>
 						</Stack>
-						<TableCV2X<CamerasProps>
+						<TableCV2X<ICamera>
 							columns={CamerasTableTemplate}
-							rows={(cameras as CamerasProps[]) ?? []}
+							rows={(cameras as ICamera[]) ?? []}
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
 							handleOnClickDelete={handleOpenDeleteModal}

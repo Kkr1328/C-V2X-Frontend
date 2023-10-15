@@ -39,10 +39,3 @@ export interface DriversProps {
 	password?: string;
 	confirmed_password?: string;
 }
-
-export interface CamerasProps {
-	id: string;
-	name: string;
-	position: Position;
-	car_id: string;
-}

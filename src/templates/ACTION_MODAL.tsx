@@ -1,6 +1,7 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
 import { InputFieldProp } from '@/types/COMMON';
-import { CamerasProps, CarsProps, DriversProps } from '@/types/ENTITY';
+import { CarsProps, DriversProps } from '@/types/ENTITY';
+import { ICamera } from '@/types/models/camera.model';
 import { IRSU } from '@/types/models/rsu.model';
 
 export const CarActionModalTemplate: InputFieldProp<CarsProps>[] = [
@@ -90,7 +91,7 @@ export const DriverActionModalTemplate: InputFieldProp<DriversProps>[] = [
 	},
 ];
 
-export const CameraActionModalTemplate: InputFieldProp<CamerasProps>[] = [
+export const CameraActionModalTemplate: InputFieldProp<ICamera>[] = [
 	{
 		id: 'name',
 		label: INPUT_LABEL.NAME,

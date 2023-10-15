@@ -1,4 +1,5 @@
-import { CamerasProps, CarsProps, DriversProps } from '@/types/ENTITY';
+import { CarsProps, DriversProps } from '@/types/ENTITY';
+import { ICamera } from '@/types/models/camera.model';
 import { IRSU } from '@/types/models/rsu.model';
 
 export const MockedCarsTableContent: CarsProps[] = [
@@ -8,8 +9,8 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0001',
 		model: 'Model01',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver01',
 	},
@@ -19,8 +20,8 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0002',
 		model: 'Model02',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver02',
 	},
@@ -30,8 +31,8 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0003',
 		model: 'Model03',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver03',
 	},
@@ -41,8 +42,8 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0004',
 		model: 'Model04',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver04',
 	},
@@ -52,8 +53,8 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0005',
 		model: 'Model05',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver05',
 	},
@@ -63,8 +64,8 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0006',
 		model: 'Model06',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver06',
 	},
@@ -74,8 +75,8 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0007',
 		model: 'Model07',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver07',
 	},
@@ -138,48 +139,55 @@ export const MockedDriversTableContent: DriversProps[] = [
 		phone_no: '098xxxx007',
 	},
 ];
-export const MockedCamerasTableContent: CamerasProps[] = [
+export const MockedCamerasTableContent: ICamera[] = [
 	{
 		id: 'cameraxxx01',
 		name: 'Camera01',
 		position: 'Front',
 		car_id: 'Car01',
+		car: 'Car01',
 	},
 	{
 		id: 'cameraxxx02',
 		name: 'Camera02',
 		position: 'Back',
 		car_id: 'Car02',
+		car: 'Car02',
 	},
 	{
 		id: 'cameraxxx03',
 		name: 'Camera03',
 		position: 'Front',
 		car_id: 'Car03',
+		car: 'Car03',
 	},
 	{
 		id: 'cameraxxx04',
 		name: 'Camera04',
 		position: 'Back',
 		car_id: 'Car04',
+		car: 'Car04',
 	},
 	{
 		id: 'cameraxxx05',
 		name: 'Camera05',
 		position: 'Front',
 		car_id: 'Car05',
+		car: 'Car05',
 	},
 	{
 		id: 'cameraxxx06',
 		name: 'Camera06',
 		position: 'Back',
 		car_id: 'Car06',
+		car: 'Car06',
 	},
 	{
 		id: 'cameraxxx07',
 		name: 'Camera07',
 		position: 'Front',
 		car_id: 'Car07',
+		car: 'Car07',
 	},
 ];
 
