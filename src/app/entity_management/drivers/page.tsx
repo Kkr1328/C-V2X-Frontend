@@ -15,8 +15,11 @@ import ModalInputs from '@/components/module/ModalInputs';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
-import { DriversProps } from '@/types/ENTITY';
-import { IGetDriversRequest } from '@/types/models/driver.model';
+import {
+	IDriver,
+	IDriverInput,
+	IGetDriversRequest,
+} from '@/types/models/driver.model';
 // templates
 import { DriverFilterTemplate } from '@/templates/FILTER';
 import { DriversTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -53,23 +56,29 @@ export default function Home() {
 	const defaultData = DriverActionModalTemplate.reduce(
 		(acc, item) => ({
 			...acc,
-			[item.id]: '' as DriversProps[keyof DriversProps],
+			[item.id]: '' as IDriver[keyof IDriver],
 		}),
-		{} as DriversProps
+		{} as IDriver
+	);
+
+	const defaultInputData = DriverActionModalTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as IDriverInput[keyof IDriverInput],
+		}),
+		{} as IDriverInput
 	);
 
 	// Modal data state
-	const [informModalData, setInformModalData] =
-		useState<DriversProps>(defaultData);
+	const [informModalData, setInformModalData] = useState<IDriver>(defaultData);
 	const [registerModalData, setRegisterModalData] =
-		useState<DriversProps>(defaultData);
+		useState<IDriverInput>(defaultInputData);
 	const [updateModalData, setUpdateModalData] =
-		useState<DriversProps>(defaultData);
-	const [deleteModalData, setDeleteModalData] =
-		useState<DriversProps>(defaultData);
+		useState<IDriverInput>(defaultInputData);
+	const [deleteModalData, setDeleteModalData] = useState<IDriver>(defaultData);
 
 	// Inform modal
-	const handleOpenInformModal = (informData: DriversProps) => {
+	const handleOpenInformModal = (informData: IDriver) => {
 		setInformModalData(informData);
 		setOpenInformModal(true);
 	};
@@ -79,7 +88,7 @@ export default function Home() {
 	const handleOpenRegisterModel = () => setOpenRegisterModal(true);
 	const handleCloseRegisterModal = () => {
 		setOpenRegisterModal(false);
-		setRegisterModalData(defaultData);
+		setRegisterModalData(defaultInputData);
 	};
 	const handleRegisterNotification = () => {
 		if (!createDriverError) {
@@ -106,13 +115,17 @@ export default function Home() {
 	};
 
 	// Update modal
-	const handleOpenUpdateModal = (updateData: DriversProps) => {
-		setUpdateModalData(updateData);
+	const handleOpenUpdateModal = (updateData: IDriver) => {
+		setUpdateModalData({
+			...updateData,
+			password: '',
+			confirmed_password: '',
+		});
 		setOpenUpdateModal(true);
 	};
 	const handleCloseUpdateModal = () => {
 		setOpenUpdateModal(false);
-		setUpdateModalData(defaultData);
+		setUpdateModalData(defaultInputData);
 	};
 	const handleUpdateNotification = () => {
 		if (!updateDriverError) {
@@ -142,7 +155,7 @@ export default function Home() {
 	};
 
 	// Delete modal
-	const handleOpenDeleteModal = (deleteData: DriversProps) => {
+	const handleOpenDeleteModal = (deleteData: IDriver) => {
 		setDeleteModalData(deleteData);
 		setOpenDeleteModal(true);
 	};
@@ -256,7 +269,7 @@ export default function Home() {
 								onClick={refetchData}
 							/>
 						</Stack>
-						<TableCV2X<DriversProps>
+						<TableCV2X<IDriver>
 							columns={DriversTableTemplate}
 							rows={drivers ?? []}
 							handleOnClickInformation={handleOpenInformModal}

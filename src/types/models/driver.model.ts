@@ -33,3 +33,7 @@ export interface IDriver {
 	phone_no: string;
 	username: string;
 }
+
+export interface IDriverInput extends IDriver, IDriverRequest {
+	confirmed_password: string;
+}
