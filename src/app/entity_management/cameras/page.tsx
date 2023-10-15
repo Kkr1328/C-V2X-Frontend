@@ -266,7 +266,9 @@ export default function Home() {
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
-							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
+							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total (${
+								cameras?.length || 0
+							})`}</p>
 							<div className="grow" />
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REGISTER}
