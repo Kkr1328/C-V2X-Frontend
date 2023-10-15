@@ -13,8 +13,6 @@ export interface ICarRequest {
 	license_plate: string;
 	model: string;
 	driver_id: string;
-	front_cam_id: string;
-	back_cam_id: string;
 }
 
 export interface IGetCarsRequest {
@@ -37,4 +35,11 @@ export interface ICar {
 	cameras: CameraType[];
 	driver_id: string;
 	driver: string;
+}
+
+export interface ICarInfo extends ICar {
+	front_cam_position: string;
+	front_cam_name: string;
+	back_cam_position: string;
+	back_cam_name: string;
 }

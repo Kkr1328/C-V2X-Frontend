@@ -1,9 +1,9 @@
-import { CarsProps } from '@/types/ENTITY';
+import { ICar } from '@/types/models/car.model';
 import { ICamera } from '@/types/models/camera.model';
 import { IDriver } from '@/types/models/driver.model';
 import { IRSU } from '@/types/models/rsu.model';
 
-export const MockedCarsTableContent: CarsProps[] = [
+export const MockedCarsTableContent: ICar[] = [
 	{
 		id: 'carxxx01',
 		name: 'Car01',
@@ -14,6 +14,7 @@ export const MockedCarsTableContent: CarsProps[] = [
 			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver01',
+		driver: 'Driver01',
 	},
 	{
 		id: 'carxxx02',
@@ -25,6 +26,7 @@ export const MockedCarsTableContent: CarsProps[] = [
 			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver02',
+		driver: 'Driver02',
 	},
 	{
 		id: 'carxxx03',
@@ -36,6 +38,7 @@ export const MockedCarsTableContent: CarsProps[] = [
 			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver03',
+		driver: 'Driver03',
 	},
 	{
 		id: 'carxxx04',
@@ -47,6 +50,7 @@ export const MockedCarsTableContent: CarsProps[] = [
 			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver04',
+		driver: 'Driver04',
 	},
 	{
 		id: 'carxxx05',
@@ -58,6 +62,7 @@ export const MockedCarsTableContent: CarsProps[] = [
 			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver05',
+		driver: 'Driver05',
 	},
 	{
 		id: 'carxxx06',
@@ -69,6 +74,7 @@ export const MockedCarsTableContent: CarsProps[] = [
 			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver06',
+		driver: 'Driver06',
 	},
 	{
 		id: 'carxxx07',
@@ -80,6 +86,7 @@ export const MockedCarsTableContent: CarsProps[] = [
 			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver07',
+		driver: 'Driver07',
 	},
 ];
 export const MockedDriversTableContent: IDriver[] = [

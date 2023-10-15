@@ -33,10 +33,9 @@ interface TableCV2XProps<T extends TableRowProps> {
 	isLoading?: boolean;
 }
 
-function HeaderCell<T>(props: { column: TableHeaderProps<T>; index: number }) {
+function HeaderCell<T>(props: { column: TableHeaderProps<T> }) {
 	return (
 		<TableCell
-			key={props.index}
 			align={props.column.align}
 			className="p-16 bg-dark_background_grey"
 			sx={{
@@ -50,21 +49,17 @@ function HeaderCell<T>(props: { column: TableHeaderProps<T>; index: number }) {
 	);
 }
 
-function MissingValueCell(props: { index: number }) {
+function MissingValueCell() {
 	return (
-		<TableCell key={props.index} align={'center'} className="w-full">
+		<TableCell align={'center'} className="w-full">
 			<StatusDot variant={'Missing'} />
 		</TableCell>
 	);
 }
 
-function CameraCell<T>(props: {
-	column: TableHeaderProps<T>;
-	row: T;
-	index: number;
-}) {
+function CameraCell<T>(props: { column: TableHeaderProps<T>; row: T }) {
 	return (
-		<TableCell key={props.index} align={props.column.align} className="w-full">
+		<TableCell align={props.column.align} className="w-full">
 			{(props.row[props.column.id as keyof T] as CameraType[]).map(
 				(camera, index) => (
 					<Stack direction="row" key={index}>
@@ -82,13 +77,9 @@ function CameraCell<T>(props: {
 	);
 }
 
-function StringCell<T>(props: {
-	column: TableHeaderProps<T>;
-	row: T;
-	index: number;
-}) {
+function StringCell<T>(props: { column: TableHeaderProps<T>; row: T }) {
 	return (
-		<TableCell key={props.index} align={props.column.align} className="w-full">
+		<TableCell align={props.column.align} className="w-full">
 			<p className="break-all inline-block align-baseline font-istok text-black text-p1">
 				{props.row[props.column.id as keyof T] as string}
 			</p>
@@ -141,7 +132,7 @@ export default function TableCV2X<T extends TableRowProps>(
 				<TableHead>
 					<TableRow>
 						{props.columns.map((column, index) => (
-							<HeaderCell column={column} index={index} />
+							<HeaderCell key={index} column={column} />
 						))}
 					</TableRow>
 				</TableHead>
@@ -174,21 +165,21 @@ export default function TableCV2X<T extends TableRowProps>(
 										);
 									} else if (column.id === 'cameras') {
 										return (
-											<React.Fragment>
+											<React.Fragment key={index}>
 												{(row[column.id] as CameraType[]).length === 0 ? (
-													<MissingValueCell index={index} />
+													<MissingValueCell />
 												) : (
-													<CameraCell column={column} row={row} index={index} />
+													<CameraCell column={column} row={row} />
 												)}
 											</React.Fragment>
 										);
 									} else {
 										return (
-											<React.Fragment>
+											<React.Fragment key={index}>
 												{(row[column.id] as string).length === 0 ? (
-													<MissingValueCell index={index} />
+													<MissingValueCell />
 												) : (
-													<StringCell column={column} row={row} index={index} />
+													<StringCell column={column} row={row} />
 												)}
 											</React.Fragment>
 										);

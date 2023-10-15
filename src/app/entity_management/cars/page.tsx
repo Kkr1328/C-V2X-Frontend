@@ -15,8 +15,7 @@ import ModalInputs from '@/components/module/ModalInputs';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
-import { CarsProps } from '@/types/ENTITY';
-import { IGetCarsRequest } from '@/types/models/car.model';
+import { ICar, ICarInfo, IGetCarsRequest } from '@/types/models/car.model';
 // templates
 import { CarFilterTemplate } from '@/templates/FILTER';
 import { CarsTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -57,24 +56,41 @@ export default function Home() {
 	const defaultData = CarActionModalTemplate.reduce(
 		(acc, item) => ({
 			...acc,
-			[item.id]: '' as CarsProps[keyof CarsProps],
+			[item.id]: '' as ICar[keyof ICar],
 		}),
-		{} as CarsProps
+		{} as ICar
+	);
+
+	const defaultInfoData = CarActionModalTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as ICarInfo[keyof ICarInfo],
+		}),
+		{} as ICarInfo
 	);
 
 	// Modal data state
 	const [informModalData, setInformModalData] =
-		useState<CarsProps>(defaultData);
-	const [registerModalData, setRegisterModalData] =
-		useState<CarsProps>(defaultData);
-	const [updateModalData, setUpdateModalData] =
-		useState<CarsProps>(defaultData);
-	const [deleteModalData, setDeleteModalData] =
-		useState<CarsProps>(defaultData);
+		useState<ICarInfo>(defaultInfoData);
+	const [registerModalData, setRegisterModalData] = useState<ICar>(defaultData);
+	const [updateModalData, setUpdateModalData] = useState<ICar>(defaultData);
+	const [deleteModalData, setDeleteModalData] = useState<ICar>(defaultData);
 
 	// Inform modal
-	const handleOpenInformModal = (informData: CarsProps) => {
-		setInformModalData(informData);
+	const handleOpenInformModal = (informData: ICar) => {
+		const front_cam =
+			informData.cameras.length !== 0 &&
+			informData.cameras.filter((camera) => camera.position === 'Front')[0];
+		const back_cam =
+			informData.cameras.length !== 0 &&
+			informData.cameras.filter((camera) => camera.position === 'Back')[0];
+		setInformModalData({
+			...informData,
+			front_cam_position: front_cam ? front_cam.position : '',
+			front_cam_name: front_cam ? front_cam.name : '',
+			back_cam_position: back_cam ? back_cam.position : '',
+			back_cam_name: back_cam ? back_cam.name : '',
+		});
 		setOpenInformModal(true);
 	};
 	const handleCloseInformModal = () => setOpenInformModal(false);
@@ -101,8 +117,6 @@ export default function Home() {
 				license_plate: registerModalData.license_plate,
 				model: registerModalData.model,
 				driver_id: registerModalData.driver_id || '',
-				front_cam_id: registerModalData.front_camera || '',
-				back_cam_id: registerModalData.back_camera || '',
 			})
 		)
 			.then(refetchData)
@@ -111,7 +125,7 @@ export default function Home() {
 	};
 
 	// Update modal
-	const handleOpenUpdateModal = (updateData: CarsProps) => {
+	const handleOpenUpdateModal = (updateData: ICar) => {
 		setUpdateModalData(updateData);
 		setOpenUpdateModal(true);
 	};
@@ -137,8 +151,6 @@ export default function Home() {
 					license_plate: updateModalData.license_plate,
 					model: updateModalData.model,
 					driver_id: updateModalData.driver_id || '',
-					front_cam_id: updateModalData.front_camera || '',
-					back_cam_id: updateModalData.back_camera || '',
 				},
 			})
 		)
@@ -148,7 +160,7 @@ export default function Home() {
 	};
 
 	// Delete modal
-	const handleOpenDeleteModal = (deleteData: CarsProps) => {
+	const handleOpenDeleteModal = (deleteData: ICar) => {
 		setDeleteModalData(deleteData);
 		setOpenDeleteModal(true);
 	};
@@ -190,11 +202,11 @@ export default function Home() {
 			}) || [];
 		return [
 			{
-				id: 'front_camera',
+				id: 'front_cam_id',
 				option: cameraOption,
 			},
 			{
-				id: 'back_camera',
+				id: 'back_cam_id',
 				option: cameraOption,
 			},
 			{
@@ -292,9 +304,9 @@ export default function Home() {
 								variant="outlined"
 							/>
 						</Stack>
-						<TableCV2X<CarsProps>
+						<TableCV2X<ICar>
 							columns={CarsTableTemplate}
-							rows={(cars as CarsProps[]) ?? []}
+							rows={cars ?? []}
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
 							handleOnClickDelete={handleOpenDeleteModal}

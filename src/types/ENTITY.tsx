@@ -17,14 +17,3 @@ export interface CameraType {
 	name: string;
 	position: Position;
 }
-
-export interface CarsProps {
-	id: string;
-	name: string;
-	license_plate: string;
-	model: string;
-	cameras: CameraType[];
-	front_camera?: string;
-	back_camera?: string;
-	driver_id?: string;
-}
