@@ -36,7 +36,7 @@ export default function Home() {
 	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 
-	const { data: rsus } = useSelector(selectGetRSUs);
+	const { data: rsus, loading: rsusLoading } = useSelector(selectGetRSUs);
 	const { error: createRSUError } = useSelector(selectCreateRSU);
 	const { error: updateRSUError } = useSelector(selectUpdateRSU);
 	const { error: deleteRSUError } = useSelector(selectDeleteRSU);
@@ -236,6 +236,7 @@ export default function Home() {
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
 							handleOnClickDelete={handleOpenDeleteModal}
+							isLoading={rsusLoading}
 						/>
 					</Stack>
 				</Card>

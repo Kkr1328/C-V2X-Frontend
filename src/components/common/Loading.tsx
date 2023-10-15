@@ -19,10 +19,12 @@ export default function Loading(props: LoadingProps) {
 					/>
 				</Modal>
 			) : (
-				<CircularProgress
-					size={props.size || 24}
-					className="text-primary_blue"
-				/>
+				<div className="flex w-full h-full items-center justify-center">
+					<CircularProgress
+						size={props.size || 24}
+						className="text-primary_blue"
+					/>
+				</div>
 			)}
 		</Fragment>
 	);
