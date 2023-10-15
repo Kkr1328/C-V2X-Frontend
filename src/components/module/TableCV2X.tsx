@@ -14,13 +14,14 @@ import {
 } from '@mui/material';
 // components
 import Loading from '@/components/common/Loading';
+import NoData from '@/components/common/NoData';
+import StatusDot from '@/components/common/StatusDot';
 // uitls
 import IconMapper from '@/utils/IconMapper';
 // consts
 import { BUTTON_LABEL } from '@/constants/LABEL';
 // types
 import { CameraType, TableHeaderProps, TableRowProps } from '@/types/ENTITY';
-import NoData from '../common/NoData';
 
 interface TableCV2XProps<T extends TableRowProps> {
 	columns: TableHeaderProps<T>[];
@@ -32,26 +33,115 @@ interface TableCV2XProps<T extends TableRowProps> {
 	isLoading?: boolean;
 }
 
+function HeaderCell<T>(props: { column: TableHeaderProps<T>; index: number }) {
+	return (
+		<TableCell
+			key={props.index}
+			align={props.column.align}
+			className="p-16 bg-dark_background_grey"
+			sx={{
+				width: props.column.id === 'action' ? '132px' : 'auto',
+			}}
+		>
+			<p className="inline-block align-baseline font-istok text-black text-h5">
+				{props.column.label}
+			</p>
+		</TableCell>
+	);
+}
+
+function MissingValueCell(props: { index: number }) {
+	return (
+		<TableCell key={props.index} align={'center'} className="w-full">
+			<StatusDot variant={'Missing'} />
+		</TableCell>
+	);
+}
+
+function CameraCell<T>(props: {
+	column: TableHeaderProps<T>;
+	row: T;
+	index: number;
+}) {
+	return (
+		<TableCell key={props.index} align={props.column.align} className="w-full">
+			{(props.row[props.column.id as keyof T] as CameraType[]).map(
+				(camera, index) => (
+					<Stack direction="row" key={index}>
+						<p className="inline-block align-baseline font-istok text-black text-p1">
+							{camera.name as React.ReactNode}
+						</p>
+						<p className="inline-block align-baseline font-istok text-light_text_grey text-p1">
+							&nbsp;-&nbsp;
+							{camera.position as React.ReactNode}
+						</p>
+					</Stack>
+				)
+			)}
+		</TableCell>
+	);
+}
+
+function StringCell<T>(props: {
+	column: TableHeaderProps<T>;
+	row: T;
+	index: number;
+}) {
+	return (
+		<TableCell key={props.index} align={props.column.align} className="w-full">
+			<p className="break-all inline-block align-baseline font-istok text-black text-p1">
+				{props.row[props.column.id as keyof T] as string}
+			</p>
+		</TableCell>
+	);
+}
+
+function InformationButton(props: { onClick: () => void }) {
+	return (
+		<IconButton
+			disableRipple
+			className="p-none text-primary_blue"
+			onClick={props.onClick}
+		>
+			<IconMapper icon={BUTTON_LABEL.SEARCH} />
+		</IconButton>
+	);
+}
+
+function EditButton(props: { onClick: () => void }) {
+	return (
+		<IconButton
+			disableRipple
+			className="p-none text-black"
+			onClick={props.onClick}
+		>
+			<IconMapper icon={BUTTON_LABEL.UPDATE} />
+		</IconButton>
+	);
+}
+
+function DeleteButton(props: { onClick: () => void }) {
+	return (
+		<IconButton
+			disableRipple
+			className="p-none text-error_red"
+			onClick={props.onClick}
+		>
+			<IconMapper icon={BUTTON_LABEL.DELETE} />
+		</IconButton>
+	);
+}
+
 export default function TableCV2X<T extends TableRowProps>(
 	props: TableCV2XProps<T>
 ) {
 	return (
 		<TableContainer className="flex flex-col grow h-full overflow-y-scroll">
-			<Table stickyHeader>
+			<Table stickyHeader sx={{ width: '100%', tableLayout: 'fixed' }}>
 				<TableHead>
 					<TableRow>
 						{props.columns.map((column, index) => (
-							<React.Fragment key={index}>
-								<TableCell
-									key={index}
-									align={column.align}
-									className="w-full p-16 bg-dark_background_grey"
-								>
-									<p className="inline-block align-baseline font-istok text-black text-h5">
-										{column.label}
-									</p>
-								</TableCell>
-							</React.Fragment>
+							<HeaderCell column={column} index={index} />
 						))}
 					</TableRow>
 				</TableHead>
@@ -68,65 +158,39 @@ export default function TableCV2X<T extends TableRowProps>(
 												sx={{ width: '132px' }}
 											>
 												<Stack direction="row" className="gap-8 justify-center">
-													<IconButton
-														disableRipple
-														className="p-none text-primary_blue"
+													<InformationButton
 														onClick={() =>
 															props.handleOnClickInformation?.(row)
 														}
-													>
-														<IconMapper icon={BUTTON_LABEL.SEARCH} />
-													</IconButton>
-													<IconButton
-														disableRipple
-														className="p-none text-black"
+													/>
+													<EditButton
 														onClick={() => props.handleOnClickUpdate?.(row)}
-													>
-														<IconMapper icon={BUTTON_LABEL.UPDATE} />
-													</IconButton>
-													<IconButton
-														disableRipple
-														className="p-none text-error_red"
+													/>
+													<DeleteButton
 														onClick={() => props.handleOnClickDelete?.(row)}
-													>
-														<IconMapper icon={BUTTON_LABEL.DELETE} />
-													</IconButton>
+													/>
 												</Stack>
 											</TableCell>
 										);
 									} else if (column.id === 'cameras') {
 										return (
-											<TableCell
-												key={index}
-												align={column.align}
-												className="w-full"
-											>
-												{(row[column.id] as CameraType[]).map(
-													(camera, index) => (
-														<Stack direction="row" key={index}>
-															<p className="inline-block align-baseline font-istok text-black text-p1">
-																{camera.name as React.ReactNode}
-															</p>
-															<p className="inline-block align-baseline font-istok text-light_text_grey text-p1">
-																&nbsp;-&nbsp;
-																{camera.position as React.ReactNode}
-															</p>
-														</Stack>
-													)
+											<React.Fragment>
+												{(row[column.id] as CameraType[]).length === 0 ? (
+													<MissingValueCell index={index} />
+												) : (
+													<CameraCell column={column} row={row} index={index} />
 												)}
-											</TableCell>
+											</React.Fragment>
 										);
 									} else {
 										return (
-											<TableCell
-												key={index}
-												align={column.align}
-												className="w-full"
-											>
-												<p className="inline-block align-baseline font-istok text-black text-p1">
-													{row[column.id] as React.ReactNode}
-												</p>
-											</TableCell>
+											<React.Fragment>
+												{(row[column.id] as string).length === 0 ? (
+													<MissingValueCell index={index} />
+												) : (
+													<StringCell column={column} row={row} index={index} />
+												)}
+											</React.Fragment>
 										);
 									}
 								})}
