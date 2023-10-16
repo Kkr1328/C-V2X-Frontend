@@ -187,13 +187,19 @@ export default function Home() {
 		if (!registerDriverLoading && registerDriverLoading !== undefined) {
 			handleRegisterNotification();
 		}
+	}, [registerDriverLoading]);
+
+	useEffect(() => {
 		if (!updateDriverLoading && updateDriverLoading !== undefined) {
 			handleUpdateNotification();
 		}
+	}, [updateDriverLoading]);
+
+	useEffect(() => {
 		if (!deleteDriverLoading && deleteDriverLoading !== undefined) {
 			handleDeleteNotification();
 		}
-	}, [registerDriverLoading, updateDriverLoading, deleteDriverLoading]);
+	}, [deleteDriverLoading]);
 
 	return (
 		<Fragment>

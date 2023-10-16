@@ -151,13 +151,19 @@ export default function Home() {
 		if (!registerRSULoading && registerRSULoading !== undefined) {
 			handleRegisterNotification();
 		}
+	}, [registerRSULoading]);
+
+	useEffect(() => {
 		if (!updateRSULoading && updateRSULoading !== undefined) {
 			handleUpdateNotification();
 		}
+	}, [updateRSULoading]);
+
+	useEffect(() => {
 		if (!deleteRSULoading && deleteRSULoading !== undefined) {
 			handleDeleteNotification();
 		}
-	}, [registerRSULoading, updateRSULoading, deleteRSULoading]);
+	}, [deleteRSULoading]);
 
 	return (
 		<>

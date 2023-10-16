@@ -221,13 +221,19 @@ export default function Home() {
 		if (!registerCarLoading && registerCarLoading !== undefined) {
 			handleRegisterNotification();
 		}
+	}, [registerCarLoading]);
+
+	useEffect(() => {
 		if (!updateCarLoading && updateCarLoading !== undefined) {
 			handleUpdateNotification();
 		}
+	}, [updateCarLoading]);
+
+	useEffect(() => {
 		if (!deleteCarLoading && deleteCarLoading !== undefined) {
 			handleDeleteNotification();
 		}
-	}, [registerCarLoading, updateCarLoading, deleteCarLoading]);
+	}, [deleteCarLoading]);
 
 	return (
 		<>

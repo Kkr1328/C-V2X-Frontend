@@ -195,13 +195,19 @@ export default function Home() {
 		if (!registerCameraLoading && registerCameraLoading !== undefined) {
 			handleRegisterNotification();
 		}
+	}, [registerCameraLoading]);
+
+	useEffect(() => {
 		if (!updateCameraLoading && updateCameraLoading !== undefined) {
 			handleUpdateNotification();
 		}
+	}, [updateCameraLoading]);
+
+	useEffect(() => {
 		if (!deleteCameraLoading && deleteCameraLoading !== undefined) {
 			handleDeleteNotification();
 		}
-	}, [registerCameraLoading, updateCameraLoading, deleteCameraLoading]);
+	}, [deleteCameraLoading]);
 
 	return (
 		<>
