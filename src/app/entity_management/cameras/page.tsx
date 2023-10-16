@@ -41,9 +41,12 @@ export default function Home() {
 	const { data: cameras, loading: camerasLoading } =
 		useSelector(selectGetCameras);
 	const { data: carsList } = useSelector(selectGetCarsList);
-	const { error: createCameraError } = useSelector(selectCreateCamera);
-	const { error: updateCameraError } = useSelector(selectUpdateCamera);
-	const { error: deleteCameraError } = useSelector(selectDeleteCamera);
+	const { error: registerCameraError, loading: registerCameraLoading } =
+		useSelector(selectCreateCamera);
+	const { error: updateCameraError, loading: updateCameraLoading } =
+		useSelector(selectUpdateCamera);
+	const { error: deleteCameraError, loading: deleteCameraLoading } =
+		useSelector(selectDeleteCamera);
 
 	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
@@ -80,7 +83,7 @@ export default function Home() {
 		setRegisterModalData(defaultData);
 	};
 	const handleRegisterNotification = () => {
-		if (!createCameraError) {
+		if (!registerCameraError) {
 			enqueueSnackbar('Register a camera successfully', {
 				variant: 'success',
 			});
@@ -95,9 +98,7 @@ export default function Home() {
 				position: registerModalData.position,
 				car_id: registerModalData.car_id,
 			})
-		)
-			.then(refetchData)
-			.then(handleRegisterNotification);
+		).then(refetchData);
 		handleCloseRegisterModal();
 	};
 
@@ -129,9 +130,7 @@ export default function Home() {
 					car_id: updateModalData.car_id,
 				},
 			})
-		)
-			.then(refetchData)
-			.then(handleUpdateNotification);
+		).then(refetchData);
 		handleCloseUpdateModal();
 	};
 
@@ -154,9 +153,7 @@ export default function Home() {
 		}
 	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_CAMERA({ id: deleteModalData.id }))
-			.then(refetchData)
-			.then(handleDeleteNotification);
+		dispatch(FETCH_DELETE_CAMERA({ id: deleteModalData.id })).then(refetchData);
 		handleCloseDeleteModal();
 	};
 
@@ -193,6 +190,18 @@ export default function Home() {
 	useEffect(() => {
 		refetchData();
 	}, []);
+
+	useEffect(() => {
+		if (!registerCameraLoading && registerCameraLoading !== undefined) {
+			handleRegisterNotification();
+		}
+		if (!updateCameraLoading && updateCameraLoading !== undefined) {
+			handleUpdateNotification();
+		}
+		if (!deleteCameraLoading && deleteCameraLoading !== undefined) {
+			handleDeleteNotification();
+		}
+	}, [registerCameraLoading, updateCameraLoading, deleteCameraLoading]);
 
 	return (
 		<>
