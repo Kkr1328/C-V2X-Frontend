@@ -1,52 +1,38 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Stack } from '@mui/material';
 
-import SelectCV2X, { SelectOption } from '@/components/common/SelectCV2X';
+import SelectCV2X from '@/components/common/SelectCV2X';
 import TextFieldCV2X from '@/components/common/TextFieldCV2X';
 
 import { InputFieldProp } from '@/types/COMMON';
 
 interface ModalInputsProp<T> {
 	template: InputFieldProp<T>[];
-	initiateValue?: T;
+	data: T;
+	onDataChange: React.Dispatch<React.SetStateAction<T>>;
+	options?: any;
 	isReadOnly?: boolean;
 	isLoading?: boolean;
 }
 
-const options = [
-	{
-		value: 'Front',
-		label: 'Front',
-	},
-	{
-		value: 'Back',
-		label: 'Back',
-	},
-];
-
 export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 	const maxRow = Math.max(...props.template.map((item) => item.row), 0);
-	const defaultData = props.template.reduce(
-		(acc, item) => ({ ...acc, [item.id]: '' as T[keyof T] }),
-		{} as T
-	);
-
-	const [data, setData] = useState<T>(props.initiateValue || defaultData);
 
 	const getSearch = (id: keyof T) => {
-		if (data) {
-			return data[id] as string;
+		if (props.data) {
+			return props.data[id] as string;
 		}
 		return '';
 	};
 	const handleSearchChange = (id: keyof T, value: string) => {
-		setData({
-			...data,
+		props.onDataChange({
+			...props.data,
 			[id]: value,
 		} as T);
+		console.log(props.data);
 	};
 
 	return (
@@ -79,14 +65,21 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 										isRequired={inputField.isRequired}
 										isLoading={props.isLoading}
 										value={
-											options.find(
-												(option) => option.value === getSearch(inputField.id)
-											) || null
+											props.options
+												.filter((item: any) => item.id === inputField.id)[0]
+												.option.find(
+													(option: any) =>
+														option.value === getSearch(inputField.id)
+												) || null
 										}
 										onChange={(_, value) => {
 											value && handleSearchChange(inputField.id, value.value);
 										}}
-										options={options}
+										options={
+											props.options.filter(
+												(item: any) => item.id === inputField.id
+											)[0].option
+										}
 									/>
 								)
 							)

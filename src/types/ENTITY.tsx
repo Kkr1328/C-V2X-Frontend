@@ -13,6 +13,7 @@ export interface TableRowProps {
 }
 
 export interface CameraType {
+	id: string;
 	name: string;
 	position: Position;
 }
@@ -44,10 +45,4 @@ export interface CamerasProps {
 	name: string;
 	position: Position;
 	car_id: string;
-}
-
-export interface RSUsProps {
-	id: string;
-	name: string;
-	rec_speed: string;
 }

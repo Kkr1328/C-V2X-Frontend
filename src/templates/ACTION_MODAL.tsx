@@ -1,11 +1,7 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
 import { InputFieldProp } from '@/types/COMMON';
-import {
-	CamerasProps,
-	CarsProps,
-	DriversProps,
-	RSUsProps,
-} from '@/types/ENTITY';
+import { CamerasProps, CarsProps, DriversProps } from '@/types/ENTITY';
+import { IRSU } from '@/types/models/rsu.model';
 
 export const CarActionModalTemplate: InputFieldProp<CarsProps>[] = [
 	{
@@ -121,7 +117,7 @@ export const CameraActionModalTemplate: InputFieldProp<CamerasProps>[] = [
 	},
 ];
 
-export const RSUActionModalTemplate: InputFieldProp<RSUsProps>[] = [
+export const RSUActionModalTemplate: InputFieldProp<IRSU>[] = [
 	{
 		id: 'name',
 		label: INPUT_LABEL.NAME,
@@ -131,7 +127,7 @@ export const RSUActionModalTemplate: InputFieldProp<RSUsProps>[] = [
 		row: 1,
 	},
 	{
-		id: 'rec_speed',
+		id: 'recommended_speed',
 		label: INPUT_LABEL.RECOMENDED_SPEED,
 		type: 'TextField',
 		placeholder: 'ex. 50',

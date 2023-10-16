@@ -3,9 +3,9 @@ import {
 	CamerasProps,
 	CarsProps,
 	DriversProps,
-	RSUsProps,
 	TableHeaderProps,
 } from '@/types/ENTITY';
+import { IRSU } from '@/types/models/rsu.model';
 
 export const CarsTableTemplate: TableHeaderProps<CarsProps>[] = [
 	{
@@ -118,7 +118,7 @@ export const CamerasTableTemplate: TableHeaderProps<CamerasProps>[] = [
 	},
 ];
 
-export const RSUsTableTemplate: TableHeaderProps<RSUsProps>[] = [
+export const RSUsTableTemplate: TableHeaderProps<IRSU>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
@@ -132,7 +132,7 @@ export const RSUsTableTemplate: TableHeaderProps<RSUsProps>[] = [
 		isSorted: true,
 	},
 	{
-		id: 'rec_speed',
+		id: 'recommended_speed',
 		label: INPUT_LABEL.RECOMENDED_SPEED,
 		align: 'left',
 		isSorted: true,

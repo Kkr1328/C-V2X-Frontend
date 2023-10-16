@@ -39,7 +39,10 @@ export default function ButtonCV2X(props: ButtonCV2XProp) {
 	const outlinedErrorStyle: string =
 		'text-error_red border-error_red border-2 bg-white hover:border-error_red hover:border-2 hover:bg-dark_background_red disabled:border-light_text_grey disabled:border-2 disabled:text-light_text_grey disabled:bg-dark_background_grey';
 
-	const buttonStyle: string = `normal-case h-44 px-12 m-none gap-8 rounded-md ${
+	const buttonStyle: string = `${
+		props.label ? '' : '!w-44'
+	} normal-case min-w-0 h-44 px-12 m-none gap-8 rounded-md
+	${
 		props.variant === 'text'
 			? props.color === 'secondary'
 				? textSecondaryStyle
@@ -73,9 +76,11 @@ export default function ButtonCV2X(props: ButtonCV2XProp) {
 			onClick={props.onClick}
 		>
 			{props.icon && <IconMapper icon={props.icon} />}
-			<p className="inline-block align-baseline font-istok text-h5">
-				{props.label}
-			</p>
+			{props.label && (
+				<p className="inline-block align-baseline font-istok text-h5">
+					{props.label}
+				</p>
+			)}
 		</Button>
 	);
 }

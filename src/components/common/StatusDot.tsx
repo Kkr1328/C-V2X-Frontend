@@ -1,9 +1,10 @@
 import IconMapper from '@/utils/IconMapper';
 
 import { BUTTON_LABEL } from '@/constants/LABEL';
+import { StatusDotType } from '@/types/COMMON';
 
 interface StatusDotProps {
-	variant: 'Active' | 'Inactive' | 'Warning' | 'Emergency' | 'Missing';
+	variant: (typeof StatusDotType)[number];
 }
 
 export default function StatusDot(props: StatusDotProps) {

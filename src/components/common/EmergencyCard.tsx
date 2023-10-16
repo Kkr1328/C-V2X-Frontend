@@ -4,11 +4,11 @@ import IconMapper from '@/utils/IconMapper';
 import { Card, IconButton, Skeleton, Stack } from '@mui/material';
 
 interface EmeregncyCardProps {
-	carName: string;
+	carName?: string;
 	handleLocate?: () => void;
-	time: string;
+	time?: string;
 	driverPhoneNo?: string;
-	state: Emergency;
+	state?: Emergency;
 	isLoading?: boolean;
 }
 
@@ -17,11 +17,11 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 		<Skeleton
 			animation="wave"
 			variant="rectangular"
-			className="rounded-l-none rounded-r-lg border-l-8 h-[83px] w-300 border-light_text_grey"
+			className="w-300 h-[83px] rounded-l-none rounded-r-lg border-l-8 border-light_text_grey"
 		/>
 	) : (
 		<Card
-			className={`w-300 rounded-l-none rounded-r-lg border-l-8 p-16 bg-dark_background_grey ${
+			className={`w-300 h-[83px] rounded-l-none rounded-r-lg border-l-8 p-16 bg-dark_background_grey ${
 				props.state === 'PENDING'
 					? 'border-error_red'
 					: props.state === 'IN PROGRESS'
