@@ -43,9 +43,12 @@ export default function Home() {
 	const { data: cars, loading: carsLoading } = useSelector(selectGetCars);
 	const { data: camerasList } = useSelector(selectGetCamerasList);
 	const { data: driversList } = useSelector(selectGetDriversList);
-	const { error: createCarError } = useSelector(selectCreateCar);
-	const { error: updateCarError } = useSelector(selectUpdateCar);
-	const { error: deleteCarError } = useSelector(selectDeleteCar);
+	const { error: registerCarError, loading: registerCarLoading } =
+		useSelector(selectCreateCar);
+	const { error: updateCarError, loading: updateCarLoading } =
+		useSelector(selectUpdateCar);
+	const { error: deleteCarError, loading: deleteCarLoading } =
+		useSelector(selectDeleteCar);
 
 	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
@@ -102,7 +105,7 @@ export default function Home() {
 		setRegisterModalData(defaultData);
 	};
 	const handleRegisterNotification = () => {
-		if (!createCarError) {
+		if (!registerCarError) {
 			enqueueSnackbar('Register a RSU successfully', {
 				variant: 'success',
 			});
@@ -118,9 +121,7 @@ export default function Home() {
 				model: registerModalData.model,
 				driver_id: registerModalData.driver_id || '',
 			})
-		)
-			.then(refetchData)
-			.then(handleRegisterNotification);
+		).then(refetchData);
 		handleCloseRegisterModal();
 	};
 
@@ -153,9 +154,7 @@ export default function Home() {
 					driver_id: updateModalData.driver_id || '',
 				},
 			})
-		)
-			.then(refetchData)
-			.then(handleUpdateNotification);
+		).then(refetchData);
 		handleCloseUpdateModal();
 	};
 
@@ -178,9 +177,7 @@ export default function Home() {
 		}
 	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_CAR({ id: deleteModalData.id }))
-			.then(refetchData)
-			.then(handleDeleteNotification);
+		dispatch(FETCH_DELETE_CAR({ id: deleteModalData.id })).then(refetchData);
 		handleCloseDeleteModal();
 	};
 
@@ -219,6 +216,18 @@ export default function Home() {
 	useEffect(() => {
 		refetchData();
 	}, []);
+
+	useEffect(() => {
+		if (!registerCarLoading && registerCarLoading !== undefined) {
+			handleRegisterNotification();
+		}
+		if (!updateCarLoading && updateCarLoading !== undefined) {
+			handleUpdateNotification();
+		}
+		if (!deleteCarLoading && deleteCarLoading !== undefined) {
+			handleDeleteNotification();
+		}
+	}, [registerCarLoading, updateCarLoading, deleteCarLoading]);
 
 	return (
 		<>
