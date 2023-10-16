@@ -7,7 +7,7 @@ const getRSUsReducer = createReducer(initialState, (builder) =>
 	builder
 		.addCase(FETCH_GET_RSUS.pending, (state) => ({ ...state, loading: true }))
 		.addCase(FETCH_GET_RSUS.fulfilled, (_, { payload }) => {
-			return { loading: false, data: payload };
+			return { loading: false, data: payload, error: undefined };
 		})
 		.addCase(FETCH_GET_RSUS.rejected, (_, action) => ({
 			loading: false,

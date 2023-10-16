@@ -12,6 +12,7 @@ const deleteDriverReducer = createReducer(initialState, (builder) =>
 		.addCase(FETCH_DELETE_DRIVER.fulfilled, (state) => ({
 			...state,
 			loading: false,
+			error: undefined,
 		}))
 		.addCase(FETCH_DELETE_DRIVER.rejected, (state, action) => ({
 			...state,

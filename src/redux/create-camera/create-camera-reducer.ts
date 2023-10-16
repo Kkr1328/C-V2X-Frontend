@@ -12,6 +12,7 @@ const createCameraReducer = createReducer(initialState, (builder) =>
 		.addCase(FETCH_CREATE_CAMERA.fulfilled, (state) => ({
 			...state,
 			loading: false,
+			error: undefined,
 		}))
 		.addCase(FETCH_CREATE_CAMERA.rejected, (state, action) => ({
 			...state,

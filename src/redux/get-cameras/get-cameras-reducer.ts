@@ -10,7 +10,7 @@ const getCamerasReducer = createReducer(initialState, (builder) =>
 			loading: true,
 		}))
 		.addCase(FETCH_GET_CAMERAS.fulfilled, (_, { payload }) => {
-			return { loading: false, data: payload };
+			return { loading: false, data: payload, error: undefined };
 		})
 		.addCase(FETCH_GET_CAMERAS.rejected, (_, action) => ({
 			loading: false,

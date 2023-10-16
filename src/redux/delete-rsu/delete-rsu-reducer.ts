@@ -12,6 +12,7 @@ const deleteRSUReducer = createReducer(initialState, (builder) =>
 		.addCase(FETCH_DELETE_RSU.fulfilled, (state) => ({
 			...state,
 			loading: false,
+			error: undefined,
 		}))
 		.addCase(FETCH_DELETE_RSU.rejected, (state, action) => ({
 			...state,
