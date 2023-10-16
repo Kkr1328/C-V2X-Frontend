@@ -1,0 +1,6 @@
+export const MAP_OBJECT_CONFIG = {
+    NORMAL_PIN_SIZE : 64,
+    FOCUS_PIN_SIZE : 84,
+    IMAGE_PROFILE_SIZE : 32,
+    COVER_AREA_COLOR : '#17A5D3'
+}
