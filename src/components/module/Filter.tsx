@@ -81,7 +81,10 @@ export default function Filter<T>(props: FilterProp<T>) {
 												) || null
 										}
 										onChange={(_, value) => {
-											value && handleSearchChange(inputField.id, value.value);
+											handleSearchChange(
+												inputField.id,
+												value ? value.value : ''
+											);
 										}}
 										options={
 											props.options.filter(
