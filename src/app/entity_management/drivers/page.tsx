@@ -42,10 +42,12 @@ export default function Home() {
 
 	const { data: drivers, loading: driversLoading } =
 		useSelector(selectGetDrivers);
-	const { error: createDriverError } = useSelector(selectCreateDriver);
+	const { error: registerDriverError, loading: registerDriverLoading } =
+		useSelector(selectCreateDriver);
 	const { error: updateDriverError, loading: updateDriverLoading } =
 		useSelector(selectUpdateDriver);
-	const { error: deleteDriverError } = useSelector(selectDeleteDriver);
+	const { error: deleteDriverError, loading: deleteDriverLoading } =
+		useSelector(selectDeleteDriver);
 
 	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
@@ -91,7 +93,7 @@ export default function Home() {
 		setRegisterModalData(defaultInputData);
 	};
 	const handleRegisterNotification = () => {
-		if (!createDriverError) {
+		if (!registerDriverError) {
 			enqueueSnackbar('Register a driver successfully', {
 				variant: 'success',
 			});
@@ -108,9 +110,7 @@ export default function Home() {
 				username: registerModalData.username,
 				password: registerModalData.password || '',
 			})
-		)
-			.then(refetchData)
-			.then(handleRegisterNotification);
+		).then(refetchData);
 		handleCloseRegisterModal();
 	};
 
@@ -148,9 +148,7 @@ export default function Home() {
 					password: updateModalData.password || '',
 				},
 			})
-		)
-			.then(refetchData)
-			.then(handleUpdateNotification);
+		).then(refetchData);
 		handleCloseUpdateModal();
 	};
 
@@ -173,9 +171,7 @@ export default function Home() {
 		}
 	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id }))
-			.then(refetchData)
-			.then(handleDeleteNotification);
+		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id })).then(refetchData);
 		handleCloseDeleteModal();
 	};
 
@@ -186,6 +182,18 @@ export default function Home() {
 	useEffect(() => {
 		refetchData();
 	}, []);
+
+	useEffect(() => {
+		if (!registerDriverLoading && registerDriverLoading !== undefined) {
+			handleRegisterNotification();
+		}
+		if (!updateDriverLoading && updateDriverLoading !== undefined) {
+			handleUpdateNotification();
+		}
+		if (!deleteDriverLoading && deleteDriverLoading !== undefined) {
+			handleDeleteNotification();
+		}
+	}, [registerDriverLoading, updateDriverLoading, deleteDriverLoading]);
 
 	return (
 		<Fragment>
