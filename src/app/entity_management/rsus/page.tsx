@@ -37,9 +37,12 @@ export default function Home() {
 	const { enqueueSnackbar } = useSnackbar();
 
 	const { data: rsus, loading: rsusLoading } = useSelector(selectGetRSUs);
-	const { error: createRSUError } = useSelector(selectCreateRSU);
-	const { error: updateRSUError } = useSelector(selectUpdateRSU);
-	const { error: deleteRSUError } = useSelector(selectDeleteRSU);
+	const { error: registerRSUError, loading: registerRSULoading } =
+		useSelector(selectCreateRSU);
+	const { error: updateRSUError, loading: updateRSULoading } =
+		useSelector(selectUpdateRSU);
+	const { error: deleteRSUError, loading: deleteRSULoading } =
+		useSelector(selectDeleteRSU);
 
 	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
@@ -72,7 +75,7 @@ export default function Home() {
 		setRegisterModalData(defaultData);
 	};
 	const handleRegisterNotification = () => {
-		if (!createRSUError) {
+		if (!registerRSUError) {
 			enqueueSnackbar('Register a RSU successfully', {
 				variant: 'success',
 			});
@@ -81,9 +84,7 @@ export default function Home() {
 		}
 	};
 	const handleSubmitRegisterModal = () => {
-		dispatch(FETCH_CREATE_RSU(registerModalData))
-			.then(refetchData)
-			.then(handleRegisterNotification);
+		dispatch(FETCH_CREATE_RSU(registerModalData)).then(refetchData);
 		handleCloseRegisterModal();
 	};
 
@@ -111,9 +112,7 @@ export default function Home() {
 				query: updateModalData,
 				request: updateModalData,
 			})
-		)
-			.then(refetchData)
-			.then(handleUpdateNotification);
+		).then(refetchData);
 		handleCloseUpdateModal();
 	};
 
@@ -136,9 +135,7 @@ export default function Home() {
 		}
 	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_RSU(deleteModalData))
-			.then(refetchData)
-			.then(handleDeleteNotification);
+		dispatch(FETCH_DELETE_RSU(deleteModalData)).then(refetchData);
 		handleCloseDeleteModal();
 	};
 
@@ -149,6 +146,18 @@ export default function Home() {
 	useEffect(() => {
 		refetchData();
 	}, []);
+
+	useEffect(() => {
+		if (!registerRSULoading && registerRSULoading !== undefined) {
+			handleRegisterNotification();
+		}
+		if (!updateRSULoading && updateRSULoading !== undefined) {
+			handleUpdateNotification();
+		}
+		if (!deleteRSULoading && deleteRSULoading !== undefined) {
+			handleDeleteNotification();
+		}
+	}, [registerRSULoading, updateRSULoading, deleteRSULoading]);
 
 	return (
 		<>
