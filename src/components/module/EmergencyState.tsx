@@ -16,12 +16,14 @@ export default function EmergencyState(props: EmergencyStateProps) {
 
 	return (
 		<Droppable key={props.title} droppableId={props.droppableId}>
-			{(provided) => {
+			{(provided, snapshot) => {
 				return (
 					<Card
 						ref={provided.innerRef}
 						{...provided.droppableProps}
-						className="h-[calc(100vh-192px)] bg-white rounded-lg p-32 w-fit"
+						className={`h-[calc(100vh-192px)] ${
+							snapshot.isDraggingOver ? 'bg-light_background_blue' : 'bg-white'
+						} rounded-lg p-32 w-fit`}
 					>
 						<Stack className="items-center h-full">
 							<Stack direction="row" className="w-full">
