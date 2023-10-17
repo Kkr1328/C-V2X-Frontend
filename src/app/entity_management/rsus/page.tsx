@@ -44,6 +44,34 @@ export default function Home() {
 	const { error: deleteRSUError, loading: deleteRSULoading } =
 		useSelector(selectDeleteRSU);
 
+	const defaultFilterData = RSUFilterTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as IGetRSUsRequest[keyof IGetRSUsRequest],
+		}),
+		{} as IGetRSUsRequest
+	);
+
+	// fiiter state
+	const [search, setSearch] = useState<IGetRSUsRequest>(defaultFilterData);
+
+	const getSearch = (id: keyof IGetRSUsRequest) => {
+		if (search) {
+			return search[id] as string;
+		}
+		return '';
+	};
+	const handleSearchChange = (id: keyof IGetRSUsRequest, value: string) => {
+		setSearch({
+			...search,
+			[id]: value,
+		} as IGetRSUsRequest);
+	};
+	const handleClearSearch = () => {
+		setSearch(defaultFilterData);
+	};
+	const handleOnSearch = () => dispatch(FETCH_GET_RSUS(search));
+
 	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
@@ -140,8 +168,11 @@ export default function Home() {
 	};
 
 	const refetchData = () => dispatch(FETCH_GET_RSUS({}));
-	const handleOnSearch = (search: IGetRSUsRequest) =>
-		dispatch(FETCH_GET_RSUS(search));
+
+	const handleOnClickRefresh = () => {
+		handleClearSearch();
+		refetchData();
+	};
 
 	useEffect(() => {
 		refetchData();
@@ -227,6 +258,9 @@ export default function Home() {
 						<Filter
 							template={RSUFilterTemplate}
 							handleSubmitSearch={handleOnSearch}
+							getSearch={getSearch}
+							handleSearchChange={handleSearchChange}
+							handleClearSearch={handleClearSearch}
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
@@ -244,7 +278,7 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={BUTTON_LABEL.REFRESH}
 								variant="outlined"
-								onClick={refetchData}
+								onClick={handleOnClickRefresh}
 							/>
 						</Stack>
 						<TableCV2X<IRSU>

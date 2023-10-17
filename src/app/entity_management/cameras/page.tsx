@@ -48,6 +48,34 @@ export default function Home() {
 	const { error: deleteCameraError, loading: deleteCameraLoading } =
 		useSelector(selectDeleteCamera);
 
+	const defaultFilterData = CameraFilterTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as IGetCamerasRequest[keyof IGetCamerasRequest],
+		}),
+		{} as IGetCamerasRequest
+	);
+
+	// fiiter state
+	const [search, setSearch] = useState<IGetCamerasRequest>(defaultFilterData);
+
+	const getSearch = (id: keyof IGetCamerasRequest) => {
+		if (search) {
+			return search[id] as string;
+		}
+		return '';
+	};
+	const handleSearchChange = (id: keyof IGetCamerasRequest, value: string) => {
+		setSearch({
+			...search,
+			[id]: value,
+		} as IGetCamerasRequest);
+	};
+	const handleClearSearch = () => {
+		setSearch(defaultFilterData);
+	};
+	const handleOnSearch = () => dispatch(FETCH_GET_CAMERAS(search));
+
 	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
@@ -161,8 +189,12 @@ export default function Home() {
 		dispatch(FETCH_GET_CAMERAS({}));
 		dispatch(FETCH_GET_CARS_LIST());
 	};
-	const handleOnSearch = (search: IGetCamerasRequest) =>
-		dispatch(FETCH_GET_CAMERAS(search));
+
+	const handleOnClickRefresh = () => {
+		handleClearSearch();
+		refetchData();
+	};
+
 	const generateOptions = () => {
 		const positionOption = [
 			{
@@ -273,6 +305,9 @@ export default function Home() {
 						<Filter
 							template={CameraFilterTemplate}
 							handleSubmitSearch={handleOnSearch}
+							getSearch={getSearch}
+							handleSearchChange={handleSearchChange}
+							handleClearSearch={handleClearSearch}
 							options={generateOptions()}
 						/>
 						<Divider />
@@ -291,7 +326,7 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={BUTTON_LABEL.REFRESH}
 								variant="outlined"
-								onClick={refetchData}
+								onClick={handleOnClickRefresh}
 							/>
 						</Stack>
 						<TableCV2X<ICamera>

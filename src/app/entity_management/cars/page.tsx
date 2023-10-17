@@ -50,6 +50,34 @@ export default function Home() {
 	const { error: deleteCarError, loading: deleteCarLoading } =
 		useSelector(selectDeleteCar);
 
+	const defaultFilterData = CarFilterTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as IGetCarsRequest[keyof IGetCarsRequest],
+		}),
+		{} as IGetCarsRequest
+	);
+
+	// fiiter state
+	const [search, setSearch] = useState<IGetCarsRequest>(defaultFilterData);
+
+	const getSearch = (id: keyof IGetCarsRequest) => {
+		if (search) {
+			return search[id] as string;
+		}
+		return '';
+	};
+	const handleSearchChange = (id: keyof IGetCarsRequest, value: string) => {
+		setSearch({
+			...search,
+			[id]: value,
+		} as IGetCarsRequest);
+	};
+	const handleClearSearch = () => {
+		setSearch(defaultFilterData);
+	};
+	const handleOnSearch = () => dispatch(FETCH_GET_CARS(search));
+
 	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
@@ -186,8 +214,12 @@ export default function Home() {
 		dispatch(FETCH_GET_CAMERAS_LIST());
 		dispatch(FETCH_GET_DRIVERS_LIST());
 	};
-	const handleOnSearch = (search: IGetCarsRequest) =>
-		dispatch(FETCH_GET_CARS(search));
+
+	const handleOnClickRefresh = () => {
+		handleClearSearch();
+		refetchData();
+	};
+
 	const generateOptions = () => {
 		const cameraOption =
 			camerasList?.map((camera) => {
@@ -299,6 +331,9 @@ export default function Home() {
 						<Filter
 							template={CarFilterTemplate}
 							handleSubmitSearch={handleOnSearch}
+							getSearch={getSearch}
+							handleSearchChange={handleSearchChange}
+							handleClearSearch={handleClearSearch}
 							options={generateOptions()}
 						/>
 						<Divider />
@@ -317,6 +352,7 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={BUTTON_LABEL.REFRESH}
 								variant="outlined"
+								onClick={handleOnClickRefresh}
 							/>
 						</Stack>
 						<TableCV2X<ICar>

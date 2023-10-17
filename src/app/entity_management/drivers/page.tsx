@@ -49,6 +49,34 @@ export default function Home() {
 	const { error: deleteDriverError, loading: deleteDriverLoading } =
 		useSelector(selectDeleteDriver);
 
+	const defaultFilterData = DriverFilterTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as IGetDriversRequest[keyof IGetDriversRequest],
+		}),
+		{} as IGetDriversRequest
+	);
+
+	// fiiter state
+	const [search, setSearch] = useState<IGetDriversRequest>(defaultFilterData);
+
+	const getSearch = (id: keyof IGetDriversRequest) => {
+		if (search) {
+			return search[id] as string;
+		}
+		return '';
+	};
+	const handleSearchChange = (id: keyof IGetDriversRequest, value: string) => {
+		setSearch({
+			...search,
+			[id]: value,
+		} as IGetDriversRequest);
+	};
+	const handleClearSearch = () => {
+		setSearch(defaultFilterData);
+	};
+	const handleOnSearch = () => dispatch(FETCH_GET_DRIVERS(search));
+
 	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
@@ -176,8 +204,11 @@ export default function Home() {
 	};
 
 	const refetchData = () => dispatch(FETCH_GET_DRIVERS({}));
-	const handleOnSearch = (search: IGetDriversRequest) =>
-		dispatch(FETCH_GET_DRIVERS(search));
+
+	const handleOnClickRefresh = () => {
+		handleClearSearch();
+		refetchData();
+	};
 
 	useEffect(() => {
 		refetchData();
@@ -263,6 +294,9 @@ export default function Home() {
 						<Filter
 							template={DriverFilterTemplate}
 							handleSubmitSearch={handleOnSearch}
+							getSearch={getSearch}
+							handleSearchChange={handleSearchChange}
+							handleClearSearch={handleClearSearch}
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
@@ -280,7 +314,7 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={BUTTON_LABEL.REFRESH}
 								variant="outlined"
-								onClick={refetchData}
+								onClick={handleOnClickRefresh}
 							/>
 						</Stack>
 						<TableCV2X<IDriver>
