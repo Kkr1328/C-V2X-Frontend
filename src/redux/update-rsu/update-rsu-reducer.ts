@@ -12,6 +12,7 @@ const updateRSUReducer = createReducer(initialState, (builder) =>
 		.addCase(FETCH_UPDATE_RSU.fulfilled, (state) => ({
 			...state,
 			loading: false,
+			error: undefined,
 		}))
 		.addCase(FETCH_UPDATE_RSU.rejected, (state, action) => ({
 			...state,

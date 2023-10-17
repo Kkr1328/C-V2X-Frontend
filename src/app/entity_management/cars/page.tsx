@@ -15,8 +15,7 @@ import ModalInputs from '@/components/module/ModalInputs';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
-import { CarsProps } from '@/types/ENTITY';
-import { IGetCarsRequest } from '@/types/models/car.model';
+import { ICar, ICarInfo, IGetCarsRequest } from '@/types/models/car.model';
 // templates
 import { CarFilterTemplate } from '@/templates/FILTER';
 import { CarsTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -41,12 +40,43 @@ export default function Home() {
 	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 
-	const { data: cars } = useSelector(selectGetCars);
+	const { data: cars, loading: carsLoading } = useSelector(selectGetCars);
 	const { data: camerasList } = useSelector(selectGetCamerasList);
 	const { data: driversList } = useSelector(selectGetDriversList);
-	const { error: createCarError } = useSelector(selectCreateCar);
-	const { error: updateCarError } = useSelector(selectUpdateCar);
-	const { error: deleteCarError } = useSelector(selectDeleteCar);
+	const { error: registerCarError, loading: registerCarLoading } =
+		useSelector(selectCreateCar);
+	const { error: updateCarError, loading: updateCarLoading } =
+		useSelector(selectUpdateCar);
+	const { error: deleteCarError, loading: deleteCarLoading } =
+		useSelector(selectDeleteCar);
+
+	const defaultFilterData = CarFilterTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as IGetCarsRequest[keyof IGetCarsRequest],
+		}),
+		{} as IGetCarsRequest
+	);
+
+	// fiiter state
+	const [search, setSearch] = useState<IGetCarsRequest>(defaultFilterData);
+
+	const getSearch = (id: keyof IGetCarsRequest) => {
+		if (search) {
+			return search[id] as string;
+		}
+		return '';
+	};
+	const handleSearchChange = (id: keyof IGetCarsRequest, value: string) => {
+		setSearch({
+			...search,
+			[id]: value,
+		} as IGetCarsRequest);
+	};
+	const handleClearSearch = () => {
+		setSearch(defaultFilterData);
+	};
+	const handleOnSearch = () => dispatch(FETCH_GET_CARS(search));
 
 	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
@@ -57,24 +87,41 @@ export default function Home() {
 	const defaultData = CarActionModalTemplate.reduce(
 		(acc, item) => ({
 			...acc,
-			[item.id]: '' as CarsProps[keyof CarsProps],
+			[item.id]: '' as ICar[keyof ICar],
 		}),
-		{} as CarsProps
+		{} as ICar
+	);
+
+	const defaultInfoData = CarActionModalTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as ICarInfo[keyof ICarInfo],
+		}),
+		{} as ICarInfo
 	);
 
 	// Modal data state
 	const [informModalData, setInformModalData] =
-		useState<CarsProps>(defaultData);
-	const [registerModalData, setRegisterModalData] =
-		useState<CarsProps>(defaultData);
-	const [updateModalData, setUpdateModalData] =
-		useState<CarsProps>(defaultData);
-	const [deleteModalData, setDeleteModalData] =
-		useState<CarsProps>(defaultData);
+		useState<ICarInfo>(defaultInfoData);
+	const [registerModalData, setRegisterModalData] = useState<ICar>(defaultData);
+	const [updateModalData, setUpdateModalData] = useState<ICar>(defaultData);
+	const [deleteModalData, setDeleteModalData] = useState<ICar>(defaultData);
 
 	// Inform modal
-	const handleOpenInformModal = (informData: CarsProps) => {
-		setInformModalData(informData);
+	const handleOpenInformModal = (informData: ICar) => {
+		const front_cam =
+			informData.cameras.length !== 0 &&
+			informData.cameras.filter((camera) => camera.position === 'Front')[0];
+		const back_cam =
+			informData.cameras.length !== 0 &&
+			informData.cameras.filter((camera) => camera.position === 'Back')[0];
+		setInformModalData({
+			...informData,
+			front_cam_position: front_cam ? front_cam.position : '',
+			front_cam_name: front_cam ? front_cam.name : '',
+			back_cam_position: back_cam ? back_cam.position : '',
+			back_cam_name: back_cam ? back_cam.name : '',
+		});
 		setOpenInformModal(true);
 	};
 	const handleCloseInformModal = () => setOpenInformModal(false);
@@ -86,7 +133,7 @@ export default function Home() {
 		setRegisterModalData(defaultData);
 	};
 	const handleRegisterNotification = () => {
-		if (!createCarError) {
+		if (!registerCarError) {
 			enqueueSnackbar('Register a RSU successfully', {
 				variant: 'success',
 			});
@@ -101,17 +148,13 @@ export default function Home() {
 				license_plate: registerModalData.license_plate,
 				model: registerModalData.model,
 				driver_id: registerModalData.driver_id || '',
-				front_cam_id: registerModalData.front_camera || '',
-				back_cam_id: registerModalData.back_camera || '',
 			})
-		)
-			.then(refetchData)
-			.then(handleRegisterNotification);
+		).then(refetchData);
 		handleCloseRegisterModal();
 	};
 
 	// Update modal
-	const handleOpenUpdateModal = (updateData: CarsProps) => {
+	const handleOpenUpdateModal = (updateData: ICar) => {
 		setUpdateModalData(updateData);
 		setOpenUpdateModal(true);
 	};
@@ -137,18 +180,14 @@ export default function Home() {
 					license_plate: updateModalData.license_plate,
 					model: updateModalData.model,
 					driver_id: updateModalData.driver_id || '',
-					front_cam_id: updateModalData.front_camera || '',
-					back_cam_id: updateModalData.back_camera || '',
 				},
 			})
-		)
-			.then(refetchData)
-			.then(handleUpdateNotification);
+		).then(refetchData);
 		handleCloseUpdateModal();
 	};
 
 	// Delete modal
-	const handleOpenDeleteModal = (deleteData: CarsProps) => {
+	const handleOpenDeleteModal = (deleteData: ICar) => {
 		setDeleteModalData(deleteData);
 		setOpenDeleteModal(true);
 	};
@@ -166,9 +205,7 @@ export default function Home() {
 		}
 	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_CAR({ id: deleteModalData.id }))
-			.then(refetchData)
-			.then(handleDeleteNotification);
+		dispatch(FETCH_DELETE_CAR({ id: deleteModalData.id })).then(refetchData);
 		handleCloseDeleteModal();
 	};
 
@@ -177,8 +214,12 @@ export default function Home() {
 		dispatch(FETCH_GET_CAMERAS_LIST());
 		dispatch(FETCH_GET_DRIVERS_LIST());
 	};
-	const handleOnSearch = (search: IGetCarsRequest) =>
-		dispatch(FETCH_GET_CARS(search));
+
+	const handleOnClickRefresh = () => {
+		handleClearSearch();
+		refetchData();
+	};
+
 	const generateOptions = () => {
 		const cameraOption =
 			camerasList?.map((camera) => {
@@ -190,11 +231,11 @@ export default function Home() {
 			}) || [];
 		return [
 			{
-				id: 'front_camera',
+				id: 'front_cam_id',
 				option: cameraOption,
 			},
 			{
-				id: 'back_camera',
+				id: 'back_cam_id',
 				option: cameraOption,
 			},
 			{
@@ -207,6 +248,24 @@ export default function Home() {
 	useEffect(() => {
 		refetchData();
 	}, []);
+
+	useEffect(() => {
+		if (!registerCarLoading && registerCarLoading !== undefined) {
+			handleRegisterNotification();
+		}
+	}, [registerCarLoading]);
+
+	useEffect(() => {
+		if (!updateCarLoading && updateCarLoading !== undefined) {
+			handleUpdateNotification();
+		}
+	}, [updateCarLoading]);
+
+	useEffect(() => {
+		if (!deleteCarLoading && deleteCarLoading !== undefined) {
+			handleDeleteNotification();
+		}
+	}, [deleteCarLoading]);
 
 	return (
 		<>
@@ -272,11 +331,16 @@ export default function Home() {
 						<Filter
 							template={CarFilterTemplate}
 							handleSubmitSearch={handleOnSearch}
+							getSearch={getSearch}
+							handleSearchChange={handleSearchChange}
+							handleClearSearch={handleClearSearch}
 							options={generateOptions()}
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
-							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
+							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total (${
+								cars?.length || 0
+							})`}</p>
 							<div className="grow" />
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REGISTER}
@@ -288,14 +352,16 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={BUTTON_LABEL.REFRESH}
 								variant="outlined"
+								onClick={handleOnClickRefresh}
 							/>
 						</Stack>
-						<TableCV2X<CarsProps>
+						<TableCV2X<ICar>
 							columns={CarsTableTemplate}
-							rows={(cars as CarsProps[]) ?? []}
+							rows={cars ?? []}
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
 							handleOnClickDelete={handleOpenDeleteModal}
+							isLoading={carsLoading}
 						/>
 					</Stack>
 				</Card>

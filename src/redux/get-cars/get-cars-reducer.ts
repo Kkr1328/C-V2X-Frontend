@@ -7,7 +7,7 @@ const getCarsReducer = createReducer(initialState, (builder) =>
 	builder
 		.addCase(FETCH_GET_CARS.pending, (state) => ({ ...state, loading: true }))
 		.addCase(FETCH_GET_CARS.fulfilled, (_, { payload }) => {
-			return { loading: false, data: payload };
+			return { loading: false, data: payload, error: undefined };
 		})
 		.addCase(FETCH_GET_CARS.rejected, (_, action) => ({
 			loading: false,

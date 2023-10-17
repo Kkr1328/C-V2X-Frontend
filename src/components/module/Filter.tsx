@@ -13,34 +13,14 @@ import { BUTTON_LABEL } from '@/constants/LABEL';
 
 interface FilterProp<T> {
 	template: InputFieldProp<T>[];
-	handleSubmitSearch: (search: T) => void;
+	handleSubmitSearch: () => void;
+	getSearch: (id: keyof T) => string;
+	handleSearchChange: (id: keyof T, value: string) => void;
+	handleClearSearch: () => void;
 	options?: any;
 }
 
 export default function Filter<T>(props: FilterProp<T>) {
-	const defaultSearch = props.template.reduce(
-		(acc, item) => ({ ...acc, [item.id]: '' as T[keyof T] }),
-		{} as T
-	);
-
-	const [search, setSearch] = useState<T>(defaultSearch);
-
-	const getSearch = (id: keyof T) => {
-		if (search) {
-			return search[id] as string;
-		}
-		return '';
-	};
-	const handleSearchChange = (id: keyof T, value: string) => {
-		setSearch({
-			...search,
-			[id]: value,
-		} as T);
-	};
-	const handleClearSearch = () => {
-		setSearch(defaultSearch);
-	};
-
 	const maxRow =
 		Math.max(...props.template.map((item) => item.row), 0) +
 		Number(props.template.length % 4 === 0);
@@ -61,9 +41,9 @@ export default function Filter<T>(props: FilterProp<T>) {
 									key={inputField.label}
 									title={inputField.label}
 									placeholder={inputField.placeholder}
-									value={getSearch(inputField.id)}
+									value={props.getSearch(inputField.id)}
 									onChange={(event) =>
-										handleSearchChange(inputField.id, event.target.value)
+										props.handleSearchChange(inputField.id, event.target.value)
 									}
 								/>
 							) : (
@@ -77,11 +57,14 @@ export default function Filter<T>(props: FilterProp<T>) {
 												.filter((item: any) => item.id === inputField.id)[0]
 												.option.find(
 													(option: any) =>
-														option.value === getSearch(inputField.id)
+														option.value === props.getSearch(inputField.id)
 												) || null
 										}
 										onChange={(_, value) => {
-											value && handleSearchChange(inputField.id, value.value);
+											props.handleSearchChange(
+												inputField.id,
+												value ? value.value : ''
+											);
 										}}
 										options={
 											props.options.filter(
@@ -107,13 +90,13 @@ export default function Filter<T>(props: FilterProp<T>) {
 									icon={BUTTON_LABEL.CLEAR}
 									label={BUTTON_LABEL.CLEAR}
 									variant="outlined"
-									onClick={handleClearSearch}
+									onClick={props.handleClearSearch}
 								/>
 								<ButtonCV2X
 									icon={BUTTON_LABEL.SEARCH}
 									label={BUTTON_LABEL.SEARCH}
 									variant="contained"
-									onClick={() => props.handleSubmitSearch(search)}
+									onClick={props.handleSubmitSearch}
 								/>
 							</Stack>
 						</Fragment>

@@ -10,7 +10,7 @@ const getDriversReducer = createReducer(initialState, (builder) =>
 			loading: true,
 		}))
 		.addCase(FETCH_GET_DRIVERS.fulfilled, (_, { payload }) => {
-			return { loading: false, data: payload };
+			return { loading: false, data: payload, error: undefined };
 		})
 		.addCase(FETCH_GET_DRIVERS.rejected, (_, action) => ({
 			loading: false,

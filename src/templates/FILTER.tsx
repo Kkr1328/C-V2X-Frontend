@@ -1,9 +1,11 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
 import { InputFieldProp } from '@/types/COMMON';
-import { CamerasProps, CarsProps, DriversProps } from '@/types/ENTITY';
+import { IGetCarsRequest } from '@/types/models/car.model';
+import { IGetCamerasRequest } from '@/types/models/camera.model';
+import { IGetDriversRequest } from '@/types/models/driver.model';
 import { IGetRSUsRequest } from '@/types/models/rsu.model';
 
-export const CarFilterTemplate: InputFieldProp<CarsProps>[] = [
+export const CarFilterTemplate: InputFieldProp<IGetCarsRequest>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
@@ -33,14 +35,14 @@ export const CarFilterTemplate: InputFieldProp<CarsProps>[] = [
 		row: 1,
 	},
 	{
-		id: 'front_camera',
+		id: 'front_cam_id',
 		label: INPUT_LABEL.FRONT_CAMERA,
 		type: 'Select',
 		placeholder: 'ex. Camera01',
 		row: 2,
 	},
 	{
-		id: 'back_camera',
+		id: 'back_cam_id',
 		label: INPUT_LABEL.BACK_CAMERA,
 		type: 'Select',
 		placeholder: 'ex. Camera01',
@@ -55,7 +57,7 @@ export const CarFilterTemplate: InputFieldProp<CarsProps>[] = [
 	},
 ];
 
-export const DriverFilterTemplate: InputFieldProp<DriversProps>[] = [
+export const DriverFilterTemplate: InputFieldProp<IGetDriversRequest>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,
@@ -93,7 +95,7 @@ export const DriverFilterTemplate: InputFieldProp<DriversProps>[] = [
 	},
 ];
 
-export const CameraFilterTemplate: InputFieldProp<CamerasProps>[] = [
+export const CameraFilterTemplate: InputFieldProp<IGetCamerasRequest>[] = [
 	{
 		id: 'id',
 		label: INPUT_LABEL.ID,

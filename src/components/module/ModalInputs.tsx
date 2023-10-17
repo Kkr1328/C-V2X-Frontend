@@ -32,7 +32,6 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 			...props.data,
 			[id]: value,
 		} as T);
-		console.log(props.data);
 	};
 
 	return (
@@ -42,47 +41,51 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 					{props.template
 						.filter((inputField) => inputField.row === index + 1)
 						.map((inputField) =>
-							props.isReadOnly || inputField.type === 'TextField' ? (
-								<TextFieldCV2X
-									key={inputField.label}
-									title={inputField.label}
-									placeholder={inputField.placeholder}
-									isRequired={inputField.isRequired}
-									isPassword={inputField.isPassword}
-									isReadOnly={props.isReadOnly}
-									isLoading={props.isLoading}
-									value={getSearch(inputField.id)}
-									onChange={(event) =>
-										handleSearchChange(inputField.id, event.target.value)
-									}
-								/>
-							) : (
-								inputField.type === 'Select' && (
-									<SelectCV2X
-										key={inputField.label}
-										title={inputField.label}
-										placeholder={inputField.placeholder}
-										isRequired={inputField.isRequired}
-										isLoading={props.isLoading}
-										value={
-											props.options
-												.filter((item: any) => item.id === inputField.id)[0]
-												.option.find(
-													(option: any) =>
-														option.value === getSearch(inputField.id)
-												) || null
-										}
-										onChange={(_, value) => {
-											value && handleSearchChange(inputField.id, value.value);
-										}}
-										options={
-											props.options.filter(
-												(item: any) => item.id === inputField.id
-											)[0].option
-										}
-									/>
-								)
-							)
+							props.isReadOnly || inputField.type === 'TextField'
+								? ((inputField.id !== 'front_cam_name' &&
+										inputField.id !== 'front_cam_position' &&
+										inputField.id !== 'back_cam_name' &&
+										inputField.id !== 'back_cam_position') ||
+										getSearch(inputField.id) !== '') && (
+										<TextFieldCV2X
+											key={inputField.label}
+											title={inputField.label}
+											placeholder={inputField.placeholder}
+											isRequired={inputField.isRequired}
+											isPassword={inputField.isPassword}
+											isReadOnly={props.isReadOnly}
+											isLoading={props.isLoading}
+											value={getSearch(inputField.id)}
+											onChange={(event) =>
+												handleSearchChange(inputField.id, event.target.value)
+											}
+										/>
+								  )
+								: inputField.type === 'Select' && (
+										<SelectCV2X
+											key={inputField.label}
+											title={inputField.label}
+											placeholder={inputField.placeholder}
+											isRequired={inputField.isRequired}
+											isLoading={props.isLoading}
+											value={
+												props.options
+													.filter((item: any) => item.id === inputField.id)[0]
+													.option.find(
+														(option: any) =>
+															option.value === getSearch(inputField.id)
+													) || null
+											}
+											onChange={(_, value) => {
+												value && handleSearchChange(inputField.id, value.value);
+											}}
+											options={
+												props.options.filter(
+													(item: any) => item.id === inputField.id
+												)[0].option
+											}
+										/>
+								  )
 						)}
 				</Stack>
 			))}

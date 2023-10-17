@@ -1,5 +1,7 @@
+'use client';
+// react
 import * as React from 'react';
-
+// material ui
 import {
 	Table,
 	TableContainer,
@@ -10,12 +12,16 @@ import {
 	IconButton,
 	Stack,
 } from '@mui/material';
-
+// components
+import Loading from '@/components/common/Loading';
+import NoData from '@/components/common/NoData';
+import StatusDot from '@/components/common/StatusDot';
+// uitls
 import IconMapper from '@/utils/IconMapper';
-
+// consts
 import { BUTTON_LABEL } from '@/constants/LABEL';
+// types
 import { CameraType, TableHeaderProps, TableRowProps } from '@/types/ENTITY';
-import Loading from '../common/Loading';
 
 interface TableCV2XProps<T extends TableRowProps> {
 	columns: TableHeaderProps<T>[];
@@ -27,106 +33,165 @@ interface TableCV2XProps<T extends TableRowProps> {
 	isLoading?: boolean;
 }
 
+function HeaderCell<T>(props: { column: TableHeaderProps<T> }) {
+	return (
+		<TableCell
+			align={props.column.align}
+			className="p-16 bg-dark_background_grey"
+			sx={{
+				width: props.column.id === 'action' ? '132px' : 'auto',
+			}}
+		>
+			<p className="inline-block align-baseline font-istok text-black text-h5">
+				{props.column.label}
+			</p>
+		</TableCell>
+	);
+}
+
+function MissingValueCell() {
+	return (
+		<TableCell align={'center'} className="w-full">
+			<StatusDot variant={'Missing'} />
+		</TableCell>
+	);
+}
+
+function CameraCell<T>(props: { column: TableHeaderProps<T>; row: T }) {
+	return (
+		<TableCell align={props.column.align} className="w-full">
+			{(props.row[props.column.id as keyof T] as CameraType[]).map(
+				(camera, index) => (
+					<Stack direction="row" key={index}>
+						<p className="inline-block align-baseline font-istok text-black text-p1">
+							{camera.name as React.ReactNode}
+						</p>
+						<p className="inline-block align-baseline font-istok text-light_text_grey text-p1">
+							&nbsp;-&nbsp;
+							{camera.position as React.ReactNode}
+						</p>
+					</Stack>
+				)
+			)}
+		</TableCell>
+	);
+}
+
+function StringCell<T>(props: { column: TableHeaderProps<T>; row: T }) {
+	return (
+		<TableCell align={props.column.align} className="w-full">
+			<p className="break-all inline-block align-baseline font-istok text-black text-p1">
+				{props.row[props.column.id as keyof T] as string}
+			</p>
+		</TableCell>
+	);
+}
+
+function InformationButton(props: { onClick: () => void }) {
+	return (
+		<IconButton
+			disableRipple
+			className="p-none text-primary_blue"
+			onClick={props.onClick}
+		>
+			<IconMapper icon={BUTTON_LABEL.SEARCH} />
+		</IconButton>
+	);
+}
+
+function EditButton(props: { onClick: () => void }) {
+	return (
+		<IconButton
+			disableRipple
+			className="p-none text-black"
+			onClick={props.onClick}
+		>
+			<IconMapper icon={BUTTON_LABEL.UPDATE} />
+		</IconButton>
+	);
+}
+
+function DeleteButton(props: { onClick: () => void }) {
+	return (
+		<IconButton
+			disableRipple
+			className="p-none text-error_red"
+			onClick={props.onClick}
+		>
+			<IconMapper icon={BUTTON_LABEL.DELETE} />
+		</IconButton>
+	);
+}
+
 export default function TableCV2X<T extends TableRowProps>(
 	props: TableCV2XProps<T>
 ) {
 	return (
-		<TableContainer className="grow overflow-y-scroll">
-			<Table stickyHeader>
+		<TableContainer className="flex flex-col grow h-full overflow-y-scroll">
+			<Table stickyHeader sx={{ width: '100%', tableLayout: 'fixed' }}>
 				<TableHead>
 					<TableRow>
 						{props.columns.map((column, index) => (
-							<React.Fragment key={index}>
-								<TableCell
-									className="p-16 bg-dark_background_grey"
-									key={`header_item_${index}`}
-									align={column.align}
-								>
-									<p className="inline-block align-baseline font-istok text-black text-h5">
-										{column.label}
-									</p>
-								</TableCell>
-							</React.Fragment>
+							<HeaderCell key={index} column={column} />
 						))}
 					</TableRow>
 				</TableHead>
-				<TableBody>
-					{props.rows.map((row: T) => {
-						return (
-							<TableRow hover tabIndex={-1} key={row.id}>
+				{!props.isLoading && (
+					<TableBody>
+						{props.rows.map((row, index) => (
+							<TableRow hover tabIndex={-1} key={index}>
 								{props.columns.map((column, index) => {
-									if (column.id !== 'action') {
-										return (
-											<TableCell key={`row_item_${index}`} align={column.align}>
-												{column.id === 'cameras' ? (
-													(row[column.id] as CameraType[]).map(
-														(camera, index) => (
-															<Stack direction="row" key={index}>
-																<p className="inline-block align-baseline font-istok text-black text-p1">
-																	{camera.name as React.ReactNode}
-																</p>
-																<p className="inline-block align-baseline font-istok text-light_text_grey text-p1">
-																	&nbsp;-&nbsp;
-																	{camera.position as React.ReactNode}
-																</p>
-															</Stack>
-														)
-													)
-												) : (
-													<p className="inline-block align-baseline font-istok text-black text-p1">
-														{row[column.id] as React.ReactNode}
-													</p>
-												)}
-											</TableCell>
-										);
-									} else {
+									if (column.id === 'action') {
 										return (
 											<TableCell
-												key={column.id}
+												key={index}
 												align={column.align}
 												sx={{ width: '132px' }}
 											>
 												<Stack direction="row" className="gap-8 justify-center">
-													<IconButton
-														disableRipple
-														className="p-none text-primary_blue"
-														onClick={() => {
-															props.handleOnClickInformation &&
-																props.handleOnClickInformation(row);
-														}}
-													>
-														<IconMapper icon={BUTTON_LABEL.SEARCH} />
-													</IconButton>
-													<IconButton
-														disableRipple
-														className="p-none text-black"
-														onClick={() => {
-															props.handleOnClickUpdate &&
-																props.handleOnClickUpdate(row);
-														}}
-													>
-														<IconMapper icon={BUTTON_LABEL.UPDATE} />
-													</IconButton>
-													<IconButton
-														disableRipple
-														className="p-none text-error_red"
-														onClick={() => {
-															props.handleOnClickDelete &&
-																props.handleOnClickDelete(row);
-														}}
-													>
-														<IconMapper icon={BUTTON_LABEL.DELETE} />
-													</IconButton>
+													<InformationButton
+														onClick={() =>
+															props.handleOnClickInformation?.(row)
+														}
+													/>
+													<EditButton
+														onClick={() => props.handleOnClickUpdate?.(row)}
+													/>
+													<DeleteButton
+														onClick={() => props.handleOnClickDelete?.(row)}
+													/>
 												</Stack>
 											</TableCell>
+										);
+									} else if (column.id === 'cameras') {
+										return (
+											<React.Fragment key={index}>
+												{(row[column.id] as CameraType[]).length === 0 ? (
+													<MissingValueCell />
+												) : (
+													<CameraCell column={column} row={row} />
+												)}
+											</React.Fragment>
+										);
+									} else {
+										return (
+											<React.Fragment key={index}>
+												{(row[column.id] as string).length === 0 ? (
+													<MissingValueCell />
+												) : (
+													<StringCell column={column} row={row} />
+												)}
+											</React.Fragment>
 										);
 									}
 								})}
 							</TableRow>
-						);
-					})}
-				</TableBody>
+						))}
+					</TableBody>
+				)}
 			</Table>
+			{!props.isLoading && props.rows.length === 0 && <NoData />}
+			{props.isLoading && <Loading />}
 		</TableContainer>
 	);
 }

@@ -15,8 +15,7 @@ import ModalInputs from '@/components/module/ModalInputs';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
-import { CamerasProps } from '@/types/ENTITY';
-import { IGetCamerasRequest } from '@/types/models/camera.model';
+import { ICamera, IGetCamerasRequest } from '@/types/models/camera.model';
 // templates
 import { CameraFilterTemplate } from '@/templates/FILTER';
 import { CamerasTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -39,11 +38,43 @@ export default function Home() {
 	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 
-	const { data: cameras } = useSelector(selectGetCameras);
+	const { data: cameras, loading: camerasLoading } =
+		useSelector(selectGetCameras);
 	const { data: carsList } = useSelector(selectGetCarsList);
-	const { error: createCameraError } = useSelector(selectCreateCamera);
-	const { error: updateCameraError } = useSelector(selectUpdateCamera);
-	const { error: deleteCameraError } = useSelector(selectDeleteCamera);
+	const { error: registerCameraError, loading: registerCameraLoading } =
+		useSelector(selectCreateCamera);
+	const { error: updateCameraError, loading: updateCameraLoading } =
+		useSelector(selectUpdateCamera);
+	const { error: deleteCameraError, loading: deleteCameraLoading } =
+		useSelector(selectDeleteCamera);
+
+	const defaultFilterData = CameraFilterTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as IGetCamerasRequest[keyof IGetCamerasRequest],
+		}),
+		{} as IGetCamerasRequest
+	);
+
+	// fiiter state
+	const [search, setSearch] = useState<IGetCamerasRequest>(defaultFilterData);
+
+	const getSearch = (id: keyof IGetCamerasRequest) => {
+		if (search) {
+			return search[id] as string;
+		}
+		return '';
+	};
+	const handleSearchChange = (id: keyof IGetCamerasRequest, value: string) => {
+		setSearch({
+			...search,
+			[id]: value,
+		} as IGetCamerasRequest);
+	};
+	const handleClearSearch = () => {
+		setSearch(defaultFilterData);
+	};
+	const handleOnSearch = () => dispatch(FETCH_GET_CAMERAS(search));
 
 	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
@@ -54,23 +85,20 @@ export default function Home() {
 	const defaultData = CameraActionModalTemplate.reduce(
 		(acc, item) => ({
 			...acc,
-			[item.id]: '' as CamerasProps[keyof CamerasProps],
+			[item.id]: '' as ICamera[keyof ICamera],
 		}),
-		{} as CamerasProps
+		{} as ICamera
 	);
 
 	// Modal data state
-	const [informModalData, setInformModalData] =
-		useState<CamerasProps>(defaultData);
+	const [informModalData, setInformModalData] = useState<ICamera>(defaultData);
 	const [registerModalData, setRegisterModalData] =
-		useState<CamerasProps>(defaultData);
-	const [updateModalData, setUpdateModalData] =
-		useState<CamerasProps>(defaultData);
-	const [deleteModalData, setDeleteModalData] =
-		useState<CamerasProps>(defaultData);
+		useState<ICamera>(defaultData);
+	const [updateModalData, setUpdateModalData] = useState<ICamera>(defaultData);
+	const [deleteModalData, setDeleteModalData] = useState<ICamera>(defaultData);
 
 	// Inform modal
-	const handleOpenInformModal = (informData: CamerasProps) => {
+	const handleOpenInformModal = (informData: ICamera) => {
 		setInformModalData(informData);
 		setOpenInformModal(true);
 	};
@@ -83,7 +111,7 @@ export default function Home() {
 		setRegisterModalData(defaultData);
 	};
 	const handleRegisterNotification = () => {
-		if (!createCameraError) {
+		if (!registerCameraError) {
 			enqueueSnackbar('Register a camera successfully', {
 				variant: 'success',
 			});
@@ -98,14 +126,12 @@ export default function Home() {
 				position: registerModalData.position,
 				car_id: registerModalData.car_id,
 			})
-		)
-			.then(refetchData)
-			.then(handleRegisterNotification);
+		).then(refetchData);
 		handleCloseRegisterModal();
 	};
 
 	// Update modal
-	const handleOpenUpdateModal = (updateData: CamerasProps) => {
+	const handleOpenUpdateModal = (updateData: ICamera) => {
 		setUpdateModalData(updateData);
 		setOpenUpdateModal(true);
 	};
@@ -132,14 +158,12 @@ export default function Home() {
 					car_id: updateModalData.car_id,
 				},
 			})
-		)
-			.then(refetchData)
-			.then(handleUpdateNotification);
+		).then(refetchData);
 		handleCloseUpdateModal();
 	};
 
 	// Delete modal
-	const handleOpenDeleteModal = (deleteData: CamerasProps) => {
+	const handleOpenDeleteModal = (deleteData: ICamera) => {
 		setDeleteModalData(deleteData);
 		setOpenDeleteModal(true);
 	};
@@ -157,9 +181,7 @@ export default function Home() {
 		}
 	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_CAMERA({ id: deleteModalData.id }))
-			.then(refetchData)
-			.then(handleDeleteNotification);
+		dispatch(FETCH_DELETE_CAMERA({ id: deleteModalData.id })).then(refetchData);
 		handleCloseDeleteModal();
 	};
 
@@ -167,8 +189,12 @@ export default function Home() {
 		dispatch(FETCH_GET_CAMERAS({}));
 		dispatch(FETCH_GET_CARS_LIST());
 	};
-	const handleOnSearch = (search: IGetCamerasRequest) =>
-		dispatch(FETCH_GET_CAMERAS(search));
+
+	const handleOnClickRefresh = () => {
+		handleClearSearch();
+		refetchData();
+	};
+
 	const generateOptions = () => {
 		const positionOption = [
 			{
@@ -196,6 +222,24 @@ export default function Home() {
 	useEffect(() => {
 		refetchData();
 	}, []);
+
+	useEffect(() => {
+		if (!registerCameraLoading && registerCameraLoading !== undefined) {
+			handleRegisterNotification();
+		}
+	}, [registerCameraLoading]);
+
+	useEffect(() => {
+		if (!updateCameraLoading && updateCameraLoading !== undefined) {
+			handleUpdateNotification();
+		}
+	}, [updateCameraLoading]);
+
+	useEffect(() => {
+		if (!deleteCameraLoading && deleteCameraLoading !== undefined) {
+			handleDeleteNotification();
+		}
+	}, [deleteCameraLoading]);
 
 	return (
 		<>
@@ -261,11 +305,16 @@ export default function Home() {
 						<Filter
 							template={CameraFilterTemplate}
 							handleSubmitSearch={handleOnSearch}
+							getSearch={getSearch}
+							handleSearchChange={handleSearchChange}
+							handleClearSearch={handleClearSearch}
 							options={generateOptions()}
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
-							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
+							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total (${
+								cameras?.length || 0
+							})`}</p>
 							<div className="grow" />
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REGISTER}
@@ -277,15 +326,16 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={BUTTON_LABEL.REFRESH}
 								variant="outlined"
-								onClick={refetchData}
+								onClick={handleOnClickRefresh}
 							/>
 						</Stack>
-						<TableCV2X<CamerasProps>
+						<TableCV2X<ICamera>
 							columns={CamerasTableTemplate}
-							rows={(cameras as CamerasProps[]) ?? []}
+							rows={(cameras as ICamera[]) ?? []}
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
 							handleOnClickDelete={handleOpenDeleteModal}
+							isLoading={camerasLoading}
 						/>
 					</Stack>
 				</Card>

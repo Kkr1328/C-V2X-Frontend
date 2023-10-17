@@ -12,6 +12,7 @@ const deleteCarReducer = createReducer(initialState, (builder) =>
 		.addCase(FETCH_DELETE_CAR.fulfilled, (state) => ({
 			...state,
 			loading: false,
+			error: undefined,
 		}))
 		.addCase(FETCH_DELETE_CAR.rejected, (state, action) => ({
 			...state,

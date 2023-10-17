@@ -36,10 +36,41 @@ export default function Home() {
 	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 
-	const { data: rsus } = useSelector(selectGetRSUs);
-	const { error: createRSUError } = useSelector(selectCreateRSU);
-	const { error: updateRSUError } = useSelector(selectUpdateRSU);
-	const { error: deleteRSUError } = useSelector(selectDeleteRSU);
+	const { data: rsus, loading: rsusLoading } = useSelector(selectGetRSUs);
+	const { error: registerRSUError, loading: registerRSULoading } =
+		useSelector(selectCreateRSU);
+	const { error: updateRSUError, loading: updateRSULoading } =
+		useSelector(selectUpdateRSU);
+	const { error: deleteRSUError, loading: deleteRSULoading } =
+		useSelector(selectDeleteRSU);
+
+	const defaultFilterData = RSUFilterTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as IGetRSUsRequest[keyof IGetRSUsRequest],
+		}),
+		{} as IGetRSUsRequest
+	);
+
+	// fiiter state
+	const [search, setSearch] = useState<IGetRSUsRequest>(defaultFilterData);
+
+	const getSearch = (id: keyof IGetRSUsRequest) => {
+		if (search) {
+			return search[id] as string;
+		}
+		return '';
+	};
+	const handleSearchChange = (id: keyof IGetRSUsRequest, value: string) => {
+		setSearch({
+			...search,
+			[id]: value,
+		} as IGetRSUsRequest);
+	};
+	const handleClearSearch = () => {
+		setSearch(defaultFilterData);
+	};
+	const handleOnSearch = () => dispatch(FETCH_GET_RSUS(search));
 
 	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
@@ -72,7 +103,7 @@ export default function Home() {
 		setRegisterModalData(defaultData);
 	};
 	const handleRegisterNotification = () => {
-		if (!createRSUError) {
+		if (!registerRSUError) {
 			enqueueSnackbar('Register a RSU successfully', {
 				variant: 'success',
 			});
@@ -81,9 +112,7 @@ export default function Home() {
 		}
 	};
 	const handleSubmitRegisterModal = () => {
-		dispatch(FETCH_CREATE_RSU(registerModalData))
-			.then(refetchData)
-			.then(handleRegisterNotification);
+		dispatch(FETCH_CREATE_RSU(registerModalData)).then(refetchData);
 		handleCloseRegisterModal();
 	};
 
@@ -111,9 +140,7 @@ export default function Home() {
 				query: updateModalData,
 				request: updateModalData,
 			})
-		)
-			.then(refetchData)
-			.then(handleUpdateNotification);
+		).then(refetchData);
 		handleCloseUpdateModal();
 	};
 
@@ -136,19 +163,38 @@ export default function Home() {
 		}
 	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_RSU(deleteModalData))
-			.then(refetchData)
-			.then(handleDeleteNotification);
+		dispatch(FETCH_DELETE_RSU(deleteModalData)).then(refetchData);
 		handleCloseDeleteModal();
 	};
 
 	const refetchData = () => dispatch(FETCH_GET_RSUS({}));
-	const handleOnSearch = (search: IGetRSUsRequest) =>
-		dispatch(FETCH_GET_RSUS(search));
+
+	const handleOnClickRefresh = () => {
+		handleClearSearch();
+		refetchData();
+	};
 
 	useEffect(() => {
 		refetchData();
 	}, []);
+
+	useEffect(() => {
+		if (!registerRSULoading && registerRSULoading !== undefined) {
+			handleRegisterNotification();
+		}
+	}, [registerRSULoading]);
+
+	useEffect(() => {
+		if (!updateRSULoading && updateRSULoading !== undefined) {
+			handleUpdateNotification();
+		}
+	}, [updateRSULoading]);
+
+	useEffect(() => {
+		if (!deleteRSULoading && deleteRSULoading !== undefined) {
+			handleDeleteNotification();
+		}
+	}, [deleteRSULoading]);
 
 	return (
 		<>
@@ -212,10 +258,15 @@ export default function Home() {
 						<Filter
 							template={RSUFilterTemplate}
 							handleSubmitSearch={handleOnSearch}
+							getSearch={getSearch}
+							handleSearchChange={handleSearchChange}
+							handleClearSearch={handleClearSearch}
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
-							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
+							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total (${
+								rsus?.length || 0
+							})`}</p>
 							<div className="grow" />
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REGISTER}
@@ -227,7 +278,7 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={BUTTON_LABEL.REFRESH}
 								variant="outlined"
-								onClick={refetchData}
+								onClick={handleOnClickRefresh}
 							/>
 						</Stack>
 						<TableCV2X<IRSU>
@@ -236,6 +287,7 @@ export default function Home() {
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
 							handleOnClickDelete={handleOpenDeleteModal}
+							isLoading={rsusLoading}
 						/>
 					</Stack>
 				</Card>

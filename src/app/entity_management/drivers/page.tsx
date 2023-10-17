@@ -15,8 +15,11 @@ import ModalInputs from '@/components/module/ModalInputs';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
-import { DriversProps } from '@/types/ENTITY';
-import { IGetDriversRequest } from '@/types/models/driver.model';
+import {
+	IDriver,
+	IDriverInput,
+	IGetDriversRequest,
+} from '@/types/models/driver.model';
 // templates
 import { DriverFilterTemplate } from '@/templates/FILTER';
 import { DriversTableTemplate } from '@/templates/ENTITY_TABLE';
@@ -37,11 +40,42 @@ export default function Home() {
 	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 
-	const { data: drivers } = useSelector(selectGetDrivers);
-	const { error: createDriverError } = useSelector(selectCreateDriver);
+	const { data: drivers, loading: driversLoading } =
+		useSelector(selectGetDrivers);
+	const { error: registerDriverError, loading: registerDriverLoading } =
+		useSelector(selectCreateDriver);
 	const { error: updateDriverError, loading: updateDriverLoading } =
 		useSelector(selectUpdateDriver);
-	const { error: deleteDriverError } = useSelector(selectDeleteDriver);
+	const { error: deleteDriverError, loading: deleteDriverLoading } =
+		useSelector(selectDeleteDriver);
+
+	const defaultFilterData = DriverFilterTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as IGetDriversRequest[keyof IGetDriversRequest],
+		}),
+		{} as IGetDriversRequest
+	);
+
+	// fiiter state
+	const [search, setSearch] = useState<IGetDriversRequest>(defaultFilterData);
+
+	const getSearch = (id: keyof IGetDriversRequest) => {
+		if (search) {
+			return search[id] as string;
+		}
+		return '';
+	};
+	const handleSearchChange = (id: keyof IGetDriversRequest, value: string) => {
+		setSearch({
+			...search,
+			[id]: value,
+		} as IGetDriversRequest);
+	};
+	const handleClearSearch = () => {
+		setSearch(defaultFilterData);
+	};
+	const handleOnSearch = () => dispatch(FETCH_GET_DRIVERS(search));
 
 	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
@@ -52,23 +86,29 @@ export default function Home() {
 	const defaultData = DriverActionModalTemplate.reduce(
 		(acc, item) => ({
 			...acc,
-			[item.id]: '' as DriversProps[keyof DriversProps],
+			[item.id]: '' as IDriver[keyof IDriver],
 		}),
-		{} as DriversProps
+		{} as IDriver
+	);
+
+	const defaultInputData = DriverActionModalTemplate.reduce(
+		(acc, item) => ({
+			...acc,
+			[item.id]: '' as IDriverInput[keyof IDriverInput],
+		}),
+		{} as IDriverInput
 	);
 
 	// Modal data state
-	const [informModalData, setInformModalData] =
-		useState<DriversProps>(defaultData);
+	const [informModalData, setInformModalData] = useState<IDriver>(defaultData);
 	const [registerModalData, setRegisterModalData] =
-		useState<DriversProps>(defaultData);
+		useState<IDriverInput>(defaultInputData);
 	const [updateModalData, setUpdateModalData] =
-		useState<DriversProps>(defaultData);
-	const [deleteModalData, setDeleteModalData] =
-		useState<DriversProps>(defaultData);
+		useState<IDriverInput>(defaultInputData);
+	const [deleteModalData, setDeleteModalData] = useState<IDriver>(defaultData);
 
 	// Inform modal
-	const handleOpenInformModal = (informData: DriversProps) => {
+	const handleOpenInformModal = (informData: IDriver) => {
 		setInformModalData(informData);
 		setOpenInformModal(true);
 	};
@@ -78,10 +118,10 @@ export default function Home() {
 	const handleOpenRegisterModel = () => setOpenRegisterModal(true);
 	const handleCloseRegisterModal = () => {
 		setOpenRegisterModal(false);
-		setRegisterModalData(defaultData);
+		setRegisterModalData(defaultInputData);
 	};
 	const handleRegisterNotification = () => {
-		if (!createDriverError) {
+		if (!registerDriverError) {
 			enqueueSnackbar('Register a driver successfully', {
 				variant: 'success',
 			});
@@ -98,20 +138,22 @@ export default function Home() {
 				username: registerModalData.username,
 				password: registerModalData.password || '',
 			})
-		)
-			.then(refetchData)
-			.then(handleRegisterNotification);
+		).then(refetchData);
 		handleCloseRegisterModal();
 	};
 
 	// Update modal
-	const handleOpenUpdateModal = (updateData: DriversProps) => {
-		setUpdateModalData(updateData);
+	const handleOpenUpdateModal = (updateData: IDriver) => {
+		setUpdateModalData({
+			...updateData,
+			password: '',
+			confirmed_password: '',
+		});
 		setOpenUpdateModal(true);
 	};
 	const handleCloseUpdateModal = () => {
 		setOpenUpdateModal(false);
-		setUpdateModalData(defaultData);
+		setUpdateModalData(defaultInputData);
 	};
 	const handleUpdateNotification = () => {
 		if (!updateDriverError) {
@@ -134,14 +176,12 @@ export default function Home() {
 					password: updateModalData.password || '',
 				},
 			})
-		)
-			.then(refetchData)
-			.then(handleUpdateNotification);
+		).then(refetchData);
 		handleCloseUpdateModal();
 	};
 
 	// Delete modal
-	const handleOpenDeleteModal = (deleteData: DriversProps) => {
+	const handleOpenDeleteModal = (deleteData: IDriver) => {
 		setDeleteModalData(deleteData);
 		setOpenDeleteModal(true);
 	};
@@ -159,19 +199,38 @@ export default function Home() {
 		}
 	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id }))
-			.then(refetchData)
-			.then(handleDeleteNotification);
+		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id })).then(refetchData);
 		handleCloseDeleteModal();
 	};
 
 	const refetchData = () => dispatch(FETCH_GET_DRIVERS({}));
-	const handleOnSearch = (search: IGetDriversRequest) =>
-		dispatch(FETCH_GET_DRIVERS(search));
+
+	const handleOnClickRefresh = () => {
+		handleClearSearch();
+		refetchData();
+	};
 
 	useEffect(() => {
 		refetchData();
 	}, []);
+
+	useEffect(() => {
+		if (!registerDriverLoading && registerDriverLoading !== undefined) {
+			handleRegisterNotification();
+		}
+	}, [registerDriverLoading]);
+
+	useEffect(() => {
+		if (!updateDriverLoading && updateDriverLoading !== undefined) {
+			handleUpdateNotification();
+		}
+	}, [updateDriverLoading]);
+
+	useEffect(() => {
+		if (!deleteDriverLoading && deleteDriverLoading !== undefined) {
+			handleDeleteNotification();
+		}
+	}, [deleteDriverLoading]);
 
 	return (
 		<Fragment>
@@ -235,10 +294,15 @@ export default function Home() {
 						<Filter
 							template={DriverFilterTemplate}
 							handleSubmitSearch={handleOnSearch}
+							getSearch={getSearch}
+							handleSearchChange={handleSearchChange}
+							handleClearSearch={handleClearSearch}
 						/>
 						<Divider />
 						<Stack direction="row" className="gap-8">
-							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
+							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total (${
+								drivers?.length || 0
+							})`}</p>
 							<div className="grow" />
 							<ButtonCV2X
 								icon={BUTTON_LABEL.REGISTER}
@@ -250,15 +314,16 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={BUTTON_LABEL.REFRESH}
 								variant="outlined"
-								onClick={refetchData}
+								onClick={handleOnClickRefresh}
 							/>
 						</Stack>
-						<TableCV2X<DriversProps>
+						<TableCV2X<IDriver>
 							columns={DriversTableTemplate}
 							rows={drivers ?? []}
 							handleOnClickInformation={handleOpenInformModal}
 							handleOnClickUpdate={handleOpenUpdateModal}
 							handleOnClickDelete={handleOpenDeleteModal}
+							isLoading={driversLoading}
 						/>
 					</Stack>
 				</Card>

@@ -12,6 +12,7 @@ const updateDriverReducer = createReducer(initialState, (builder) =>
 		.addCase(FETCH_UPDATE_DRIVER.fulfilled, (state) => ({
 			...state,
 			loading: false,
+			error: undefined,
 		}))
 		.addCase(FETCH_UPDATE_DRIVER.rejected, (state, action) => ({
 			...state,
