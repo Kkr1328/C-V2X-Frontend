@@ -12,6 +12,7 @@ import {
 	MockedInProgressEmergency,
 	MockedPendingEmergency,
 } from '@/mock/EMERGENCY';
+import { EmergencyColumn } from '@/types/COMMON';
 
 export default function Home() {
 	const initialColumns = {
@@ -28,6 +29,7 @@ export default function Home() {
 			list: MockedCompleteEmergency,
 		},
 	};
+
 	const [columns, setColumns] = useState(initialColumns);
 
 	const onDragEnd = ({ source, destination }: DropResult) => {
@@ -42,10 +44,8 @@ export default function Home() {
 			return null;
 
 		// Set start and end variables
-		const start =
-			columns[source.droppableId as 'pending' | 'inProgress' | 'complete'];
-		const end =
-			columns[destination.droppableId as 'pending' | 'inProgress' | 'complete'];
+		const start = columns[source.droppableId as EmergencyColumn];
+		const end = columns[destination.droppableId as EmergencyColumn];
 
 		// If start is the same as end, we're in the same column
 		if (start === end) {
@@ -109,42 +109,42 @@ export default function Home() {
 				<Stack direction="row" className="gap-32 justify-center">
 					<DragDropContext onDragEnd={onDragEnd}>
 						<EmergencyState title="PENDING" droppableId="pending">
-							{columns.pending.list.map((person: any, index: number) => {
+							{columns.pending.list.map((emergency: any, index: number) => {
 								return (
 									<EmergencyCard
-										id={person.id}
+										id={emergency.id}
 										index={index}
-										carName={person.carName}
-										time={person.time}
-										driverPhoneNo={person.driverPhoneNo}
+										carName={emergency.carName}
+										time={emergency.time}
+										driverPhoneNo={emergency.driverPhoneNo}
 										state="PENDING"
 									/>
 								);
 							})}
 						</EmergencyState>
 						<EmergencyState title="IN PROGRESS" droppableId="inProgress">
-							{columns.inProgress.list.map((person: any, index: number) => {
+							{columns.inProgress.list.map((emergency: any, index: number) => {
 								return (
 									<EmergencyCard
-										id={person.id}
+										id={emergency.id}
 										index={index}
-										carName={person.carName}
-										time={person.time}
-										driverPhoneNo={person.driverPhoneNo}
+										carName={emergency.carName}
+										time={emergency.time}
+										driverPhoneNo={emergency.driverPhoneNo}
 										state="IN PROGRESS"
 									/>
 								);
 							})}
 						</EmergencyState>
 						<EmergencyState title="COMPLETE" droppableId="complete">
-							{columns.complete.list.map((person: any, index: number) => {
+							{columns.complete.list.map((emergency: any, index: number) => {
 								return (
 									<EmergencyCard
-										id={person.id}
+										id={emergency.id}
 										index={index}
-										carName={person.carName}
-										time={person.time}
-										driverPhoneNo={person.driverPhoneNo}
+										carName={emergency.carName}
+										time={emergency.time}
+										driverPhoneNo={emergency.driverPhoneNo}
 										state="COMPLETE"
 									/>
 								);

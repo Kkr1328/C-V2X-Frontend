@@ -1,17 +1,19 @@
 import { Card, Stack } from '@mui/material';
 import NoData from '../common/NoData';
-import EmergencyCard from '../common/EmergencyCard';
-import { Emergency } from '@/types/COMMON';
+import { Emergency, EmergencyColumn } from '@/types/COMMON';
 import { Droppable } from 'react-beautiful-dnd';
+import React from 'react';
 
 interface EmergencyStateProps {
-	droppableId: string;
+	droppableId: EmergencyColumn;
 	title: Emergency;
 	children?: React.ReactNode;
 	isLoading?: boolean;
 }
 
 export default function EmergencyState(props: EmergencyStateProps) {
+	const childrenCount = React.Children.toArray(props.children).length;
+
 	return (
 		<Droppable key={props.title} droppableId={props.droppableId}>
 			{(provided) => {
@@ -28,17 +30,17 @@ export default function EmergencyState(props: EmergencyStateProps) {
 								</p>
 								<div className="grow" />
 								<p className="inline-block align-baseline font-istok text-light_text_grey text-h3">
-									7
+									{childrenCount}
 								</p>
 							</Stack>
 							{props.isLoading ? (
 								<Stack className="items-center h-full overflow-y-auto"></Stack>
-							) : props.children ? (
-								props.children
-							) : (
+							) : childrenCount === 0 ? (
 								<div className="w-300 h-full flex items-center">
 									<NoData />
 								</div>
+							) : (
+								props.children
 							)}
 						</Stack>
 						{provided.placeholder}
