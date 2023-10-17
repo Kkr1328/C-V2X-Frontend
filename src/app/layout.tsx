@@ -23,7 +23,7 @@ export default function RootLayout({
 	return (
 		<>
 			<html lang="en" className={`${istok_web.variable} font-sans`}>
-				<body suppressHydrationWarning={true}>
+				<body id="__next" suppressHydrationWarning={true}>
 					<LayoutWrapper>{children}</LayoutWrapper>
 				</body>
 			</html>
