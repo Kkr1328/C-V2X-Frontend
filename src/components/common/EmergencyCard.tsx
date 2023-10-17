@@ -5,12 +5,12 @@ import { Card, IconButton, Skeleton, Stack } from '@mui/material';
 import { Draggable } from 'react-beautiful-dnd';
 
 interface EmeregncyCardProps {
-	index: number;
-	id: string;
-	carName: string;
+	index?: number;
+	id?: string;
+	carName?: string;
 	handleLocate?: () => void;
-	time: string;
-	driverPhoneNo: string;
+	time?: string;
+	driverPhoneNo?: string;
 	state?: Emergency;
 	isLoading?: boolean;
 }
@@ -20,10 +20,14 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 		<Skeleton
 			animation="wave"
 			variant="rectangular"
-			className="w-300 h-[83px] rounded-l-none rounded-r-lg border-l-8 border-light_text_grey"
+			className="w-300 h-[83px] rounded-l-none rounded-r-lg border-l-8 mt-16 border-light_text_grey"
 		/>
 	) : (
-		<Draggable key={props.id} draggableId={props.id} index={props.index}>
+		<Draggable
+			key={props.id ?? '0'}
+			draggableId={props.id ?? '0'}
+			index={props.index ?? 0}
+		>
 			{(provided) => {
 				return (
 					<Card

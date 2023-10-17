@@ -3,6 +3,7 @@ import NoData from '../common/NoData';
 import { Emergency, EmergencyColumn } from '@/types/COMMON';
 import { Droppable } from 'react-beautiful-dnd';
 import React from 'react';
+import EmergencyCard from '../common/EmergencyCard';
 
 interface EmergencyStateProps {
 	droppableId: EmergencyColumn;
@@ -36,7 +37,12 @@ export default function EmergencyState(props: EmergencyStateProps) {
 								</p>
 							</Stack>
 							{props.isLoading ? (
-								<Stack className="items-center h-full overflow-y-auto"></Stack>
+								<Stack className="items-center h-full overflow-y-auto">
+									<EmergencyCard isLoading={true} />
+									<EmergencyCard isLoading={true} />
+									<EmergencyCard isLoading={true} />
+									<EmergencyCard isLoading={true} />
+								</Stack>
 							) : childrenCount === 0 ? (
 								<div className="w-300 h-full flex items-center">
 									<NoData />
