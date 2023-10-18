@@ -10,7 +10,7 @@ import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL 
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 import { MockedCars, MockedCarLocation, MockedRSU } from '@/mock/ENTITY_OVERVIEW';
-import { StuffLocation, RSUInformation } from '@/types/OVERVIEW';
+import { StuffLocation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
@@ -30,32 +30,16 @@ export default function Home() {
 		if (node === null || node.id === focus?.id) {
 			setFocus(null)
 			setPillMode(PILL_LABEL.ALL)
-			map?.panTo(MockedCarLocation[0].location)
 		} else {
-			setFocus({ id: node.id, type: 'CAR' })
-			setPillMode(
-				node.status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : 
-				node.status ?? PILL_LABEL.ALL
-			)
+			setFocus({ id: node.id, type: node.type })
+			setPillMode(node.status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : node.status ?? PILL_LABEL.ALL)
 			map?.panTo(node.location)
 		}
 	}
 
-	function changeFocusRSU(node: RSUInformation) {
-		if (focus?.id === node.id) {
-			changeFocus(null)
-			return
-		}
-		setFocus({ id: node.id, type: 'RSU'} )
-		setPillMode(null)
-		map?.panTo(node.location)
-	}
-
 	function changePillMode(value: PILL_LABEL) {
 		setFocus({ id: focus?.id ?? "", type: 'CAR'})
-		if (value !== null) {
-			setPillMode(value)
-		}
+		if (value !== null) { setPillMode(value) }
 	}
 	
 	function clickCarCard(carID: string) {
@@ -102,7 +86,7 @@ export default function Home() {
 								location={RSU.location}
 								radius={RSU.radius}
 								isFocus={focus?.id === RSU.id}
-								onClick={() => changeFocusRSU(RSU)}
+								onClick={() => changeFocus(RSU)}
 							/>
 						) 
 					}

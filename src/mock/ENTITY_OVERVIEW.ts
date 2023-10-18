@@ -89,7 +89,7 @@ export const MockedCars: CarCard[] = [
 export const MockedCarLocation: StuffLocation[] = [
 	{
 		id: 'carxxx01',
-		name: 'Car 01',
+		type: 'CAR',
 		location: {
 			lat : 13.787528639832523,
 			lng: 100.54476506712641
@@ -98,7 +98,7 @@ export const MockedCarLocation: StuffLocation[] = [
 	}, 
 	{
 		id: 'carxxx02',
-		name: 'Car 02',
+		type: 'CAR',
 		location: {
 			lat : 13.787528639832523,
 			lng: 100.53476506712641
@@ -107,7 +107,7 @@ export const MockedCarLocation: StuffLocation[] = [
 	},
 	{
 		id: 'carxxx03',
-		name: 'Car 03',
+		type: 'CAR',
 		location: {
 			lat : 13.798528639832523,
 			lng: 100.55176506712641
@@ -120,6 +120,7 @@ export const MockedRSU: RSUInformation[] = [
 	{
 		id: 'RSUxxx01',
 		name: 'RSU 01',
+		type: 'RSU',
 		location: {
 			lat : 13.777528639832523,
 			lng: 100.54476506712641
@@ -142,6 +143,7 @@ export const MockedRSU: RSUInformation[] = [
 	{
 		id: 'RSUxxx02',
 		name: 'RSU 02',
+		type: 'RSU',
 		location: {
 			lat : 13.778528639832523,
 			lng: 100.56076506712641

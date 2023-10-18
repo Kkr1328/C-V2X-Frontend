@@ -17,12 +17,13 @@ export interface CarCard {
 
 export interface StuffLocation {
     id: string;
-    name: string;
+    type: 'RSU' | 'CAR';
     location: Location;
     status?: PILL_LABEL;
 }
 
 export interface RSUInformation extends StuffLocation {
+    name: string;
     radius: number;
     recommendSpeed: string;
 
