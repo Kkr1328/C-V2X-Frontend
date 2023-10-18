@@ -45,7 +45,7 @@ export enum BUTTON_LABEL {
 	REFRESH = 'Refresh',
 	UPDATE = 'Update',
 	DELETE = 'Delete',
-	CANCLE = 'Cancle',
+	CANCEL = 'Cancel',
 	CONFIRM = 'Confirm',
 	ZOOM = 'Zoom',
 	MISSING = 'Missing',
