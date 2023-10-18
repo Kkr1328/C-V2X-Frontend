@@ -18,8 +18,7 @@ import { useState } from 'react';
 import RSUCard from '@/components/overview/RSUCard';
 
 export default function Home() {
-	const [theFocus, setTheFocus] = useState<String | null>()
-	const [focusMode, setFocusMode] = useState<"RSU" | "CAR">("CAR")
+	const [focus, setFocus] = useState<{ id: string, type: 'CAR' | 'RSU' } | null>(null)
 	const [map, setMap] = useState<google.maps.Map>()
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
 
@@ -28,34 +27,32 @@ export default function Home() {
 	})
 
 	function changeFocus(node: StuffLocation | null) {
-		if (node === null || node.id === theFocus) {
-			setTheFocus(null)
+		if (node === null || node.id === focus?.id) {
+			setFocus(null)
 			setPillMode(PILL_LABEL.ALL)
 			map?.panTo(MockedCarLocation[0].location)
 		} else {
-			setTheFocus(node.id)
+			setFocus({ id: node.id, type: 'CAR' })
 			setPillMode(
 				node.status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : 
 				node.status ?? PILL_LABEL.ALL
 			)
 			map?.panTo(node.location)
 		}
-		setFocusMode("CAR")
 	}
 
 	function changeFocusRSU(node: RSUInformation) {
-		if (theFocus === node.id) {
+		if (focus?.id === node.id) {
 			changeFocus(null)
 			return
 		}
-		setTheFocus(node.id)
-		setFocusMode("RSU")
+		setFocus({ id: node.id, type: 'RSU'} )
 		setPillMode(null)
 		map?.panTo(node.location)
 	}
 
 	function changePillMode(value: PILL_LABEL) {
-		setFocusMode("CAR")
+		setFocus({ id: focus?.id ?? "", type: 'CAR'})
 		if (value !== null) {
 			setPillMode(value)
 		}
@@ -90,7 +87,7 @@ export default function Home() {
 							<Marker
 								icon={{
 									url: `${MAP_ASSETS.CAR_PIN}${CAR.status}.svg`,
-									scaledSize: theFocus === CAR.id ? 
+									scaledSize: focus?.id === CAR.id ? 
 										new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) : 
 										new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
 								}}
@@ -104,7 +101,7 @@ export default function Home() {
 							<RSUMarker
 								location={RSU.location}
 								radius={RSU.radius}
-								isFocus={theFocus === RSU.id}
+								isFocus={focus?.id === RSU.id}
 								onClick={() => changeFocusRSU(RSU)}
 							/>
 						) 
@@ -118,21 +115,21 @@ export default function Home() {
 						onChange={(_event, value) => changePillMode(value)}
 					/>
 					<List className='grow overflow-y-scroll'>
-						{ focusMode === "CAR" ?
+						{ focus?.type === "CAR" || focus === null ?
 							MockedCars
 								.filter((car) => car.status === pillMode || pillMode === PILL_LABEL.ALL)
-								.sort((car) => (car.id === theFocus ? -1 : 1))
+								.sort((car) => (car.id === focus?.id ? -1 : 1))
 								.map((car) =>
 									<CarCard
 										key={car.id}
 										car={car} 
-										isFocus={car.id === theFocus}
+										isFocus={car.id === focus?.id}
 										onClick={() => clickCarCard(car.id)}							
 									/>
 								)
 							:
 							MockedRSU
-								.filter(all => all.id === theFocus)
+								.filter(all => all.id === focus?.id)
 								.map((RSU) =>
 									<RSUCard
 										key={RSU.id} 

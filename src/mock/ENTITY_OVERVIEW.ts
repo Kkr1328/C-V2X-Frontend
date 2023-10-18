@@ -26,7 +26,9 @@ export const MockedCars: CarCard[] = [
 			id: 'driverxxxx01',
 			first_name: 'nice',
 			last_name: 'cool',
-			phone_no: '08xxxxxxxx'
+			phone_no: '08xxxxxxxx',
+			name: '',
+			username: ''
 		},
 		status: PILL_LABEL.EMERGENCY
 	} ,
@@ -50,7 +52,9 @@ export const MockedCars: CarCard[] = [
 			id: 'driverxxxx01',
 			first_name: 'love',
 			last_name: 'drink',
-			phone_no: '08xxxxxxxx'
+			phone_no: '08xxxxxxxx',
+			name: '',
+			username: ''
 		},
 		status: PILL_LABEL.WARNING
 	},
@@ -74,7 +78,9 @@ export const MockedCars: CarCard[] = [
 			id: 'driverxxxx03',
 			first_name: 'mark',
 			last_name: 'cu',
-			phone_no: '08xxxxxxxx'
+			phone_no: '08xxxxxxxx',
+			name: '',
+			username: ''
 		},
 		status: PILL_LABEL.ACTIVE
 	}
@@ -125,6 +131,11 @@ export const MockedRSU: RSUInformation[] = [
 				name: 'car 01',
 				speed: '30 km/h',
 				status: PILL_LABEL.ACTIVE
+			},
+			{
+				name: 'car 02',
+				speed: '37 km/h',
+				status: PILL_LABEL.WARNING
 			}
 		]
 	},
