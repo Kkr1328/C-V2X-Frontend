@@ -86,5 +86,14 @@ export enum OVERVIEW_SUMMARY_CARD_LABEL {
 	ACTIVE_CAR = 'Active car(s)',
 	ACTIVE_DRIVER = 'Active driver(s)',
 	PENDING_EMERGENCY = 'PENDING emergency',
-	IN_PROGRESS_EMERGENCY = 'IN PROGRESS emergency'
+	IN_PROGRESS_EMERGENCY = 'IN PROGRESS emergency',
+}
+
+export enum HEARTBEAT_TABLE_LABEL {
+	CAR = 'Car',
+	FRONT_CAM = 'Front camera',
+	BACK_CAM = 'Back camera',
+	RSU = 'RSU',
+	STATUS = 'Status',
+	ACTION = 'Action',
 }
