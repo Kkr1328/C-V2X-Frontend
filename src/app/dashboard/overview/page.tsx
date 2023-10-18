@@ -42,9 +42,8 @@ export default function Home() {
 		if (value !== null) { setPillMode(value) }
 	}
 	
-	function clickCarCard(carID: string) {
-		let index = MockedCarLocation.findIndex((value) => value.id === carID)
-		let target = MockedCarLocation[index]
+	function clickOnCarCard(carID: string) {
+		let target = MockedCarLocation.find((value) => value.id === carID) ?? null
 		changeFocus(target)
 	}
 
@@ -108,7 +107,7 @@ export default function Home() {
 										key={car.id}
 										car={car} 
 										isFocus={car.id === focus?.id}
-										onClick={() => clickCarCard(car.id)}							
+										onClick={() => clickOnCarCard(car.id)}							
 									/>
 								)
 							:
