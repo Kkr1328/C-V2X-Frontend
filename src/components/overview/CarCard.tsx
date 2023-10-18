@@ -6,6 +6,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Pill from "../common/Pill";
 import CarAvatar from "./CarAvatar";
+import { PILL_LABEL } from "@/constants/LABEL";
 
 interface CarCardProps {
   car: CarCard,
@@ -43,8 +44,10 @@ function CarCardDetail(props: CarCardDetailProps) {
           <div className="flex gap-8">
             <CarAvatar status={props.car.status} />
             {props.car.name}
-          </div> 
-          <Pill variant={props.car.status} />
+          </div>
+          { props.car.status !== PILL_LABEL.ACTIVE &&
+            <Pill variant={props.car.status} />
+          }
         </div>
   
         {/* properties */}
