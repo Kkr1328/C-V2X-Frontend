@@ -18,7 +18,7 @@ import { useState } from 'react';
 import RSUCard from '@/components/overview/RSUCard';
 
 export default function Home() {
-	const [theFocus, setTheFocus] = useState<String>()
+	const [theFocus, setTheFocus] = useState<String | null>()
 	const [focusMode, setFocusMode] = useState<"RSU" | "CAR">("CAR")
 	const [map, setMap] = useState<google.maps.Map>()
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
@@ -27,14 +27,20 @@ export default function Home() {
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "<GOOGLE-MAP-KEY>",
 	})
 
-	function changeFocus(node: StuffLocation) {
-		setTheFocus(node.id)
-		setFocusMode("CAR")
-		setPillMode(
-			node.status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : 
-			node.status ?? PILL_LABEL.ALL
-		)
-		map?.panTo(node.location)
+	function changeFocus(node: StuffLocation | null) {
+		if (node === null) {
+			setTheFocus(null)
+			setPillMode(PILL_LABEL.ALL)
+			map?.panTo(MockedCarLocation[0].location)
+		} else {
+			setTheFocus(node.id)
+			setFocusMode("CAR")
+			setPillMode(
+				node.status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : 
+				node.status ?? PILL_LABEL.ALL
+			)
+			map?.panTo(node.location)
+		}
 	}
 
 	function changeFocusRSU(node: RSUInformation) {
@@ -54,7 +60,11 @@ export default function Home() {
 	function clickCarCard(carID: string) {
 		let index = MockedCarLocation.findIndex((value) => value.id === carID)
 		let target = MockedCarLocation[index]
-		changeFocus(target)
+		if (theFocus !== target.id) {
+			changeFocus(target)
+		} else {
+			changeFocus(null)
+		}
 	}
 
 	if(!isLoaded) return <div>Loading...</div>

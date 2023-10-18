@@ -18,19 +18,20 @@ export default function CarCard(props: CarCardProps) {
       <Card 
         onClick={props.onClick} 
         className={`${props.isFocus ? 'border-primary_blue border-2 cursor-zoom-out' : 'cursor-zoom-in'} bg-light_background_grey rounded-lg my-16 p-8`}>
-        <InCard 
-            id={props.car.id} 
-            name={props.car.name} 
-            cameras={props.car.cameras} 
-            speed={props.car.speed} 
-            driver={props.car.driver} 
-            status={props.car.status}
+        <CarCardDetail 
+            car={props.car}
+            onClick={props.onClick}
         />
       </Card>
   )
 }
 
-function InCard(car: CarCard) {
+interface CarCardDetailProps {
+  car: CarCard
+  onClick: () => void
+}
+
+function CarCardDetail(props: CarCardDetailProps) {
   const [expand, setExpand] = useState<boolean>(false)
 
   return (
@@ -38,18 +39,18 @@ function InCard(car: CarCard) {
       {/* head */}
       <div className="text-h4 font-bold flex items-center gap-16 mb-12">
         <div className="flex gap-8">
-          <CarAvatar status={car.status} />
-          {car.name}
+          <CarAvatar status={props.car.status} />
+          {props.car.name}
         </div> 
-        <Pill variant={car.status} />
+        <Pill variant={props.car.status} />
       </div>
 
       {/* properties */}
-      <div>Speed : {car.speed ?? "null"}</div>
+      <div>Speed : {props.car.speed ?? "null"}</div>
       <Collapse in={expand} timeout="auto">
-          <div className='my-4'>Driver : {`${car.driver.first_name} ${car.driver.last_name}`}</div>
-          <div className='my-4'>Phone No. : {car.driver.phone_no ?? "null"}</div>
-          {car.cameras.map((camera) => (
+          <div className='my-4'>Driver : {`${props.car.driver.first_name} ${props.car.driver.last_name}`}</div>
+          <div className='my-4'>Phone No. : {props.car.driver.phone_no ?? "null"}</div>
+          {props.car.cameras.map((camera) => (
             <div key={camera.id} className='my-4'>
               {camera.position + " camera"} : {camera.name}
             </div>
