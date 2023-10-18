@@ -3,7 +3,7 @@
 import PageTitle from '@/components/common/PageTitle';
 import SummaryCard from '@/components/common/SummaryCard';
 import ToggleButtonCV2X from '@/components/common/ToggleButtonCV2X';
-import CarCardDetail from '@/components/overview/CarCardDetail';
+import CarCard from '@/components/overview/CarCard';
 import RSUMarker from '@/components/overview/RSUMarker';
 
 import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
@@ -14,7 +14,6 @@ import { StuffLocation, RSUInformation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
-import Image from 'next/image';
 import { useState } from 'react';
 import RSUCard from '@/components/overview/RSUCard';
 
@@ -114,7 +113,7 @@ export default function Home() {
 								.filter((car) => car.status === pillMode || pillMode === PILL_LABEL.ALL)
 								.sort((car) => (car.id === theFocus ? -1 : 1))
 								.map((car) =>
-									<CarCardDetail 
+									<CarCard
 										key={car.id}
 										car={car} 
 										isFocus={car.id === theFocus}
