@@ -2,7 +2,7 @@ import { Card, Stack } from '@mui/material';
 import NoData from '../common/NoData';
 import { Emergency, EmergencyColumn } from '@/types/COMMON';
 import { Droppable } from 'react-beautiful-dnd';
-import React from 'react';
+import React, { Fragment } from 'react';
 import EmergencyCard from '../common/EmergencyCard';
 
 interface EmergencyStateProps {
@@ -43,12 +43,11 @@ export default function EmergencyState(props: EmergencyStateProps) {
 									<EmergencyCard isLoading={true} />
 									<EmergencyCard isLoading={true} />
 								</Stack>
-							) : childrenCount === 0 ? (
-								<div className="w-300 h-full flex items-center">
-									<NoData />
-								</div>
 							) : (
-								props.children
+								<Stack className="w-300 h-full flex items-center pb-8 overflow-y-auto">
+									{childrenCount === 0 && <NoData />}
+									{props.children}
+								</Stack>
 							)}
 						</Stack>
 						{provided.placeholder}

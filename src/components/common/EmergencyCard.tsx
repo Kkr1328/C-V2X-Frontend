@@ -20,7 +20,7 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 		<Skeleton
 			animation="wave"
 			variant="rectangular"
-			className="w-300 h-[83px] rounded-l-none rounded-r-lg border-l-8 mt-16 border-light_text_grey"
+			className="w-300 h-[83px] min-h-[83px] rounded-l-none rounded-r-lg border-l-8 mt-16 border-light_text_grey"
 		/>
 	) : (
 		<Draggable
@@ -34,7 +34,7 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 						ref={provided.innerRef}
 						{...provided.draggableProps}
 						{...provided.dragHandleProps}
-						className={`w-300 h-[83px] rounded-l-none rounded-r-lg border-l-8 p-16 mt-16 bg-dark_background_grey hover:bg-light_background_grey ${
+						className={`w-300 h-[83px] min-h-[83px] rounded-l-none rounded-r-lg border-l-8 p-16 mt-16 bg-dark_background_grey hover:bg-light_background_grey ${
 							props.state === 'PENDING'
 								? 'border-error_red'
 								: props.state === 'IN PROGRESS'
