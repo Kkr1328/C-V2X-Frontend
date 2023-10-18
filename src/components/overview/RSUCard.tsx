@@ -1,6 +1,6 @@
 import { MAP_ASSETS } from "@/constants/ASSETS";
-import { PILL_LABEL } from "@/constants/LABEL";
 import { MAP_OBJECT_CONFIG } from "@/constants/OVERVIEW";
+import { CONNECTED_CAR_ON_RSU } from "@/types/OVERVIEW";
 
 import { Card, Divider } from "@mui/material";
 import Image from 'next/image';
@@ -9,11 +9,7 @@ import CarAvatar from "./CarAvatar";
 interface RSUCardProps {
     name: string,
     recommendSpeed: string,
-    connectedCar: {
-        status: PILL_LABEL,
-        name: string,
-        speed: string
-    }[]
+    connectedCar: CONNECTED_CAR_ON_RSU[]
 }
 
 export default function RSUCard(props : RSUCardProps) {

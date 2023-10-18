@@ -28,22 +28,26 @@ export default function Home() {
 	})
 
 	function changeFocus(node: StuffLocation | null) {
-		if (node === null) {
+		if (node === null || node.id === theFocus) {
 			setTheFocus(null)
 			setPillMode(PILL_LABEL.ALL)
 			map?.panTo(MockedCarLocation[0].location)
 		} else {
 			setTheFocus(node.id)
-			setFocusMode("CAR")
 			setPillMode(
 				node.status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : 
 				node.status ?? PILL_LABEL.ALL
 			)
 			map?.panTo(node.location)
 		}
+		setFocusMode("CAR")
 	}
 
 	function changeFocusRSU(node: RSUInformation) {
+		if (theFocus === node.id) {
+			changeFocus(null)
+			return
+		}
 		setTheFocus(node.id)
 		setFocusMode("RSU")
 		setPillMode(null)
@@ -60,11 +64,7 @@ export default function Home() {
 	function clickCarCard(carID: string) {
 		let index = MockedCarLocation.findIndex((value) => value.id === carID)
 		let target = MockedCarLocation[index]
-		if (theFocus !== target.id) {
-			changeFocus(target)
-		} else {
-			changeFocus(null)
-		}
+		changeFocus(target)
 	}
 
 	if(!isLoaded) return <div>Loading...</div>

@@ -32,3 +32,9 @@ export interface RSUInformation extends StuffLocation {
         speed: string
     }[]
 }
+
+export interface CONNECTED_CAR_ON_RSU {
+    status: PILL_LABEL,
+    name: string,
+    speed: string
+}
