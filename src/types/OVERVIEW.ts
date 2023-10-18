@@ -1,5 +1,6 @@
 import { PILL_LABEL } from "@/constants/LABEL";
-import { CameraType, DriversProps } from "./ENTITY";
+import { CameraType } from "./ENTITY";
+import { IDriver } from "@/types/models/driver.model"
 export interface Location {
     lat: number,
     lng: number
@@ -10,7 +11,7 @@ export interface CarCard {
 	name: string;
 	cameras: CameraType[];
     speed: string;
-    driver: DriversProps;
+    driver: IDriver;
     status: PILL_LABEL;
 }
 
@@ -24,4 +25,10 @@ export interface StuffLocation {
 export interface RSUInformation extends StuffLocation {
     radius: number;
     recommendSpeed: string;
+
+    connectedCar: {
+        status: PILL_LABEL,
+        name: string,
+        speed: string
+    }[]
 }

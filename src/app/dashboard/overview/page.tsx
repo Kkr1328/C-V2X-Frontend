@@ -16,6 +16,7 @@ import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
 import Image from 'next/image';
 import { useState } from 'react';
+import RSUCard from '@/components/overview/RSUCard';
 
 export default function Home() {
 	const [theFocus, setTheFocus] = useState<String>()
@@ -124,19 +125,12 @@ export default function Home() {
 							MockedRSU
 								.filter(all => all.id === theFocus)
 								.map((RSU) =>
-									<Card className='bg-light_background_grey rounded-lg my-16 p-8 flex flex-col gap-8'>
-										<div className='flex items-center gap-8'>
-											<Image 
-												src={MAP_ASSETS.RSU_PROFILE} 
-												alt={'RSU profile'} 
-												width={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
-												height={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
-											/>
-											<div className='text-h4 font-bold'>{RSU.name}</div>
-										</div>
-										<div className='text-p1'>Recommended speed: {RSU.recommendSpeed}</div>
-										<Divider />
-									</Card>
+									<RSUCard
+										key={RSU.id} 
+										name={RSU.name}
+										recommendSpeed={RSU.recommendSpeed}
+										connectedCar={RSU.connectedCar}					
+									/>
 								)
 						}
 					</List>

@@ -7,6 +7,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Pill from "../common/Pill";
 import { MAP_ASSETS } from "@/constants/ASSETS";
+import CarAvatar from "./CarAvatar";
 
 interface CarCardProps {
   car: CarCard,
@@ -52,11 +53,7 @@ function InCard(car: CarCard) {
       {/* head */}
       <div className="text-h4 font-bold flex items-center gap-16 mb-12">
         <div className="flex gap-8">
-          <Image 
-            src={`${MAP_ASSETS.CAR_PROFILE}${car.status}.svg`} 
-            width="32" height="32" 
-            alt={"CAR_PROFILE"}
-          />
+          <CarAvatar status={car.status} />
           {car.name}
         </div> 
         <Pill variant={car.status} />

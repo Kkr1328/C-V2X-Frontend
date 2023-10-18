@@ -11,12 +11,14 @@ export const MockedCars: CarCard[] = [
 		name: 'Car01',
 		cameras: [
 			{
-				name: "camera01",
-				position: "Front"
+				id: '1',
+				name: 'camera01',
+				position: 'Front'
 			},
 			{
-				name: "camera02",
-				position: "Back"
+				id: '2',
+				name: 'camera02',
+				position: 'Back'
 			}
 		],
 		speed: '50 km/h',
@@ -33,10 +35,12 @@ export const MockedCars: CarCard[] = [
 		name: 'Car02',
 		cameras: [
 			{
+				id: '1',
 				name: "camera01",
 				position: "Front"
 			},
 			{
+				id: '2',
 				name: "camera02",
 				position: "Back"
 			}
@@ -55,11 +59,13 @@ export const MockedCars: CarCard[] = [
 		name: 'Car03',
 		cameras: [
 			{
-				name: "camera01",
-				position: "Front"
+				id: '1',
+				name: 'camera01',
+				position: 'Front'
 			},
 			{
-				name: "camera02",
+				id: '2',
+				name: 'camera02',
 				position: "Back"
 			}
 		],
@@ -113,7 +119,14 @@ export const MockedRSU: RSUInformation[] = [
 			lng: 100.54476506712641
 		},
 		radius: 1000,
-		recommendSpeed: "50 km/h"
+		recommendSpeed: "50 km/h",
+		connectedCar: [
+			{
+				name: 'car 01',
+				speed: '30 km/h',
+				status: PILL_LABEL.ACTIVE
+			}
+		]
 	},
 	{
 		id: 'RSUxxx02',
@@ -123,6 +136,18 @@ export const MockedRSU: RSUInformation[] = [
 			lng: 100.56076506712641
 		},
 		radius: 500,
-		recommendSpeed: "50 km/h"
+		recommendSpeed: "50 km/h",
+		connectedCar: [
+			{
+				name: 'car 01',
+				speed: '30 km/h',
+				status: PILL_LABEL.ACTIVE
+			},
+			{
+				name: 'car 02',
+				speed: '200 km/h',
+				status: PILL_LABEL.EMERGENCY
+			}
+		]
 	}
 ]
