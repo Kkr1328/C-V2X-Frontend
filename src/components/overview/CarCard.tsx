@@ -16,20 +16,19 @@ interface CarCardProps {
 
 export default function CarCard(props: CarCardProps) {
   return (
-      <Card 
-        className={`${props.isFocus ? 'border-primary_blue border-2' : ''} bg-light_background_grey rounded-lg my-16 p-8`}>
-        <CarCardDetail 
-            car={props.car}
-            onClick={props.onClick}
-            isFocus={props.isFocus}
-        />
-      </Card>
+    <Card
+      onClick={props.onClick}
+      className={`${props.isFocus ? 'border-primary_blue border-2 cursor-zoom-out' : 'cursor-zoom-in'} bg-light_background_grey rounded-lg my-16 p-8`}>
+      <CarCardDetail
+        car={props.car}
+        isFocus={props.isFocus}
+      />
+    </Card>
   )
 }
 
 interface CarCardDetailProps {
   car: CarCard,
-  onClick: () => void,
   isFocus: Boolean
 }
 
@@ -38,33 +37,33 @@ function CarCardDetail(props: CarCardDetailProps) {
 
   return (
     <div className="text-p1">
-      <div className={`${props.isFocus ? 'cursor-zoom-out' : 'cursor-zoom-in'}`} onClick={props.onClick}>
-        {/* head */}
-        <div className="text-h4 font-bold flex items-center gap-16 mb-12">
-          <div className="flex gap-8">
-            <CarAvatar status={props.car.status} />
-            {props.car.name}
-          </div>
-          { props.car.status !== PILL_LABEL.ACTIVE &&
-            <Pill variant={props.car.status} />
-          }
+      {/* head */}
+      <div className="text-h4 font-bold flex items-center gap-16 mb-12">
+        <div className="flex gap-8">
+          <CarAvatar status={props.car.status} />
+          {props.car.name}
         </div>
-  
-        {/* properties */}
-        <div>Speed : {props.car.speed ?? "null"}</div>
-        <Collapse in={expand} timeout="auto">
-            <div className='my-4'>Driver : {`${props.car.driver.first_name} ${props.car.driver.last_name}`}</div>
-            <div className='my-4'>Phone No. : {props.car.driver.phone_no ?? "null"}</div>
-            {props.car.cameras.map((camera) => (
-              <div key={camera.id} className='my-4'>
-                {camera.position + " camera"} : {camera.name}
-              </div>
-            ))}
-        </Collapse>
+        {props.car.status !== PILL_LABEL.ACTIVE &&
+          <Pill variant={props.car.status} />
+        }
       </div>
-      
-      <button className="float-right mt-4" onClick={() => { setExpand(!expand) }}>
-        { 
+
+      {/* properties */}
+      <div>Speed : {props.car.speed ?? "null"}</div>
+      <Collapse in={expand} timeout="auto">
+        <div className='my-4'>Driver : {`${props.car.driver.first_name} ${props.car.driver.last_name}`}</div>
+        <div className='my-4'>Phone No. : {props.car.driver.phone_no ?? "null"}</div>
+        {props.car.cameras.map((camera) => (
+          <div key={camera.id} className='my-4'>
+            {camera.position + " camera"} : {camera.name}
+          </div>
+        ))}
+      </Collapse>
+      <button
+        className="float-right mt-4"
+        onClick={(e) => { e.stopPropagation(); setExpand(!expand) }}
+      >
+        {
           expand ? <ExpandLessIcon /> : <ExpandMoreIcon />
         }
       </button>
