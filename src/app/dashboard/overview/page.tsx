@@ -10,7 +10,7 @@ import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL 
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 import { MockedCars, MockedCarLocation, MockedRSU } from '@/mock/ENTITY_OVERVIEW';
-import { StuffLocation } from '@/types/OVERVIEW';
+import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
@@ -18,7 +18,7 @@ import { useState } from 'react';
 import RSUCard from '@/components/overview/RSUCard';
 
 export default function Home() {
-	const [focus, setFocus] = useState<{ id: string, type: 'CAR' | 'RSU' } | null>(null)
+	const [focus, setFocus] = useState<FocusState | null>(null)
 	const [map, setMap] = useState<google.maps.Map>()
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
 

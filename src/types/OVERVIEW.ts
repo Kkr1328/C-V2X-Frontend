@@ -15,6 +15,11 @@ export interface CarCard {
     status: PILL_LABEL;
 }
 
+export interface FocusState {
+    id: string, 
+    type: 'CAR' | 'RSU'
+}
+
 export interface StuffLocation {
     id: string;
     type: 'RSU' | 'CAR';
