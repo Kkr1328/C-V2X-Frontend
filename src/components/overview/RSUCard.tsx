@@ -22,7 +22,7 @@ export default function RSUCard(props : RSUCardProps) {
                     width={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
                     height={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
                 />
-                <div className='text-h4 font-bold'>{props.name}</div>
+                <div className='text-h4'>{props.name}</div>
             </div>
             <div className='text-p1'>Recommended speed : {props.recommendSpeed}</div>
             <Divider className="my-4" />
@@ -31,7 +31,7 @@ export default function RSUCard(props : RSUCardProps) {
                     <div className='flex flex-row items-center px-8'>
                         <div className='flex w-1/2 items-center'>
                             <CarAvatar status={car.status} />
-                            <div className='mx-8 font-bold'>{car.name}</div>
+                            <div className='mx-8 text-h5'>{car.name}</div>
                         </div>
                         <div>Speed : {car.speed}</div>
                     </div>
