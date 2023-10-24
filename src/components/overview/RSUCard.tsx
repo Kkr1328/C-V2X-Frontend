@@ -28,7 +28,7 @@ export default function RSUCard(props : RSUCardProps) {
             <Divider className="my-4" />
             {
                 props.connectedCar.map((car) =>
-                    <div className='flex flex-row items-center px-8'>
+                    <div key={car.name} className='flex flex-row items-center px-8'>
                         <div className='flex w-1/2 items-center'>
                             <CarAvatar status={car.status} />
                             <div className='mx-8 text-h5'>{car.name}</div>
