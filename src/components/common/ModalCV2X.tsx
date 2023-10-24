@@ -61,7 +61,7 @@ export default function ModalCV2X(props: ModalCV2XProp) {
 								className="p-none"
 								onClick={props.handleOnClose}
 							>
-								<IconMapper icon={BUTTON_LABEL.CANCLE} />
+								<IconMapper icon={BUTTON_LABEL.CANCEL} />
 							</IconButton>
 						</>
 					)}
@@ -78,7 +78,7 @@ export default function ModalCV2X(props: ModalCV2XProp) {
 							<ButtonCV2X
 								variant="text"
 								color="secondary"
-								label={BUTTON_LABEL.CANCLE}
+								label={BUTTON_LABEL.CANCEL}
 								onClick={props.handleOnClose}
 							/>
 							<ButtonCV2X
