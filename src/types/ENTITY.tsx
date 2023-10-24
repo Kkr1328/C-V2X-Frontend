@@ -1,7 +1,7 @@
 import { Position } from './COMMON';
 
 export interface TableHeaderProps<T> {
-	id: keyof T | 'action';
+	id: keyof T | 'action' | 'heartbeat_action';
 	label: string;
 	align: 'right' | 'center' | 'left';
 	isSorted?: boolean;

@@ -68,6 +68,7 @@ function InCard(car: CarCard) {
 				<Pill variant={car.status} />
 			</div>
 
+<<<<<<< HEAD
 			{/* properties */}
 			<div>Speed: {car.speed ?? 'null'}</div>
 			<Collapse in={expand} timeout="auto">
@@ -92,3 +93,22 @@ function InCard(car: CarCard) {
 		</div>
 	);
 }
+=======
+      {/* properties */}
+      <div>Speed: {car.speed ?? "null"}</div>
+      <Collapse in={expand} timeout="auto">
+          <div className='my-4'>Driver: {`${car.driver.first_name} ${car.driver.last_name}`}</div>
+          <div className='my-4'>Phone No. : {car.driver.phone_no ?? "null"}</div>
+          {car.cameras.map((camera) => (
+            <div key={camera.id} className='my-4'>{camera.position + " camera"} : {camera.name}</div>
+          ))}
+      </Collapse>
+      <button className="float-right mt-4" onClick={() => { setExpand(!expand) }}>
+        { 
+          expand ? <ExpandLessIcon /> : <ExpandMoreIcon />
+        }
+      </button>
+    </div>
+  )
+}
+>>>>>>> main
