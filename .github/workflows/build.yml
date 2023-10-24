@@ -19,7 +19,7 @@ jobs:
         node-version: 18
 
     - name: Install Dependencies
-      run: npm clear-install
+      run: npm clean-install
 
     - name: Build
       run: npm run build
