@@ -11,10 +11,12 @@ export const MockedCars: CarCard[] = [
 		name: 'Car01',
 		cameras: [
 			{
+				id: "camera01",
 				name: "camera01",
 				position: "Front"
 			},
 			{
+				id: "camera01",
 				name: "camera02",
 				position: "Back"
 			}
@@ -33,10 +35,12 @@ export const MockedCars: CarCard[] = [
 		name: 'Car02',
 		cameras: [
 			{
+				id: "camera01",
 				name: "camera01",
 				position: "Front"
 			},
 			{
+				id: "camera02",
 				name: "camera02",
 				position: "Back"
 			}
@@ -55,10 +59,12 @@ export const MockedCars: CarCard[] = [
 		name: 'Car03',
 		cameras: [
 			{
+				id: "camera01",
 				name: "camera01",
 				position: "Front"
 			},
 			{
+				id: "camera02",
 				name: "camera02",
 				position: "Back"
 			}

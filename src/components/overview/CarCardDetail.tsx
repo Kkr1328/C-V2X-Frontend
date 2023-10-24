@@ -68,7 +68,7 @@ function InCard(car: CarCard) {
           <div className='my-4'>Driver: {`${car.driver.first_name} ${car.driver.last_name}`}</div>
           <div className='my-4'>Phone No. : {car.driver.phone_no ?? "null"}</div>
           {car.cameras.map((camera) => (
-            <div className='my-4'>{camera.position + " camera"} : {camera.name}</div>
+            <div key={camera.id} className='my-4'>{camera.position + " camera"} : {camera.name}</div>
           ))}
       </Collapse>
       <button className="float-right mt-4" onClick={() => { setExpand(!expand) }}>

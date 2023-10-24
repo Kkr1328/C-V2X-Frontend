@@ -1,8 +1,15 @@
 import { PILL_LABEL } from "@/constants/LABEL";
-import { CameraType, DriversProps } from "./ENTITY";
+import { CameraType } from "./ENTITY";
 export interface Location {
     lat: number,
     lng: number
+}
+
+interface Driver {
+    id: string,
+    first_name: string,
+    last_name: string,
+    phone_no: string
 }
 
 export interface CarCard {
@@ -10,7 +17,7 @@ export interface CarCard {
 	name: string;
 	cameras: CameraType[];
     speed: string;
-    driver: DriversProps;
+    driver: Driver;
     status: PILL_LABEL;
 }
 
