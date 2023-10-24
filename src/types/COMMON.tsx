@@ -1,6 +1,7 @@
 export type Position = 'Front' | 'Back';
 
 export type Emergency = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
+export type EmergencyColumn = 'pending' | 'inProgress' | 'complete';
 
 export const StatusDotType = [
 	'Active',
