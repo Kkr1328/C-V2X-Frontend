@@ -86,6 +86,7 @@ export default function Home() {
 								}}
 								onClick={() => changeFocus(CAR)}
 								position={CAR.location}
+								key={CAR.id}
 							/>
 						)
 					}
@@ -96,6 +97,7 @@ export default function Home() {
 								radius={RSU.radius}
 								isFocus={theFocus === RSU.id}
 								onClick={() => changeFocusRSU(RSU)}
+								key={RSU.id}
 							/>
 						) 
 					}
@@ -124,7 +126,7 @@ export default function Home() {
 							MockedRSU
 								.filter(all => all.id === theFocus)
 								.map((RSU) =>
-									<Card className='bg-light_background_grey rounded-lg my-16 p-8 flex flex-col gap-8'>
+									<Card className='bg-light_background_grey rounded-lg my-16 p-8 flex flex-col gap-8' key={RSU.id}>
 										<div className='flex items-center gap-8'>
 											<Image 
 												src={MAP_ASSETS.RSU_PROFILE} 
