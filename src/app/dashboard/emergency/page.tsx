@@ -108,48 +108,21 @@ export default function Home() {
 				<PageTitle title={NAVBAR_LABEL.EMERGENCY} />
 				<Stack direction="row" className="gap-32 justify-center">
 					<DragDropContext onDragEnd={onDragEnd}>
-						<EmergencyState title="PENDING" droppableId="pending">
-							{columns.pending.list.map((emergency: any, index: number) => {
-								return (
-									<EmergencyCard
-										id={emergency.id}
-										index={index}
-										carName={emergency.carName}
-										time={emergency.time}
-										driverPhoneNo={emergency.driverPhoneNo}
-										state="PENDING"
-									/>
-								);
-							})}
-						</EmergencyState>
-						<EmergencyState title="IN PROGRESS" droppableId="inProgress">
-							{columns.inProgress.list.map((emergency: any, index: number) => {
-								return (
-									<EmergencyCard
-										id={emergency.id}
-										index={index}
-										carName={emergency.carName}
-										time={emergency.time}
-										driverPhoneNo={emergency.driverPhoneNo}
-										state="IN PROGRESS"
-									/>
-								);
-							})}
-						</EmergencyState>
-						<EmergencyState title="COMPLETE" droppableId="complete">
-							{columns.complete.list.map((emergency: any, index: number) => {
-								return (
-									<EmergencyCard
-										id={emergency.id}
-										index={index}
-										carName={emergency.carName}
-										time={emergency.time}
-										driverPhoneNo={emergency.driverPhoneNo}
-										state="COMPLETE"
-									/>
-								);
-							})}
-						</EmergencyState>
+						<EmergencyState
+							title="PENDING"
+							droppableId="pending"
+							emergencies={columns.pending.list}
+						/>
+						<EmergencyState
+							title="IN PROGRESS"
+							droppableId="inProgress"
+							emergencies={columns.inProgress.list}
+						/>
+						<EmergencyState
+							title="COMPLETE"
+							droppableId="complete"
+							emergencies={columns.complete.list}
+						/>
 					</DragDropContext>
 				</Stack>
 			</Stack>

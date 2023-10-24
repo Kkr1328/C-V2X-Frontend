@@ -4,16 +4,17 @@ import { Emergency, EmergencyColumn } from '@/types/COMMON';
 import { Droppable } from 'react-beautiful-dnd';
 import React, { Fragment } from 'react';
 import EmergencyCard from '../common/EmergencyCard';
+import { IEmergency } from '@/types/models/emergency.model';
 
 interface EmergencyStateProps {
 	droppableId: EmergencyColumn;
 	title: Emergency;
-	children?: React.ReactNode;
+	emergencies: IEmergency[];
 	isLoading?: boolean;
 }
 
 export default function EmergencyState(props: EmergencyStateProps) {
-	const childrenCount = React.Children.toArray(props.children).length;
+	const emergenciesCount = props.emergencies.length;
 
 	return (
 		<Droppable key={props.title} droppableId={props.droppableId}>
@@ -33,7 +34,7 @@ export default function EmergencyState(props: EmergencyStateProps) {
 								</p>
 								<div className="grow" />
 								<p className="inline-block align-baseline font-istok text-light_text_grey text-h3">
-									{childrenCount}
+									{emergenciesCount}
 								</p>
 							</Stack>
 							{props.isLoading ? (
@@ -45,8 +46,19 @@ export default function EmergencyState(props: EmergencyStateProps) {
 								</Stack>
 							) : (
 								<Stack className="w-300 h-full flex items-center pb-8 overflow-y-auto">
-									{childrenCount === 0 && <NoData />}
-									{props.children}
+									{emergenciesCount === 0 && <NoData />}
+									{props.emergencies.map((emergency, index) => {
+										return (
+											<EmergencyCard
+												id={emergency.id}
+												index={index}
+												carName={emergency.carName}
+												time={emergency.time}
+												driverPhoneNo={emergency.driverPhoneNo}
+												state={props.title}
+											/>
+										);
+									})}
 								</Stack>
 							)}
 						</Stack>
