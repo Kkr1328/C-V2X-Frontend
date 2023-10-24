@@ -22,6 +22,7 @@ import IconMapper from '@/utils/IconMapper';
 import { BUTTON_LABEL } from '@/constants/LABEL';
 // types
 import { CameraType, TableHeaderProps, TableRowProps } from '@/types/ENTITY';
+import { StatusDotType } from '@/types/COMMON';
 
 interface TableCV2XProps<T extends TableRowProps> {
 	columns: TableHeaderProps<T>[];
@@ -84,6 +85,18 @@ function StringCell<T>(props: { column: TableHeaderProps<T>; row: T }) {
 				{props.row[props.column.id as keyof T] as string}
 			</p>
 		</TableCell>
+	);
+}
+
+function LocationButton(props: { onClick: () => void }) {
+	return (
+		<IconButton
+			disableRipple
+			className="p-none text-primary_blue"
+			onClick={props.onClick}
+		>
+			<IconMapper icon={BUTTON_LABEL.LOCATION} />
+		</IconButton>
 	);
 }
 
@@ -161,6 +174,43 @@ export default function TableCV2X<T extends TableRowProps>(
 														onClick={() => props.handleOnClickDelete?.(row)}
 													/>
 												</Stack>
+											</TableCell>
+										);
+									} else if (column.id === 'heartbeat_action') {
+										return (
+											<TableCell
+												key={index}
+												align={column.align}
+												sx={{ width: '132px' }}
+											>
+												<Stack direction="row" className="gap-8 justify-center">
+													<LocationButton
+														onClick={() => props.handleOnClickLocation?.()}
+													/>
+													<InformationButton
+														onClick={() =>
+															props.handleOnClickInformation?.(row)
+														}
+													/>
+												</Stack>
+											</TableCell>
+										);
+									} else if (
+										column.id === 'status' ||
+										column.id === 'front_cam' ||
+										column.id === 'back_cam'
+									) {
+										return (
+											<TableCell
+												key={index}
+												align={'center'}
+												className="w-full"
+											>
+												<StatusDot
+													variant={
+														row[column.id] as (typeof StatusDotType)[number]
+													}
+												/>
 											</TableCell>
 										);
 									} else if (column.id === 'cameras') {

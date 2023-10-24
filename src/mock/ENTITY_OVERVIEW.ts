@@ -11,14 +11,14 @@ export const MockedCars: CarCard[] = [
 		name: 'Car01',
 		cameras: [
 			{
-				id: '1',
-				name: 'camera01',
-				position: 'Front'
+				id: "camera01",
+				name: "camera01",
+				position: "Front"
 			},
 			{
-				id: '2',
-				name: 'camera02',
-				position: 'Back'
+				id: "camera01",
+				name: "camera02",
+				position: "Back"
 			}
 		],
 		speed: '50 km/h',
@@ -26,9 +26,7 @@ export const MockedCars: CarCard[] = [
 			id: 'driverxxxx01',
 			first_name: 'nice',
 			last_name: 'cool',
-			phone_no: '08xxxxxxxx',
-			name: '',
-			username: ''
+			phone_no: '08xxxxxxxx'
 		},
 		status: PILL_LABEL.EMERGENCY
 	} ,
@@ -37,12 +35,12 @@ export const MockedCars: CarCard[] = [
 		name: 'Car02',
 		cameras: [
 			{
-				id: '1',
+				id: "camera01",
 				name: "camera01",
 				position: "Front"
 			},
 			{
-				id: '2',
+				id: "camera02",
 				name: "camera02",
 				position: "Back"
 			}
@@ -52,9 +50,7 @@ export const MockedCars: CarCard[] = [
 			id: 'driverxxxx01',
 			first_name: 'love',
 			last_name: 'drink',
-			phone_no: '08xxxxxxxx',
-			name: '',
-			username: ''
+			phone_no: '08xxxxxxxx'
 		},
 		status: PILL_LABEL.WARNING
 	},
@@ -63,13 +59,13 @@ export const MockedCars: CarCard[] = [
 		name: 'Car03',
 		cameras: [
 			{
-				id: '1',
-				name: 'camera01',
-				position: 'Front'
+				id: "camera01",
+				name: "camera01",
+				position: "Front"
 			},
 			{
-				id: '2',
-				name: 'camera02',
+				id: "camera02",
+				name: "camera02",
 				position: "Back"
 			}
 		],
@@ -78,9 +74,7 @@ export const MockedCars: CarCard[] = [
 			id: 'driverxxxx03',
 			first_name: 'mark',
 			last_name: 'cu',
-			phone_no: '08xxxxxxxx',
-			name: '',
-			username: ''
+			phone_no: '08xxxxxxxx'
 		},
 		status: PILL_LABEL.ACTIVE
 	}

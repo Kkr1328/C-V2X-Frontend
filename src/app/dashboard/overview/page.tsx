@@ -76,6 +76,7 @@ export default function Home() {
 								}}
 								onClick={() => changeFocus(CAR)}
 								position={CAR.location}
+								key={CAR.id}
 							/>
 						)
 					}
@@ -86,6 +87,7 @@ export default function Home() {
 								radius={RSU.radius}
 								isFocus={focus?.id === RSU.id}
 								onClick={() => changeFocus(RSU)}
+								key={RSU.id}
 							/>
 						) 
 					}
