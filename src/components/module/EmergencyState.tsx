@@ -50,6 +50,7 @@ export default function EmergencyState(props: EmergencyStateProps) {
 									{props.emergencies.map((emergency, index) => {
 										return (
 											<EmergencyCard
+												key={emergency.id}
 												id={emergency.id}
 												index={index}
 												carName={emergency.carName}
