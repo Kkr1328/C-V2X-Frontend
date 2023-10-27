@@ -3,23 +3,22 @@
 import PageTitle from '@/components/common/PageTitle';
 import SummaryCard from '@/components/common/SummaryCard';
 import ToggleButtonCV2X from '@/components/common/ToggleButtonCV2X';
-import CarCardDetail from '@/components/overview/CarCardDetail';
+import CarCard from '@/components/overview/CarCard';
 import RSUMarker from '@/components/overview/RSUMarker';
 
 import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 import { MockedCars, MockedCarLocation, MockedRSU } from '@/mock/ENTITY_OVERVIEW';
-import { StuffLocation, RSUInformation } from '@/types/OVERVIEW';
+import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
-import Image from 'next/image';
 import { useState } from 'react';
+import RSUCard from '@/components/overview/RSUCard';
 
 export default function Home() {
-	const [theFocus, setTheFocus] = useState<String>()
-	const [focusMode, setFocusMode] = useState<"RSU" | "CAR">("CAR")
+	const [focus, setFocus] = useState<FocusState | null>(null)
 	const [map, setMap] = useState<google.maps.Map>()
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
 
@@ -27,33 +26,24 @@ export default function Home() {
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "<GOOGLE-MAP-KEY>",
 	})
 
-	function changeFocus(node: StuffLocation) {
-		setTheFocus(node.id)
-		setFocusMode("CAR")
-		setPillMode(
-			node.status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : 
-			node.status ?? PILL_LABEL.ALL
-		)
-		map?.panTo(node.location)
-	}
-
-	function changeFocusRSU(node: RSUInformation) {
-		setTheFocus(node.id)
-		setFocusMode("RSU")
-		setPillMode(null)
-		map?.panTo(node.location)
+	function changeFocus(node: StuffLocation | null) {
+		if (node === null || node.id === focus?.id) {
+			setFocus(null)
+			setPillMode(PILL_LABEL.ALL)
+		} else {
+			setFocus({ id: node.id, type: node.type })
+			setPillMode(node.status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : node.status ?? PILL_LABEL.ALL)
+			map?.panTo(node.location)
+		}
 	}
 
 	function changePillMode(value: PILL_LABEL) {
-		setFocusMode("CAR")
-		if (value !== null) {
-			setPillMode(value)
-		}
+		setFocus({ id: focus?.id ?? "", type: 'CAR'})
+		if (value !== null) { setPillMode(value) }
 	}
 	
-	function clickCarCard(carID: string) {
-		let index = MockedCarLocation.findIndex((value) => value.id === carID)
-		let target = MockedCarLocation[index]
+	function clickOnCarCard(carID: string) {
+		let target = MockedCarLocation.find((value) => value.id === carID) ?? null
 		changeFocus(target)
 	}
 
@@ -80,7 +70,7 @@ export default function Home() {
 							<Marker
 								icon={{
 									url: `${MAP_ASSETS.CAR_PIN}${CAR.status}.svg`,
-									scaledSize: theFocus === CAR.id ? 
+									scaledSize: focus?.id === CAR.id ? 
 										new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) : 
 										new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
 								}}
@@ -95,8 +85,8 @@ export default function Home() {
 							<RSUMarker
 								location={RSU.location}
 								radius={RSU.radius}
-								isFocus={theFocus === RSU.id}
-								onClick={() => changeFocusRSU(RSU)}
+								isFocus={focus?.id === RSU.id}
+								onClick={() => changeFocus(RSU)}
 								key={RSU.id}
 							/>
 						) 
@@ -110,35 +100,28 @@ export default function Home() {
 						onChange={(_event, value) => changePillMode(value)}
 					/>
 					<List className='grow overflow-y-scroll'>
-						{ focusMode === "CAR" ?
+						{ focus?.type === "CAR" || focus === null ?
 							MockedCars
 								.filter((car) => car.status === pillMode || pillMode === PILL_LABEL.ALL)
-								.sort((car) => (car.id === theFocus ? -1 : 1))
+								.sort((car) => (car.id === focus?.id ? -1 : 1))
 								.map((car) =>
-									<CarCardDetail 
+									<CarCard
 										key={car.id}
 										car={car} 
-										isFocus={car.id === theFocus}
-										onClick={() => clickCarCard(car.id)}							
+										isFocus={car.id === focus?.id}
+										onClick={() => clickOnCarCard(car.id)}							
 									/>
 								)
 							:
 							MockedRSU
-								.filter(all => all.id === theFocus)
+								.filter(all => all.id === focus?.id)
 								.map((RSU) =>
-									<Card className='bg-light_background_grey rounded-lg my-16 p-8 flex flex-col gap-8' key={RSU.id}>
-										<div className='flex items-center gap-8'>
-											<Image 
-												src={MAP_ASSETS.RSU_PROFILE} 
-												alt={'RSU profile'} 
-												width={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
-												height={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
-											/>
-											<div className='text-h4 font-bold'>{RSU.name}</div>
-										</div>
-										<div className='text-p1'>Recommended speed: {RSU.recommendSpeed}</div>
-										<Divider />
-									</Card>
+									<RSUCard
+										key={RSU.id} 
+										name={RSU.name}
+										recommendSpeed={RSU.recommendSpeed}
+										connectedCar={RSU.connectedCar}					
+									/>
 								)
 						}
 					</List>
