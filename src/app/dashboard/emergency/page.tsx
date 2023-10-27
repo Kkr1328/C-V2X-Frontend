@@ -4,100 +4,128 @@ import PageTitle from '@/components/common/PageTitle';
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { Stack } from '@mui/material';
-import { useState } from 'react';
-import EmergencyCard from '@/components/common/EmergencyCard';
+import { useEffect, useState } from 'react';
 import EmergencyState from '@/components/module/EmergencyState';
-import {
-	MockedCompleteEmergency,
-	MockedInProgressEmergency,
-	MockedPendingEmergency,
-} from '@/mock/EMERGENCY';
 import { EmergencyColumn } from '@/types/COMMON';
+import { useDispatch, useSelector } from '@/redux/store';
+import { selectGetEmergencies } from '@/redux/get-emergencies/get-emergencies-selector';
+import { FETCH_GET_EMERGENCIES } from '@/redux/get-emergencies/get-emergencies-action';
+import { IEmergency } from '@/types/models/emergency.model';
+import { FETCH_UPDATE_EMERGENCY } from '@/redux/update-emergency/update-emergency-action';
 
 export default function Home() {
+	const dispatch = useDispatch();
+
+	const { data: emergencies, loading: emergenciesLoading } =
+		useSelector(selectGetEmergencies);
+
+	useEffect(() => {
+		dispatch(FETCH_GET_EMERGENCIES());
+	}, []);
+
+	useEffect(() => {
+		setColumns({
+			pending: {
+				id: 'pending',
+				list:
+					emergencies?.filter((emergency) => emergency.status === 'pending') ||
+					[],
+			},
+			inProgress: {
+				id: 'inProgress',
+				list:
+					emergencies?.filter(
+						(emergency) => emergency.status === 'inProgress'
+					) || [],
+			},
+			complete: {
+				id: 'complete',
+				list:
+					emergencies?.filter((emergency) => emergency.status === 'complete') ||
+					[],
+			},
+		});
+	}, [emergencies]);
+
 	const initialColumns = {
 		pending: {
 			id: 'pending',
-			list: MockedPendingEmergency,
+			list: [] as IEmergency[],
 		},
 		inProgress: {
 			id: 'inProgress',
-			list: MockedInProgressEmergency,
+			list: [] as IEmergency[],
 		},
 		complete: {
 			id: 'complete',
-			list: MockedCompleteEmergency,
+			list: [] as IEmergency[],
 		},
 	};
 
 	const [columns, setColumns] = useState(initialColumns);
 
 	const onDragEnd = ({ source, destination }: DropResult) => {
-		// Make sure we have a valid destination
 		if (destination === undefined || destination === null) return null;
 
-		// Make sure we're actually moving the item
 		if (
 			source.droppableId === destination.droppableId &&
 			destination.index === source.index
 		)
 			return null;
 
-		// Set start and end variables
 		const start = columns[source.droppableId as EmergencyColumn];
 		const end = columns[destination.droppableId as EmergencyColumn];
 
-		// If start is the same as end, we're in the same column
 		if (start === end) {
-			// Move the item within the list
-			// Start by making a new list without the dragged item
 			const newList = start.list.filter(
 				(_: any, idx: number) => idx !== source.index
 			);
 
-			// Then insert the item at the right location
 			newList.splice(destination.index, 0, start.list[source.index]);
 
-			// Then create a new copy of the column object
 			const newCol = {
 				id: start.id,
 				list: newList,
 			};
 
-			// Update the state
 			setColumns((state) => ({ ...state, [newCol.id]: newCol }));
 			return null;
 		} else {
-			// If start is different from end, we need to update multiple columns
-			// Filter the start list like before
 			const newStartList = start.list.filter(
 				(_: any, idx: number) => idx !== source.index
 			);
 
-			// Create a new start column
 			const newStartCol = {
 				id: start.id,
 				list: newStartList,
 			};
 
-			// Make a new end list array
 			const newEndList = end.list;
 
-			// Insert the item into the end list
 			newEndList.splice(destination.index, 0, start.list[source.index]);
 
-			// Create a new end column
 			const newEndCol = {
 				id: end.id,
 				list: newEndList,
 			};
 
-			// Update the state
 			setColumns((state) => ({
 				...state,
 				[newStartCol.id]: newStartCol,
 				[newEndCol.id]: newEndCol,
 			}));
+			dispatch(
+				FETCH_UPDATE_EMERGENCY({
+					query: {
+						id: start.list.filter(
+							(emergency) => end.list.indexOf(emergency) !== -1
+						)[0].id,
+					},
+					request: {
+						status: destination.droppableId as EmergencyColumn,
+					},
+				})
+			);
 			return null;
 		}
 	};

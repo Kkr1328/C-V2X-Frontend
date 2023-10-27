@@ -23,6 +23,8 @@ import getRSUsListReducer from './get-rsus-list/get-rsus-list-reducer';
 import getCarsListReducer from './get-cars-list/get-cars-list-reducer';
 import getDriversListReducer from './get-drivers-list/get-drivers-list-reducer';
 import getCamerasListReducer from './get-cameras-list/get-cameras-list-reducer';
+import getEmergenciesReducer from './get-emergencies/get-emergencies-reducer';
+import updateEmergencyReducer from './update-emergency/update-emergency-reducer';
 
 export const rootReducer = combineReducers({
 	getCars: getCarsReducer,
@@ -49,6 +51,8 @@ export const rootReducer = combineReducers({
 	createRSU: createRSUReducer,
 	updateRSU: updateRSUReducer,
 	deleteRSU: deleteRSUReducer,
+	getEmergencies: getEmergenciesReducer,
+	updateEmergency: updateEmergencyReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

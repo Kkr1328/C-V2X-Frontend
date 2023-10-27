@@ -53,9 +53,9 @@ export default function EmergencyState(props: EmergencyStateProps) {
 												key={emergency.id}
 												id={emergency.id}
 												index={index}
-												carName={emergency.carName}
+												carName={emergency.car_name}
 												time={emergency.time}
-												driverPhoneNo={emergency.driverPhoneNo}
+												driverPhoneNo={emergency.driver_phone_no}
 												state={props.title}
 											/>
 										);
