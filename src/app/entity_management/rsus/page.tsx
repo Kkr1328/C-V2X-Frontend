@@ -24,9 +24,6 @@ import { RSUActionModalTemplate } from '@/templates/ACTION_MODAL';
 // redux
 import { useDispatch, useSelector } from '@/redux/store';
 import { selectGetRSUs } from '@/redux/get-rsus/get-rsus-selector';
-import { selectCreateRSU } from '@/redux/create-rsu/create-rsu-selector';
-import { selectUpdateRSU } from '@/redux/update-rsu/update-rsu-selector';
-import { selectDeleteRSU } from '@/redux/delete-rsu/delete-rsu-selector';
 import { FETCH_GET_RSUS } from '@/redux/get-rsus/get-rsus-action';
 import { FETCH_CREATE_RSU } from '@/redux/create-rsu/create-rsu-action';
 import { FETCH_UPDATE_RSU } from '@/redux/update-rsu/update-rsu-action';
@@ -37,12 +34,6 @@ export default function Home() {
 	const { enqueueSnackbar } = useSnackbar();
 
 	const { data: rsus, loading: rsusLoading } = useSelector(selectGetRSUs);
-	const { error: registerRSUError, loading: registerRSULoading } =
-		useSelector(selectCreateRSU);
-	const { error: updateRSUError, loading: updateRSULoading } =
-		useSelector(selectUpdateRSU);
-	const { error: deleteRSUError, loading: deleteRSULoading } =
-		useSelector(selectDeleteRSU);
 
 	const defaultFilterData = RSUFilterTemplate.reduce(
 		(acc, item) => ({
@@ -102,17 +93,18 @@ export default function Home() {
 		setOpenRegisterModal(false);
 		setRegisterModalData(defaultData);
 	};
-	const handleRegisterNotification = () => {
-		if (!registerRSUError) {
-			enqueueSnackbar('Register a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to register a RSU', { variant: 'error' });
-		}
-	};
 	const handleSubmitRegisterModal = () => {
-		dispatch(FETCH_CREATE_RSU(registerModalData)).then(refetchData);
+		dispatch(FETCH_CREATE_RSU(registerModalData))
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Register a RSU successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to register a RSU', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseRegisterModal();
 	};
 
@@ -125,22 +117,23 @@ export default function Home() {
 		setOpenUpdateModal(false);
 		setUpdateModalData(defaultData);
 	};
-	const handleUpdateNotification = () => {
-		if (!updateRSUError) {
-			enqueueSnackbar('Update a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to update a RSU', { variant: 'error' });
-		}
-	};
-	const handleSubmitUpdateModal = () => {
+	const handleSubmitUpdateModal = async () => {
 		dispatch(
 			FETCH_UPDATE_RSU({
 				query: updateModalData,
 				request: updateModalData,
 			})
-		).then(refetchData);
+		)
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Update a RSU successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to update a RSU', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseUpdateModal();
 	};
 
@@ -153,17 +146,18 @@ export default function Home() {
 		setOpenDeleteModal(false);
 		setDeleteModalData(defaultData);
 	};
-	const handleDeleteNotification = () => {
-		if (!deleteRSUError) {
-			enqueueSnackbar('Delete a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to delete a RSU', { variant: 'error' });
-		}
-	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_RSU(deleteModalData)).then(refetchData);
+		dispatch(FETCH_DELETE_RSU(deleteModalData))
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Delete a RSU successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to delete a RSU', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseDeleteModal();
 	};
 
@@ -177,24 +171,6 @@ export default function Home() {
 	useEffect(() => {
 		refetchData();
 	}, []);
-
-	useEffect(() => {
-		if (!registerRSULoading && registerRSULoading !== undefined) {
-			handleRegisterNotification();
-		}
-	}, [registerRSULoading]);
-
-	useEffect(() => {
-		if (!updateRSULoading && updateRSULoading !== undefined) {
-			handleUpdateNotification();
-		}
-	}, [updateRSULoading]);
-
-	useEffect(() => {
-		if (!deleteRSULoading && deleteRSULoading !== undefined) {
-			handleDeleteNotification();
-		}
-	}, [deleteRSULoading]);
 
 	return (
 		<>

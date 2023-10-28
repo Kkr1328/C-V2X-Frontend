@@ -24,9 +24,6 @@ import { CarActionModalTemplate } from '@/templates/ACTION_MODAL';
 // redux
 import { useDispatch, useSelector } from '@/redux/store';
 import { selectGetCars } from '@/redux/get-cars/get-cars-selector';
-import { selectCreateCar } from '@/redux/create-car/create-car-selector';
-import { selectUpdateCar } from '@/redux/update-car/update-car-selector';
-import { selectDeleteCar } from '@/redux/delete-car/delete-car-selector';
 import { selectGetCamerasList } from '@/redux/get-cameras-list/get-cameras-list-selector';
 import { selectGetDriversList } from '@/redux/get-drivers-list/get-drivers-list-selector';
 import { FETCH_GET_CARS } from '@/redux/get-cars/get-cars-action';
@@ -43,12 +40,6 @@ export default function Home() {
 	const { data: cars, loading: carsLoading } = useSelector(selectGetCars);
 	const { data: camerasList } = useSelector(selectGetCamerasList);
 	const { data: driversList } = useSelector(selectGetDriversList);
-	const { error: registerCarError, loading: registerCarLoading } =
-		useSelector(selectCreateCar);
-	const { error: updateCarError, loading: updateCarLoading } =
-		useSelector(selectUpdateCar);
-	const { error: deleteCarError, loading: deleteCarLoading } =
-		useSelector(selectDeleteCar);
 
 	const defaultFilterData = CarFilterTemplate.reduce(
 		(acc, item) => ({
@@ -132,15 +123,6 @@ export default function Home() {
 		setOpenRegisterModal(false);
 		setRegisterModalData(defaultData);
 	};
-	const handleRegisterNotification = () => {
-		if (!registerCarError) {
-			enqueueSnackbar('Register a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to register a RSU', { variant: 'error' });
-		}
-	};
 	const handleSubmitRegisterModal = () => {
 		dispatch(
 			FETCH_CREATE_CAR({
@@ -149,7 +131,17 @@ export default function Home() {
 				model: registerModalData.model,
 				driver_id: registerModalData.driver_id || '',
 			})
-		).then(refetchData);
+		)
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Register a car successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to register a car', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseRegisterModal();
 	};
 
@@ -162,15 +154,6 @@ export default function Home() {
 		setOpenUpdateModal(false);
 		setUpdateModalData(defaultData);
 	};
-	const handleUpdateNotification = () => {
-		if (!updateCarError) {
-			enqueueSnackbar('Update a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to update a RSU', { variant: 'error' });
-		}
-	};
 	const handleSubmitUpdateModal = () => {
 		dispatch(
 			FETCH_UPDATE_CAR({
@@ -182,7 +165,17 @@ export default function Home() {
 					driver_id: updateModalData.driver_id || '',
 				},
 			})
-		).then(refetchData);
+		)
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Update a car successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to update a car', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseUpdateModal();
 	};
 
@@ -195,17 +188,18 @@ export default function Home() {
 		setOpenDeleteModal(false);
 		setDeleteModalData(defaultData);
 	};
-	const handleDeleteNotification = () => {
-		if (!deleteCarError) {
-			enqueueSnackbar('Delete a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to delete a RSU', { variant: 'error' });
-		}
-	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_CAR({ id: deleteModalData.id })).then(refetchData);
+		dispatch(FETCH_DELETE_CAR({ id: deleteModalData.id }))
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Delete a car successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to delete a car', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseDeleteModal();
 	};
 
@@ -248,24 +242,6 @@ export default function Home() {
 	useEffect(() => {
 		refetchData();
 	}, []);
-
-	useEffect(() => {
-		if (!registerCarLoading && registerCarLoading !== undefined) {
-			handleRegisterNotification();
-		}
-	}, [registerCarLoading]);
-
-	useEffect(() => {
-		if (!updateCarLoading && updateCarLoading !== undefined) {
-			handleUpdateNotification();
-		}
-	}, [updateCarLoading]);
-
-	useEffect(() => {
-		if (!deleteCarLoading && deleteCarLoading !== undefined) {
-			handleDeleteNotification();
-		}
-	}, [deleteCarLoading]);
 
 	return (
 		<>

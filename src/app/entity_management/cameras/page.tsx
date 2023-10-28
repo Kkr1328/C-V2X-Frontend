@@ -24,9 +24,6 @@ import { CameraActionModalTemplate } from '@/templates/ACTION_MODAL';
 // redux
 import { useDispatch, useSelector } from '@/redux/store';
 import { selectGetCameras } from '@/redux/get-cameras/get-cameras-selector';
-import { selectCreateCamera } from '@/redux/create-camera/create-camera-selector';
-import { selectUpdateCamera } from '@/redux/update-camera/update-camera-selector';
-import { selectDeleteCamera } from '@/redux/delete-camera/delete-camera-selector';
 import { selectGetCarsList } from '@/redux/get-cars-list/get-cars-list-selector';
 import { FETCH_GET_CAMERAS } from '@/redux/get-cameras/get-cameras-action';
 import { FETCH_CREATE_CAMERA } from '@/redux/create-camera/create-camera-action';
@@ -41,12 +38,6 @@ export default function Home() {
 	const { data: cameras, loading: camerasLoading } =
 		useSelector(selectGetCameras);
 	const { data: carsList } = useSelector(selectGetCarsList);
-	const { error: registerCameraError, loading: registerCameraLoading } =
-		useSelector(selectCreateCamera);
-	const { error: updateCameraError, loading: updateCameraLoading } =
-		useSelector(selectUpdateCamera);
-	const { error: deleteCameraError, loading: deleteCameraLoading } =
-		useSelector(selectDeleteCamera);
 
 	const defaultFilterData = CameraFilterTemplate.reduce(
 		(acc, item) => ({
@@ -110,15 +101,6 @@ export default function Home() {
 		setOpenRegisterModal(false);
 		setRegisterModalData(defaultData);
 	};
-	const handleRegisterNotification = () => {
-		if (!registerCameraError) {
-			enqueueSnackbar('Register a camera successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to register a camera', { variant: 'error' });
-		}
-	};
 	const handleSubmitRegisterModal = () => {
 		dispatch(
 			FETCH_CREATE_CAMERA({
@@ -126,7 +108,17 @@ export default function Home() {
 				position: registerModalData.position,
 				car_id: registerModalData.car_id,
 			})
-		).then(refetchData);
+		)
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Register a camera successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to register a camera', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseRegisterModal();
 	};
 
@@ -139,15 +131,6 @@ export default function Home() {
 		setOpenUpdateModal(false);
 		setUpdateModalData(defaultData);
 	};
-	const handleUpdateNotification = () => {
-		if (!updateCameraError) {
-			enqueueSnackbar('Update a camera successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to update a camera', { variant: 'error' });
-		}
-	};
 	const handleSubmitUpdateModal = () => {
 		dispatch(
 			FETCH_UPDATE_CAMERA({
@@ -158,7 +141,17 @@ export default function Home() {
 					car_id: updateModalData.car_id,
 				},
 			})
-		).then(refetchData);
+		)
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Update a camera successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to update a camera', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseUpdateModal();
 	};
 
@@ -171,17 +164,18 @@ export default function Home() {
 		setOpenDeleteModal(false);
 		setDeleteModalData(defaultData);
 	};
-	const handleDeleteNotification = () => {
-		if (!deleteCameraError) {
-			enqueueSnackbar('Delete a camera successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to delete a camera', { variant: 'error' });
-		}
-	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_CAMERA({ id: deleteModalData.id })).then(refetchData);
+		dispatch(FETCH_DELETE_CAMERA({ id: deleteModalData.id }))
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Delete a camera successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to delete a camera', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseDeleteModal();
 	};
 
@@ -222,24 +216,6 @@ export default function Home() {
 	useEffect(() => {
 		refetchData();
 	}, []);
-
-	useEffect(() => {
-		if (!registerCameraLoading && registerCameraLoading !== undefined) {
-			handleRegisterNotification();
-		}
-	}, [registerCameraLoading]);
-
-	useEffect(() => {
-		if (!updateCameraLoading && updateCameraLoading !== undefined) {
-			handleUpdateNotification();
-		}
-	}, [updateCameraLoading]);
-
-	useEffect(() => {
-		if (!deleteCameraLoading && deleteCameraLoading !== undefined) {
-			handleDeleteNotification();
-		}
-	}, [deleteCameraLoading]);
 
 	return (
 		<>

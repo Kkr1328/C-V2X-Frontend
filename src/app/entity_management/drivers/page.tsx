@@ -28,9 +28,6 @@ import { DriverActionModalTemplate } from '@/templates/ACTION_MODAL';
 // redux
 import { useDispatch, useSelector } from '@/redux/store';
 import { selectGetDrivers } from '@/redux/get-drivers/get-drivers-selector';
-import { selectCreateDriver } from '@/redux/create-driver/create-driver-selector';
-import { selectUpdateDriver } from '@/redux/update-driver/update-driver-selector';
-import { selectDeleteDriver } from '@/redux/delete-driver/delete-driver-selector';
 import { FETCH_GET_DRIVERS } from '@/redux/get-drivers/get-drivers-action';
 import { FETCH_CREATE_DRIVER } from '@/redux/create-driver/create-driver-action';
 import { FETCH_UPDATE_DRIVER } from '@/redux/update-driver/update-driver-action';
@@ -42,12 +39,6 @@ export default function Home() {
 
 	const { data: drivers, loading: driversLoading } =
 		useSelector(selectGetDrivers);
-	const { error: registerDriverError, loading: registerDriverLoading } =
-		useSelector(selectCreateDriver);
-	const { error: updateDriverError, loading: updateDriverLoading } =
-		useSelector(selectUpdateDriver);
-	const { error: deleteDriverError, loading: deleteDriverLoading } =
-		useSelector(selectDeleteDriver);
 
 	const defaultFilterData = DriverFilterTemplate.reduce(
 		(acc, item) => ({
@@ -120,15 +111,6 @@ export default function Home() {
 		setOpenRegisterModal(false);
 		setRegisterModalData(defaultInputData);
 	};
-	const handleRegisterNotification = () => {
-		if (!registerDriverError) {
-			enqueueSnackbar('Register a driver successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to register a driver', { variant: 'error' });
-		}
-	};
 	const handleSubmitRegisterModal = () => {
 		dispatch(
 			FETCH_CREATE_DRIVER({
@@ -138,7 +120,17 @@ export default function Home() {
 				username: registerModalData.username,
 				password: registerModalData.password || '',
 			})
-		).then(refetchData);
+		)
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Register a driver successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to register a driver', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseRegisterModal();
 	};
 
@@ -155,15 +147,6 @@ export default function Home() {
 		setOpenUpdateModal(false);
 		setUpdateModalData(defaultInputData);
 	};
-	const handleUpdateNotification = () => {
-		if (!updateDriverError) {
-			enqueueSnackbar('Update a driver successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to update a driver', { variant: 'error' });
-		}
-	};
 	const handleSubmitUpdateModal = () => {
 		dispatch(
 			FETCH_UPDATE_DRIVER({
@@ -176,7 +159,17 @@ export default function Home() {
 					password: updateModalData.password || '',
 				},
 			})
-		).then(refetchData);
+		)
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Update a driver successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to update a driver', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseUpdateModal();
 	};
 
@@ -189,17 +182,18 @@ export default function Home() {
 		setOpenDeleteModal(false);
 		setDeleteModalData(defaultData);
 	};
-	const handleDeleteNotification = () => {
-		if (!deleteDriverError) {
-			enqueueSnackbar('Delete a driver successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to delete a driver', { variant: 'error' });
-		}
-	};
 	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id })).then(refetchData);
+		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id }))
+			.then((res) => {
+				if (res.meta.requestStatus === 'fulfilled') {
+					enqueueSnackbar('Delete a driver successfully', {
+						variant: 'success',
+					});
+				} else {
+					enqueueSnackbar('Fail to delete a driver', { variant: 'error' });
+				}
+			})
+			.then(refetchData);
 		handleCloseDeleteModal();
 	};
 
@@ -213,24 +207,6 @@ export default function Home() {
 	useEffect(() => {
 		refetchData();
 	}, []);
-
-	useEffect(() => {
-		if (!registerDriverLoading && registerDriverLoading !== undefined) {
-			handleRegisterNotification();
-		}
-	}, [registerDriverLoading]);
-
-	useEffect(() => {
-		if (!updateDriverLoading && updateDriverLoading !== undefined) {
-			handleUpdateNotification();
-		}
-	}, [updateDriverLoading]);
-
-	useEffect(() => {
-		if (!deleteDriverLoading && deleteDriverLoading !== undefined) {
-			handleDeleteNotification();
-		}
-	}, [deleteDriverLoading]);
 
 	return (
 		<Fragment>
