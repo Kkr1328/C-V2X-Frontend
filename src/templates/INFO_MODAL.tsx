@@ -1,7 +1,7 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
-import { InputFieldProp } from '@/types/COMMON';
+import { InputFieldProp } from '@/types/common/input.model';
 import { ICamera } from '@/types/models/camera.model';
-import { ICar, ICarInfo } from '@/types/models/car.model';
+import { ICarInfo } from '@/types/models/car.model';
 import { IDriver } from '@/types/models/driver.model';
 import { IRSU } from '@/types/models/rsu.model';
 

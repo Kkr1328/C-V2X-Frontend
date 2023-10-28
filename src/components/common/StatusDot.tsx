@@ -1,7 +1,7 @@
 import IconMapper from '@/utils/IconMapper';
 
 import { BUTTON_LABEL } from '@/constants/LABEL';
-import { StatusDotType } from '@/types/COMMON';
+import { StatusDotType } from '@/types/models/heartbeat.model';
 
 interface StatusDotProps {
 	variant: (typeof StatusDotType)[number];

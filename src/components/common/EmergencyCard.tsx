@@ -1,5 +1,5 @@
 import { BUTTON_LABEL, EMERGENCY_CARD_LABEL } from '@/constants/LABEL';
-import { Emergency } from '@/types/COMMON';
+import { Emergency } from '@/types/models/emergency.model';
 import IconMapper from '@/utils/IconMapper';
 import { Card, IconButton, Skeleton, Stack } from '@mui/material';
 import { Draggable } from 'react-beautiful-dnd';

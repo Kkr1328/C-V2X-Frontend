@@ -11,8 +11,11 @@ import {
 	CarsHeartbeatTableTemplate,
 	RSUsHeartbeatTableTemplate,
 } from '@/templates/HEARTBEAT_TABLE';
-import { StatusDotType } from '@/types/COMMON';
-import { ICarHeartbeat, IRSUHeartbeat } from '@/types/models/heartbeat.model';
+import {
+	ICarHeartbeat,
+	IRSUHeartbeat,
+	StatusDotType,
+} from '@/types/models/heartbeat.model';
 import { Card, Divider, Grid, Stack } from '@mui/material';
 
 export default function Home() {

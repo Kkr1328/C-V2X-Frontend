@@ -1,9 +1,9 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
-import { InputFieldProp } from '@/types/COMMON';
 import { ICar } from '@/types/models/car.model';
 import { ICamera } from '@/types/models/camera.model';
 import { IDriverInput } from '@/types/models/driver.model';
 import { IRSU } from '@/types/models/rsu.model';
+import { InputFieldProp } from '@/types/common/input.model';
 
 export const CarActionModalTemplate: InputFieldProp<ICar>[] = [
 	{

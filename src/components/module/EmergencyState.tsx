@@ -1,13 +1,16 @@
 import { Card, Stack } from '@mui/material';
 import NoData from '../common/NoData';
-import { Emergency, EmergencyColumn } from '@/types/COMMON';
 import { Droppable } from 'react-beautiful-dnd';
-import React, { Fragment } from 'react';
+import React from 'react';
 import EmergencyCard from '../common/EmergencyCard';
-import { IEmergency } from '@/types/models/emergency.model';
+import {
+	Emergency,
+	EmergencyStateId,
+	IEmergency,
+} from '@/types/models/emergency.model';
 
 interface EmergencyStateProps {
-	droppableId: EmergencyColumn;
+	droppableId: EmergencyStateId;
 	title: Emergency;
 	emergencies: IEmergency[];
 	isLoading?: boolean;

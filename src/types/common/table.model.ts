@@ -1,5 +1,3 @@
-import { Position } from './COMMON';
-
 export interface TableHeaderProps<T> {
 	id: keyof T | 'action' | 'heartbeat_action';
 	label: string;
@@ -10,10 +8,4 @@ export interface TableHeaderProps<T> {
 export interface TableRowProps {
 	id: string;
 	name: string;
-}
-
-export interface CameraType {
-	id: string;
-	name: string;
-	position: Position;
 }

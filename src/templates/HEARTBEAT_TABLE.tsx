@@ -1,5 +1,5 @@
 import { HEARTBEAT_TABLE_LABEL } from '@/constants/LABEL';
-import { TableHeaderProps } from '@/types/ENTITY';
+import { TableHeaderProps } from '@/types/common/table.model';
 import { ICarHeartbeat, IRSUHeartbeat } from '@/types/models/heartbeat.model';
 
 export const CarsHeartbeatTableTemplate: TableHeaderProps<ICarHeartbeat>[] = [

@@ -1,9 +1,9 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
-import { TableHeaderProps } from '@/types/ENTITY';
 import { ICar } from '@/types/models/car.model';
 import { ICamera } from '@/types/models/camera.model';
 import { IDriver } from '@/types/models/driver.model';
 import { IRSU } from '@/types/models/rsu.model';
+import { TableHeaderProps } from '@/types/common/table.model';
 
 export const CarsTableTemplate: TableHeaderProps<ICar>[] = [
 	{

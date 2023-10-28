@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 
 import { Stack } from '@mui/material';
 
@@ -8,8 +8,8 @@ import TextFieldCV2X from '../common/TextFieldCV2X';
 import SelectCV2X from '../common/SelectCV2X';
 import ButtonCV2X from '../common/ButtonCV2X';
 
-import { InputFieldProp } from '@/types/COMMON';
 import { BUTTON_LABEL } from '@/constants/LABEL';
+import { InputFieldProp } from '@/types/common/input.model';
 
 interface FilterProp<T> {
 	template: InputFieldProp<T>[];

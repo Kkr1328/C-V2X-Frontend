@@ -1,4 +1,10 @@
-import { StatusDotType } from '../COMMON';
+export const StatusDotType = [
+	'Active',
+	'Warning',
+	'Emergency',
+	'Inactive',
+	'Missing',
+] as const;
 
 export interface ICarHeartbeat {
 	id: string;

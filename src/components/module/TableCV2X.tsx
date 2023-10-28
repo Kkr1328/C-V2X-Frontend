@@ -11,6 +11,7 @@ import {
 	TableCell,
 	IconButton,
 	Stack,
+	TableRowProps,
 } from '@mui/material';
 // components
 import Loading from '@/components/common/Loading';
@@ -20,9 +21,10 @@ import StatusDot from '@/components/common/StatusDot';
 import IconMapper from '@/utils/IconMapper';
 // consts
 import { BUTTON_LABEL } from '@/constants/LABEL';
+import { TableHeaderProps } from '@/types/common/table.model';
+import { CameraType } from '@/types/models/camera.model';
+import { StatusDotType } from '@/types/models/heartbeat.model';
 // types
-import { CameraType, TableHeaderProps, TableRowProps } from '@/types/ENTITY';
-import { StatusDotType } from '@/types/COMMON';
 
 interface TableCV2XProps<T extends TableRowProps> {
 	columns: TableHeaderProps<T>[];

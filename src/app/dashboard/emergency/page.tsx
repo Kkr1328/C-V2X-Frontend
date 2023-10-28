@@ -6,11 +6,10 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import EmergencyState from '@/components/module/EmergencyState';
-import { EmergencyColumn } from '@/types/COMMON';
 import { useDispatch, useSelector } from '@/redux/store';
 import { selectGetEmergencies } from '@/redux/get-emergencies/get-emergencies-selector';
 import { FETCH_GET_EMERGENCIES } from '@/redux/get-emergencies/get-emergencies-action';
-import { IEmergency } from '@/types/models/emergency.model';
+import { EmergencyStateId, IEmergency } from '@/types/models/emergency.model';
 import { FETCH_UPDATE_EMERGENCY } from '@/redux/update-emergency/update-emergency-action';
 
 export default function Home() {
@@ -73,8 +72,8 @@ export default function Home() {
 		)
 			return null;
 
-		const start = columns[source.droppableId as EmergencyColumn];
-		const end = columns[destination.droppableId as EmergencyColumn];
+		const start = columns[source.droppableId as EmergencyStateId];
+		const end = columns[destination.droppableId as EmergencyStateId];
 
 		if (start === end) {
 			const newList = start.list.filter(
@@ -122,7 +121,7 @@ export default function Home() {
 						)[0].id,
 					},
 					request: {
-						status: destination.droppableId as EmergencyColumn,
+						status: destination.droppableId as EmergencyStateId,
 					},
 				})
 			);

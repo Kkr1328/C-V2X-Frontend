@@ -1,5 +1,8 @@
-import { EmergencyColumn } from '../COMMON';
 import { IQuerry } from '../common/query.model';
+
+export type Emergency = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
+
+export type EmergencyStateId = 'pending' | 'inProgress' | 'complete';
 
 export interface IUpdateEmergencyQuery {
 	query: IQuerry;
@@ -7,14 +10,14 @@ export interface IUpdateEmergencyQuery {
 }
 
 export interface IEmergencyRequest {
-	status: EmergencyColumn;
+	status: EmergencyStateId;
 }
 
 export interface IUpdateEmergencyRequest extends IEmergencyRequest {}
 
 export interface IEmergency {
 	id: string;
-	status: EmergencyColumn;
+	status: EmergencyStateId;
 	car_name: string;
 	driver_phone_no: string;
 	time: string;

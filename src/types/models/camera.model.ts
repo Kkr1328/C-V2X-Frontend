@@ -1,5 +1,13 @@
 import { IQuerry } from '../common/query.model';
 
+export type Position = 'Front' | 'Back';
+
+export interface CameraType {
+	id: string;
+	name: string;
+	position: Position;
+}
+
 export interface IGetCameraQuery extends IQuerry {}
 export interface IUpdateCameraQuery {
 	query: IQuerry;

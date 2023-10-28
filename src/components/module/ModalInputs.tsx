@@ -7,7 +7,7 @@ import { Stack } from '@mui/material';
 import SelectCV2X from '@/components/common/SelectCV2X';
 import TextFieldCV2X from '@/components/common/TextFieldCV2X';
 
-import { InputFieldProp } from '@/types/COMMON';
+import { InputFieldProp } from '@/types/common/input.model';
 
 interface ModalInputsProp<T> {
 	template: InputFieldProp<T>[];

@@ -1,5 +1,5 @@
-import { CameraType } from '../ENTITY';
 import { IQuerry } from '../common/query.model';
+import { CameraType } from './camera.model';
 
 export interface IGetCarQuery extends IQuerry {}
 export interface IUpdateCarQuery {

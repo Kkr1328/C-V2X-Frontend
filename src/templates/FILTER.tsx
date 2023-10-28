@@ -1,9 +1,9 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
-import { InputFieldProp } from '@/types/COMMON';
 import { IGetCarsRequest } from '@/types/models/car.model';
 import { IGetCamerasRequest } from '@/types/models/camera.model';
 import { IGetDriversRequest } from '@/types/models/driver.model';
 import { IGetRSUsRequest } from '@/types/models/rsu.model';
+import { InputFieldProp } from '@/types/common/input.model';
 
 export const CarFilterTemplate: InputFieldProp<IGetCarsRequest>[] = [
 	{
