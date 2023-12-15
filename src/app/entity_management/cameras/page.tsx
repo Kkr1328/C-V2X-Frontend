@@ -139,33 +139,14 @@ export default function Home() {
 		setInformModalData(informData);
 		setOpenInformModal(true);
 	};
-	const handleCloseInformModal = () => setOpenInformModal(false);
-
-	// Register modal
 	const handleOpenRegisterModel = () => setOpenRegisterModal(true);
-	const handleCloseRegisterModal = () => {
-		setOpenRegisterModal(false);
-		setRegisterModalData(defaultData);
-	};
-
-	// Update modal
 	const handleOpenUpdateModal = (updateData: ICamera) => {
 		setUpdateModalData(updateData);
 		setOpenUpdateModal(true);
 	};
-	const handleCloseUpdateModal = () => {
-		setOpenUpdateModal(false);
-		setUpdateModalData(defaultData);
-	};
-
-	// Delete modal
 	const handleOpenDeleteModal = (deleteData: ICamera) => {
 		setDeleteModalData(deleteData);
 		setOpenDeleteModal(true);
-	};
-	const handleCloseDeleteModal = () => {
-		setOpenDeleteModal(false);
-		setDeleteModalData(defaultData);
 	};
 
 	const refetchData = () => {
@@ -204,7 +185,13 @@ export default function Home() {
 				title={MODAL_LABEL.REGISTER_CAMERA}
 				variant={BUTTON_LABEL.REGISTER}
 				open={openRegisterModal}
-				handleOnClose={handleCloseRegisterModal}
+				handleOnClose={() =>
+					handleCloseModal(
+						defaultData,
+						setOpenRegisterModal,
+						setRegisterModalData
+					)
+				}
 				onSubmit={() => createCamera.mutate(registerModalData)}
 			>
 				<ModalInputs
@@ -218,7 +205,9 @@ export default function Home() {
 				title={informModalData.name}
 				variant={'Inform'}
 				open={openInformModal}
-				handleOnClose={handleCloseInformModal}
+				handleOnClose={() =>
+					handleCloseModal(defaultData, setOpenInformModal, setInformModalData)
+				}
 			>
 				<ModalInputs
 					template={CameraInfoModalTemplate}
@@ -231,7 +220,9 @@ export default function Home() {
 				title={MODAL_LABEL.UPDATE_CAMERA + updateModalData.id}
 				variant={BUTTON_LABEL.UPDATE}
 				open={openUpdateModal}
-				handleOnClose={handleCloseUpdateModal}
+				handleOnClose={() =>
+					handleCloseModal(defaultData, setOpenUpdateModal, setUpdateModalData)
+				}
 				onSubmit={() =>
 					updateCamera.mutate({
 						query: updateModalData,
@@ -250,7 +241,9 @@ export default function Home() {
 				title={MODAL_LABEL.ARE_YOU_SURE}
 				variant={BUTTON_LABEL.DELETE}
 				open={openDeleteModal}
-				handleOnClose={handleCloseDeleteModal}
+				handleOnClose={() =>
+					handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData)
+				}
 				onSubmit={() => deleteCamera.mutate(deleteModalData)}
 			>
 				<p>
