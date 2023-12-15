@@ -26,39 +26,79 @@ import { DriversTableTemplate } from '@/templates/ENTITY_TABLE';
 import { DriverInfoModalTemplate } from '@/templates/INFO_MODAL';
 import { DriverActionModalTemplate } from '@/templates/ACTION_MODAL';
 // redux
-import { useDispatch, useSelector } from '@/redux/store';
-import { selectGetDrivers } from '@/redux/get-drivers/get-drivers-selector';
-import { selectCreateDriver } from '@/redux/create-driver/create-driver-selector';
-import { selectUpdateDriver } from '@/redux/update-driver/update-driver-selector';
-import { selectDeleteDriver } from '@/redux/delete-driver/delete-driver-selector';
-import { FETCH_GET_DRIVERS } from '@/redux/get-drivers/get-drivers-action';
-import { FETCH_CREATE_DRIVER } from '@/redux/create-driver/create-driver-action';
-import { FETCH_UPDATE_DRIVER } from '@/redux/update-driver/update-driver-action';
-import { FETCH_DELETE_DRIVER } from '@/redux/delete-driver/delete-driver-action';
+import { DefaultDataGenerator } from '@/utils/DataGenerator';
+import {
+	createDriverAPI,
+	deleteDriverAPI,
+	getDriversAPI,
+	updateDriverAPI,
+} from '@/services/api-call';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export default function Home() {
-	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
+	const defaultFilterData = DefaultDataGenerator(DriverFilterTemplate);
+	const defaultData = DefaultDataGenerator(DriverActionModalTemplate);
+	const defaultInfoData = DefaultDataGenerator(DriverInfoModalTemplate);
 
-	const { data: drivers, loading: driversLoading } =
-		useSelector(selectGetDrivers);
-	const { error: registerDriverError, loading: registerDriverLoading } =
-		useSelector(selectCreateDriver);
-	const { error: updateDriverError, loading: updateDriverLoading } =
-		useSelector(selectUpdateDriver);
-	const { error: deleteDriverError, loading: deleteDriverLoading } =
-		useSelector(selectDeleteDriver);
-
-	const defaultFilterData = DriverFilterTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as IGetDriversRequest[keyof IGetDriversRequest],
-		}),
-		{} as IGetDriversRequest
-	);
-
-	// fiiter state
 	const [search, setSearch] = useState<IGetDriversRequest>(defaultFilterData);
+
+	const {
+		isLoading: driversLoading,
+		data: drivers,
+		refetch: refetchGetDrivers,
+	} = useQuery({
+		queryKey: ['getDrivers'],
+		queryFn: async () => await getDriversAPI(search),
+	});
+
+	const createDriver = useMutation({
+		mutationFn: createDriverAPI,
+		onSuccess: () => {
+			refetchGetDrivers();
+			handleCloseModal(defaultData, setOpenRegisterModal, setRegisterModalData);
+			enqueueSnackbar('Register a Driver successfully', {
+				variant: 'success',
+			});
+		},
+		onError: () =>
+			enqueueSnackbar('Fail to update a Driver', { variant: 'error' }),
+	});
+
+	const updateDriver = useMutation({
+		mutationFn: updateDriverAPI,
+		onSuccess: () => {
+			refetchGetDrivers();
+			handleCloseModal(defaultData, setOpenUpdateModal, setUpdateModalData);
+			enqueueSnackbar('Update a Driver successfully', {
+				variant: 'success',
+			});
+		},
+		onError: () =>
+			enqueueSnackbar('Fail to update a Driver', { variant: 'error' }),
+	});
+
+	const deleteDriver = useMutation({
+		mutationFn: deleteDriverAPI,
+		onSuccess: () => {
+			refetchGetDrivers();
+			handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData);
+			enqueueSnackbar('Delete a Driver successfully', {
+				variant: 'success',
+			});
+		},
+		onError: () =>
+			enqueueSnackbar('Fail to delete a Driver', { variant: 'error' }),
+	});
+
+	const handleCloseModal = (
+		defalutData: IDriverInput,
+		setOpenModal: React.Dispatch<React.SetStateAction<boolean>>,
+		setModalData: React.Dispatch<React.SetStateAction<IDriverInput>>
+	) => {
+		setModalData(defalutData);
+		setOpenModal(false);
+	};
 
 	const getSearch = (id: keyof IGetDriversRequest) => {
 		if (search) {
@@ -75,7 +115,6 @@ export default function Home() {
 	const handleClearSearch = () => {
 		setSearch(defaultFilterData);
 	};
-	const handleOnSearch = () => dispatch(FETCH_GET_DRIVERS(search));
 
 	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
@@ -83,29 +122,15 @@ export default function Home() {
 	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
-	const defaultData = DriverActionModalTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as IDriver[keyof IDriver],
-		}),
-		{} as IDriver
-	);
-
-	const defaultInputData = DriverActionModalTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as IDriverInput[keyof IDriverInput],
-		}),
-		{} as IDriverInput
-	);
-
 	// Modal data state
-	const [informModalData, setInformModalData] = useState<IDriver>(defaultData);
+	const [informModalData, setInformModalData] =
+		useState<IDriver>(defaultInfoData);
 	const [registerModalData, setRegisterModalData] =
-		useState<IDriverInput>(defaultInputData);
+		useState<IDriverInput>(defaultData);
 	const [updateModalData, setUpdateModalData] =
-		useState<IDriverInput>(defaultInputData);
-	const [deleteModalData, setDeleteModalData] = useState<IDriver>(defaultData);
+		useState<IDriverInput>(defaultData);
+	const [deleteModalData, setDeleteModalData] =
+		useState<IDriverInput>(defaultData);
 
 	// Inform modal
 	const handleOpenInformModal = (informData: IDriver) => {
@@ -118,28 +143,7 @@ export default function Home() {
 	const handleOpenRegisterModel = () => setOpenRegisterModal(true);
 	const handleCloseRegisterModal = () => {
 		setOpenRegisterModal(false);
-		setRegisterModalData(defaultInputData);
-	};
-	const handleRegisterNotification = () => {
-		if (!registerDriverError) {
-			enqueueSnackbar('Register a driver successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to register a driver', { variant: 'error' });
-		}
-	};
-	const handleSubmitRegisterModal = () => {
-		dispatch(
-			FETCH_CREATE_DRIVER({
-				first_name: registerModalData.first_name,
-				last_name: registerModalData.last_name,
-				phone_no: registerModalData.phone_no,
-				username: registerModalData.username,
-				password: registerModalData.password || '',
-			})
-		).then(refetchData);
-		handleCloseRegisterModal();
+		setRegisterModalData(defaultData);
 	};
 
 	// Update modal
@@ -153,84 +157,27 @@ export default function Home() {
 	};
 	const handleCloseUpdateModal = () => {
 		setOpenUpdateModal(false);
-		setUpdateModalData(defaultInputData);
-	};
-	const handleUpdateNotification = () => {
-		if (!updateDriverError) {
-			enqueueSnackbar('Update a driver successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to update a driver', { variant: 'error' });
-		}
-	};
-	const handleSubmitUpdateModal = () => {
-		dispatch(
-			FETCH_UPDATE_DRIVER({
-				query: { id: updateModalData.id },
-				request: {
-					first_name: updateModalData.first_name,
-					last_name: updateModalData.last_name,
-					phone_no: updateModalData.phone_no,
-					username: updateModalData.username,
-					password: updateModalData.password || '',
-				},
-			})
-		).then(refetchData);
-		handleCloseUpdateModal();
+		setUpdateModalData(defaultData);
 	};
 
 	// Delete modal
 	const handleOpenDeleteModal = (deleteData: IDriver) => {
-		setDeleteModalData(deleteData);
+		setDeleteModalData({
+			...deleteData,
+			password: '',
+			confirmed_password: '',
+		});
 		setOpenDeleteModal(true);
 	};
 	const handleCloseDeleteModal = () => {
 		setOpenDeleteModal(false);
 		setDeleteModalData(defaultData);
 	};
-	const handleDeleteNotification = () => {
-		if (!deleteDriverError) {
-			enqueueSnackbar('Delete a driver successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to delete a driver', { variant: 'error' });
-		}
+
+	const handleOnClickRefresh = async () => {
+		await handleClearSearch();
+		refetchGetDrivers();
 	};
-	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_DRIVER({ id: deleteModalData.id })).then(refetchData);
-		handleCloseDeleteModal();
-	};
-
-	const refetchData = () => dispatch(FETCH_GET_DRIVERS({}));
-
-	const handleOnClickRefresh = () => {
-		handleClearSearch();
-		refetchData();
-	};
-
-	useEffect(() => {
-		refetchData();
-	}, []);
-
-	useEffect(() => {
-		if (!registerDriverLoading && registerDriverLoading !== undefined) {
-			handleRegisterNotification();
-		}
-	}, [registerDriverLoading]);
-
-	useEffect(() => {
-		if (!updateDriverLoading && updateDriverLoading !== undefined) {
-			handleUpdateNotification();
-		}
-	}, [updateDriverLoading]);
-
-	useEffect(() => {
-		if (!deleteDriverLoading && deleteDriverLoading !== undefined) {
-			handleDeleteNotification();
-		}
-	}, [deleteDriverLoading]);
 
 	return (
 		<Fragment>
@@ -239,7 +186,7 @@ export default function Home() {
 				variant={BUTTON_LABEL.REGISTER}
 				open={openRegisterModal}
 				handleOnClose={handleCloseRegisterModal}
-				onSubmit={handleSubmitRegisterModal}
+				onSubmit={() => createDriver.mutate(registerModalData)}
 			>
 				<ModalInputs
 					template={DriverActionModalTemplate}
@@ -265,7 +212,12 @@ export default function Home() {
 				variant={BUTTON_LABEL.UPDATE}
 				open={openUpdateModal}
 				handleOnClose={handleCloseUpdateModal}
-				onSubmit={handleSubmitUpdateModal}
+				onSubmit={() =>
+					updateDriver.mutate({
+						query: updateModalData,
+						request: updateModalData,
+					})
+				}
 			>
 				<ModalInputs
 					template={DriverActionModalTemplate}
@@ -278,7 +230,7 @@ export default function Home() {
 				variant={BUTTON_LABEL.DELETE}
 				open={openDeleteModal}
 				handleOnClose={handleCloseDeleteModal}
-				onSubmit={handleSubmitDeleteModal}
+				onSubmit={() => deleteDriver.mutate(deleteModalData)}
 			>
 				<p>
 					{MODAL_LABEL.DO_YOU_REALLY_DELETE +
@@ -293,7 +245,7 @@ export default function Home() {
 					<Stack className="h-full flex flex-col gap-16">
 						<Filter
 							template={DriverFilterTemplate}
-							handleSubmitSearch={handleOnSearch}
+							handleSubmitSearch={refetchGetDrivers}
 							getSearch={getSearch}
 							handleSearchChange={handleSearchChange}
 							handleClearSearch={handleClearSearch}

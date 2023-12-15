@@ -22,42 +22,88 @@ import { CamerasTableTemplate } from '@/templates/ENTITY_TABLE';
 import { CameraInfoModalTemplate } from '@/templates/INFO_MODAL';
 import { CameraActionModalTemplate } from '@/templates/ACTION_MODAL';
 // redux
-import { useDispatch, useSelector } from '@/redux/store';
-import { selectGetCameras } from '@/redux/get-cameras/get-cameras-selector';
-import { selectCreateCamera } from '@/redux/create-camera/create-camera-selector';
-import { selectUpdateCamera } from '@/redux/update-camera/update-camera-selector';
-import { selectDeleteCamera } from '@/redux/delete-camera/delete-camera-selector';
-import { selectGetCarsList } from '@/redux/get-cars-list/get-cars-list-selector';
-import { FETCH_GET_CAMERAS } from '@/redux/get-cameras/get-cameras-action';
-import { FETCH_CREATE_CAMERA } from '@/redux/create-camera/create-camera-action';
-import { FETCH_UPDATE_CAMERA } from '@/redux/update-camera/update-camera-action';
-import { FETCH_DELETE_CAMERA } from '@/redux/delete-camera/delete-camera-action';
-import { FETCH_GET_CARS_LIST } from '@/redux/get-cars-list/get-cars-list-action';
+import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+	createCameraAPI,
+	deleteCameraAPI,
+	getCamerasAPI,
+	getCarsListAPI,
+	updateCameraAPI,
+} from '@/services/api-call';
 
 export default function Home() {
-	const dispatch = useDispatch();
 	const { enqueueSnackbar } = useSnackbar();
+	const defaultFilterData = DefaultDataGenerator(CameraFilterTemplate);
+	const defaultData = DefaultDataGenerator(CameraActionModalTemplate);
 
-	const { data: cameras, loading: camerasLoading } =
-		useSelector(selectGetCameras);
-	const { data: carsList } = useSelector(selectGetCarsList);
-	const { error: registerCameraError, loading: registerCameraLoading } =
-		useSelector(selectCreateCamera);
-	const { error: updateCameraError, loading: updateCameraLoading } =
-		useSelector(selectUpdateCamera);
-	const { error: deleteCameraError, loading: deleteCameraLoading } =
-		useSelector(selectDeleteCamera);
-
-	const defaultFilterData = CameraFilterTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as IGetCamerasRequest[keyof IGetCamerasRequest],
-		}),
-		{} as IGetCamerasRequest
-	);
-
-	// fiiter state
 	const [search, setSearch] = useState<IGetCamerasRequest>(defaultFilterData);
+
+	const {
+		isLoading: camerasLoading,
+		data: cameras,
+		refetch: refetchGetCameras,
+	} = useQuery({
+		queryKey: ['getCameras'],
+		queryFn: async () => await getCamerasAPI(search),
+	});
+
+	const {
+		isLoading: carsListLoading,
+		data: carsList,
+		refetch: refetchGetCarsList,
+	} = useQuery({
+		queryKey: ['getCarsList'],
+		queryFn: async () => await getCarsListAPI(),
+	});
+
+	const createCamera = useMutation({
+		mutationFn: createCameraAPI,
+		onSuccess: () => {
+			refetchGetCameras();
+			handleCloseModal(defaultData, setOpenRegisterModal, setRegisterModalData);
+			enqueueSnackbar('Register a Camera successfully', {
+				variant: 'success',
+			});
+		},
+		onError: () =>
+			enqueueSnackbar('Fail to update a Camera', { variant: 'error' }),
+	});
+
+	const updateCamera = useMutation({
+		mutationFn: updateCameraAPI,
+		onSuccess: () => {
+			refetchGetCameras();
+			handleCloseModal(defaultData, setOpenUpdateModal, setUpdateModalData);
+			enqueueSnackbar('Update a Camera successfully', {
+				variant: 'success',
+			});
+		},
+		onError: () =>
+			enqueueSnackbar('Fail to update a Camera', { variant: 'error' }),
+	});
+
+	const deleteCamera = useMutation({
+		mutationFn: deleteCameraAPI,
+		onSuccess: () => {
+			refetchGetCameras();
+			handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData);
+			enqueueSnackbar('Delete a Camera successfully', {
+				variant: 'success',
+			});
+		},
+		onError: () =>
+			enqueueSnackbar('Fail to delete a Camera', { variant: 'error' }),
+	});
+
+	const handleCloseModal = (
+		defalutData: ICamera,
+		setOpenModal: React.Dispatch<React.SetStateAction<boolean>>,
+		setModalData: React.Dispatch<React.SetStateAction<ICamera>>
+	) => {
+		setModalData(defalutData);
+		setOpenModal(false);
+	};
 
 	const getSearch = (id: keyof IGetCamerasRequest) => {
 		if (search) {
@@ -74,21 +120,12 @@ export default function Home() {
 	const handleClearSearch = () => {
 		setSearch(defaultFilterData);
 	};
-	const handleOnSearch = () => dispatch(FETCH_GET_CAMERAS(search));
 
 	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-
-	const defaultData = CameraActionModalTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as ICamera[keyof ICamera],
-		}),
-		{} as ICamera
-	);
 
 	// Modal data state
 	const [informModalData, setInformModalData] = useState<ICamera>(defaultData);
@@ -110,25 +147,6 @@ export default function Home() {
 		setOpenRegisterModal(false);
 		setRegisterModalData(defaultData);
 	};
-	const handleRegisterNotification = () => {
-		if (!registerCameraError) {
-			enqueueSnackbar('Register a camera successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to register a camera', { variant: 'error' });
-		}
-	};
-	const handleSubmitRegisterModal = () => {
-		dispatch(
-			FETCH_CREATE_CAMERA({
-				name: registerModalData.name,
-				position: registerModalData.position,
-				car_id: registerModalData.car_id,
-			})
-		).then(refetchData);
-		handleCloseRegisterModal();
-	};
 
 	// Update modal
 	const handleOpenUpdateModal = (updateData: ICamera) => {
@@ -138,28 +156,6 @@ export default function Home() {
 	const handleCloseUpdateModal = () => {
 		setOpenUpdateModal(false);
 		setUpdateModalData(defaultData);
-	};
-	const handleUpdateNotification = () => {
-		if (!updateCameraError) {
-			enqueueSnackbar('Update a camera successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to update a camera', { variant: 'error' });
-		}
-	};
-	const handleSubmitUpdateModal = () => {
-		dispatch(
-			FETCH_UPDATE_CAMERA({
-				query: { id: updateModalData.id },
-				request: {
-					name: updateModalData.name,
-					position: updateModalData.position,
-					car_id: updateModalData.car_id,
-				},
-			})
-		).then(refetchData);
-		handleCloseUpdateModal();
 	};
 
 	// Delete modal
@@ -171,23 +167,10 @@ export default function Home() {
 		setOpenDeleteModal(false);
 		setDeleteModalData(defaultData);
 	};
-	const handleDeleteNotification = () => {
-		if (!deleteCameraError) {
-			enqueueSnackbar('Delete a camera successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to delete a camera', { variant: 'error' });
-		}
-	};
-	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_CAMERA({ id: deleteModalData.id })).then(refetchData);
-		handleCloseDeleteModal();
-	};
 
 	const refetchData = () => {
-		dispatch(FETCH_GET_CAMERAS({}));
-		dispatch(FETCH_GET_CARS_LIST());
+		refetchGetCameras();
+		refetchGetCarsList();
 	};
 
 	const handleOnClickRefresh = () => {
@@ -206,40 +189,14 @@ export default function Home() {
 				label: 'Back',
 			},
 		];
-		const carOption =
-			carsList?.map((car) => {
-				return { value: car.id, label: car.name };
-			}) || [];
 		return [
 			{ id: 'position', option: positionOption },
 			{
 				id: 'car_id',
-				option: carOption,
+				option: OptionGenerator(carsList),
 			},
 		];
 	};
-
-	useEffect(() => {
-		refetchData();
-	}, []);
-
-	useEffect(() => {
-		if (!registerCameraLoading && registerCameraLoading !== undefined) {
-			handleRegisterNotification();
-		}
-	}, [registerCameraLoading]);
-
-	useEffect(() => {
-		if (!updateCameraLoading && updateCameraLoading !== undefined) {
-			handleUpdateNotification();
-		}
-	}, [updateCameraLoading]);
-
-	useEffect(() => {
-		if (!deleteCameraLoading && deleteCameraLoading !== undefined) {
-			handleDeleteNotification();
-		}
-	}, [deleteCameraLoading]);
 
 	return (
 		<>
@@ -248,7 +205,7 @@ export default function Home() {
 				variant={BUTTON_LABEL.REGISTER}
 				open={openRegisterModal}
 				handleOnClose={handleCloseRegisterModal}
-				onSubmit={handleSubmitRegisterModal}
+				onSubmit={() => createCamera.mutate(registerModalData)}
 			>
 				<ModalInputs
 					template={CameraActionModalTemplate}
@@ -275,7 +232,12 @@ export default function Home() {
 				variant={BUTTON_LABEL.UPDATE}
 				open={openUpdateModal}
 				handleOnClose={handleCloseUpdateModal}
-				onSubmit={handleSubmitUpdateModal}
+				onSubmit={() =>
+					updateCamera.mutate({
+						query: updateModalData,
+						request: updateModalData,
+					})
+				}
 			>
 				<ModalInputs
 					template={CameraActionModalTemplate}
@@ -289,7 +251,7 @@ export default function Home() {
 				variant={BUTTON_LABEL.DELETE}
 				open={openDeleteModal}
 				handleOnClose={handleCloseDeleteModal}
-				onSubmit={handleSubmitDeleteModal}
+				onSubmit={() => deleteCamera.mutate(deleteModalData)}
 			>
 				<p>
 					{MODAL_LABEL.DO_YOU_REALLY_DELETE +
@@ -304,7 +266,7 @@ export default function Home() {
 					<Stack className="h-full flex flex-col gap-16">
 						<Filter
 							template={CameraFilterTemplate}
-							handleSubmitSearch={handleOnSearch}
+							handleSubmitSearch={refetchGetCameras}
 							getSearch={getSearch}
 							handleSearchChange={handleSearchChange}
 							handleClearSearch={handleClearSearch}
