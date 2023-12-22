@@ -1,14 +1,11 @@
 interface TextProp {
-	color?: string;
-	size: string;
+	style?: string;
 	content: string;
 }
 
 export default function Text(props: TextProp) {
 	return (
-		<p
-			className={`inline-block align-baseline font-istok ${props.color} ${props.size}`}
-		>
+		<p className={`inline-block align-baseline font-istok ${props.style}`}>
 			{props.content}
 		</p>
 	);
