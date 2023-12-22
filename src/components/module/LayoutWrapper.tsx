@@ -6,16 +6,19 @@ import { SnackbarProvider } from 'notistack';
 
 import Header from '../common/Header';
 import Navbar from './Navbar';
-import StoreProvider from '@/context/StoreProvider';
+import { useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export default function LayoutWrapper({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
+	const [queryClient] = useState(() => new QueryClient());
+
 	return (
-		<SnackbarProvider maxSnack={3}>
-			<StoreProvider>
+		<QueryClientProvider client={queryClient}>
+			<SnackbarProvider maxSnack={3}>
 				<Box className="w-screen h-screen flex bg-dark_background_grey">
 					<Header />
 					<Navbar />
@@ -24,7 +27,7 @@ export default function LayoutWrapper({
 						{children}
 					</Box>
 				</Box>
-			</StoreProvider>
-		</SnackbarProvider>
+			</SnackbarProvider>
+		</QueryClientProvider>
 	);
 }
