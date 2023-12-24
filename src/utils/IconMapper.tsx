@@ -1,5 +1,4 @@
-import { BUTTON_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
-
+// material ui
 import InsertChartRoundedIcon from '@mui/icons-material/InsertChartRounded';
 import PieChartRoundedIcon from '@mui/icons-material/PieChartRounded';
 import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
@@ -25,6 +24,8 @@ import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
+// const
+import { BUTTON_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 
 interface IconMapperProps {
 	icon: string;

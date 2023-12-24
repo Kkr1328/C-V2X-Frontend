@@ -1,4 +1,6 @@
+// services
 import ApiClient from '@/services/api-client';
+// types
 import { ErrorCommon } from '@/types/common/error.model';
 
 export const executeApiCall = async (
