@@ -82,8 +82,8 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 										props.resetError?.(inputField.id);
 										handleDataChange(inputField.id, event.target.value);
 									}}
-									isError={props.error?.[inputField.id] !== ''}
-									helperMessage={props.error?.[inputField.id]}
+									isError={props.error && props.error?.[inputField.id] !== ''}
+									helperMessage={props.error && props.error?.[inputField.id]}
 								/>
 							) : (
 								useSelect(inputField) && (
@@ -105,8 +105,8 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 											}
 										}}
 										options={getOption(inputField)}
-										isError={props.error?.[inputField.id] !== ''}
-										helperMessage={props.error?.[inputField.id]}
+										isError={props.error && props.error?.[inputField.id] !== ''}
+										helperMessage={props.error && props.error?.[inputField.id]}
 									/>
 								)
 							)

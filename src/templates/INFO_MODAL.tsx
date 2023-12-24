@@ -9,21 +9,9 @@ import { ICarInfo } from '@/types/models/car.model';
 import { IDriver } from '@/types/models/driver.model';
 import { IRSU } from '@/types/models/rsu.model';
 
-export function CarInfoModalTemplate(): InputFieldProp<ICarInfo>[] {
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
-	const isUseCompact = windowWidth <= 640;
-
+export function CarInfoModalTemplate(
+	isUseCompact: boolean
+): InputFieldProp<ICarInfo>[] {
 	return [
 		{
 			id: 'license_plate',
@@ -70,21 +58,9 @@ export function CarInfoModalTemplate(): InputFieldProp<ICarInfo>[] {
 	];
 }
 
-export function DriverInfoModalTemplate(): InputFieldProp<IDriver>[] {
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
-	const isUseCompact = windowWidth <= 640;
-
+export function DriverInfoModalTemplate(
+	isUseCompact: boolean
+): InputFieldProp<IDriver>[] {
 	return [
 		{
 			id: 'username',
@@ -101,20 +77,9 @@ export function DriverInfoModalTemplate(): InputFieldProp<IDriver>[] {
 	];
 }
 
-export function CameraInfoModalTemplate(): InputFieldProp<ICamera>[] {
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
-	const isUseCompact = windowWidth <= 640;
+export function CameraInfoModalTemplate(
+	isUseCompact: boolean
+): InputFieldProp<ICamera>[] {
 	return [
 		{
 			id: 'car',
@@ -131,21 +96,9 @@ export function CameraInfoModalTemplate(): InputFieldProp<ICamera>[] {
 	];
 }
 
-export function RSUInfoModalTemplate(): InputFieldProp<IRSU>[] {
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
-	const isUseCompact = windowWidth <= 640;
-
+export function RSUInfoModalTemplate(
+	isUseCompact: boolean
+): InputFieldProp<IRSU>[] {
 	return [
 		{
 			id: 'recommended_speed',

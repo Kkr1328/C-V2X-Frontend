@@ -9,21 +9,9 @@ import { ICamera } from '@/types/models/camera.model';
 import { IDriverInput } from '@/types/models/driver.model';
 import { IRSU } from '@/types/models/rsu.model';
 
-export function CarActionModalTemplate(): InputFieldProp<ICar>[] {
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
-	const isUseCompact = windowWidth <= 640;
-
+export function CarActionModalTemplate(
+	isUseCompact: boolean
+): InputFieldProp<ICar>[] {
 	return [
 		{
 			id: 'name',
@@ -60,21 +48,9 @@ export function CarActionModalTemplate(): InputFieldProp<ICar>[] {
 	];
 }
 
-export function DriverActionModalTemplate(): InputFieldProp<IDriverInput>[] {
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
-	const isUseCompact = windowWidth <= 640;
-
+export function DriverActionModalTemplate(
+	isUseCompact: boolean
+): InputFieldProp<IDriverInput>[] {
 	return [
 		{
 			id: 'first_name',
@@ -135,21 +111,9 @@ export function DriverActionModalTemplate(): InputFieldProp<IDriverInput>[] {
 	];
 }
 
-export function CameraActionModalTemplate(): InputFieldProp<ICamera>[] {
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
-	const isUseCompact = windowWidth <= 640;
-
+export function CameraActionModalTemplate(
+	isUseCompact: boolean
+): InputFieldProp<ICamera>[] {
 	return [
 		{
 			id: 'name',
@@ -179,21 +143,9 @@ export function CameraActionModalTemplate(): InputFieldProp<ICamera>[] {
 	];
 }
 
-export function RSUActionModalTemplate(): InputFieldProp<IRSU>[] {
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
-	const isUseCompact = windowWidth <= 640;
-
+export function RSUActionModalTemplate(
+	isUseCompact: boolean
+): InputFieldProp<IRSU>[] {
 	return [
 		{
 			id: 'name',
