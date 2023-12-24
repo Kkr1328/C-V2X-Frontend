@@ -1,6 +1,6 @@
 'use client';
 // react
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
@@ -8,10 +8,11 @@ import { Card, Divider, Stack } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter';
-import ButtonCV2X from '@/components/common/ButtonCV2X';
-import TableCV2X from '@/components/module/TableCV2X';
-import ModalCV2X from '@/components/common/ModalCV2X';
-import ModalInputs from '@/components/module/ModalInputs';
+import TableController from '@/components/module/Table/TableController';
+import TableCV2X from '@/components/module/Table/TableCV2X';
+import InputModal from '@/components/module/Modal/InputModal';
+import InfoModal from '@/components/module/Modal/InfoModal';
+import DeleteModal from '@/components/module/Modal/DeleteModal';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
@@ -34,12 +35,31 @@ import {
 } from '@/services/api-call';
 // utilities
 import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
+import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 
 export default function Home() {
+	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowWidth(window.innerWidth);
+		};
+
+		window.addEventListener('resize', handleResize);
+
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, []);
+	const isUseCompactModal = windowWidth <= 640;
+
 	const { enqueueSnackbar } = useSnackbar();
 	const defaultFilterData = DefaultDataGenerator(CarFilterTemplate);
-	const defaultData = DefaultDataGenerator(CarActionModalTemplate);
-	const defaultInfoData = DefaultDataGenerator(CarInfoModalTemplate);
+	const defaultData = DefaultDataGenerator(
+		CarActionModalTemplate(isUseCompactModal)
+	);
+	const defaultInfoData = DefaultDataGenerator(
+		CarInfoModalTemplate(isUseCompactModal)
+	);
 
 	const [search, setSearch] = useState<IGetCarsRequest>(defaultFilterData);
 
@@ -52,20 +72,12 @@ export default function Home() {
 		queryFn: async () => await getCarsAPI(search),
 	});
 
-	const {
-		isLoading: camerasListLoading,
-		data: camerasList,
-		refetch: refetchGetCamerasList,
-	} = useQuery({
+	const { data: camerasList, refetch: refetchGetCamerasList } = useQuery({
 		queryKey: ['getCamerasList'],
 		queryFn: async () => await getCamerasListAPI(),
 	});
 
-	const {
-		isLoading: driversListLoading,
-		data: driversList,
-		refetch: refetchGetDriversList,
-	} = useQuery({
+	const { data: driversList, refetch: refetchGetDriversList } = useQuery({
 		queryKey: ['getDriversList'],
 		queryFn: async () => await getDriversListAPI(),
 	});
@@ -109,29 +121,8 @@ export default function Home() {
 			enqueueSnackbar('Fail to delete a Car', { variant: 'error' }),
 	});
 
-	const handleOpenModal = (
-		modalData: ICar,
-		setOpenModal: React.Dispatch<React.SetStateAction<boolean>>,
-		setModalData: React.Dispatch<React.SetStateAction<ICar>>
-	) => {
-		setOpenModal(true);
-		setModalData(modalData);
-	};
-
-	const handleCloseModal = (
-		defalutData: ICar,
-		setOpenModal: React.Dispatch<React.SetStateAction<boolean>>,
-		setModalData: React.Dispatch<React.SetStateAction<ICar>>
-	) => {
-		setModalData(defalutData);
-		setOpenModal(false);
-	};
-
 	const getSearch = (id: keyof IGetCarsRequest) => {
-		if (search) {
-			return search[id] as string;
-		}
-		return '';
+		return search ? (search[id] as string) : '';
 	};
 
 	const handleSearchChange = (id: keyof IGetCarsRequest, value: string) => {
@@ -139,10 +130,6 @@ export default function Home() {
 			...search,
 			[id]: value,
 		} as IGetCarsRequest);
-	};
-
-	const handleClearSearch = () => {
-		setSearch(defaultFilterData);
 	};
 
 	// Open-Close modal state
@@ -175,17 +162,12 @@ export default function Home() {
 		});
 		setOpenInformModal(true);
 	};
-	const handleCloseInformModal = () => setOpenInformModal(false);
 
-	const refetchData = () => {
+	const handleOnClickRefresh = async () => {
+		await setSearch(defaultFilterData);
 		refetchGetCars();
 		refetchGetCamerasList();
 		refetchGetDriversList();
-	};
-
-	const handleOnClickRefresh = async () => {
-		await handleClearSearch();
-		refetchData();
 	};
 
 	const options = [
@@ -205,76 +187,49 @@ export default function Home() {
 
 	return (
 		<>
-			<ModalCV2X
+			<InputModal
 				title={MODAL_LABEL.REGISTER_CAR}
 				variant={BUTTON_LABEL.REGISTER}
+				template={CarActionModalTemplate(isUseCompactModal)}
 				open={openRegisterModal}
-				handleOnClose={() =>
-					handleCloseModal(
-						defaultData,
-						setOpenRegisterModal,
-						setRegisterModalData
-					)
-				}
+				onOpenChange={setOpenRegisterModal}
+				data={registerModalData}
+				onDataChange={setRegisterModalData}
 				onSubmit={() => createCar.mutate(registerModalData)}
-			>
-				<ModalInputs
-					template={CarActionModalTemplate}
-					data={registerModalData}
-					onDataChange={setRegisterModalData}
-					options={options}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
+				options={options}
+			/>
+			<InfoModal
 				title={informModalData.name}
-				variant={'Inform'}
+				template={CarInfoModalTemplate(isUseCompactModal)}
 				open={openInformModal}
-				handleOnClose={handleCloseInformModal}
-			>
-				<ModalInputs
-					template={CarInfoModalTemplate}
-					data={informModalData}
-					onDataChange={setInformModalData}
-					isReadOnly={true}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
+				onOpenChange={setOpenInformModal}
+				data={informModalData}
+				onDataChange={setInformModalData}
+			/>
+			<InputModal
 				title={MODAL_LABEL.UPDATE_CAR + updateModalData.id}
 				variant={BUTTON_LABEL.UPDATE}
+				template={CarActionModalTemplate(isUseCompactModal)}
 				open={openUpdateModal}
-				handleOnClose={() =>
-					handleCloseModal(defaultData, setOpenUpdateModal, setUpdateModalData)
-				}
+				onOpenChange={setOpenUpdateModal}
+				data={updateModalData}
+				onDataChange={setUpdateModalData}
 				onSubmit={() =>
 					updateCar.mutate({
 						query: updateModalData,
 						request: updateModalData,
 					})
 				}
-			>
-				<ModalInputs
-					template={CarActionModalTemplate}
-					data={updateModalData}
-					onDataChange={setUpdateModalData}
-					options={options}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
-				title={MODAL_LABEL.ARE_YOU_SURE}
-				variant={BUTTON_LABEL.DELETE}
+				options={options}
+			/>
+			<DeleteModal
 				open={openDeleteModal}
 				handleOnClose={() =>
 					handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData)
 				}
+				entity={deleteModalData.id + ' car'}
 				onSubmit={() => deleteCar.mutate(deleteModalData)}
-			>
-				<p>
-					{MODAL_LABEL.DO_YOU_REALLY_DELETE +
-						deleteModalData.id +
-						' car' +
-						MODAL_LABEL.THIS_PROCESS_CANNOT_UNDONE}
-				</p>
-			</ModalCV2X>
+			/>
 			<Stack className="gap-16">
 				<PageTitle title={NAVBAR_LABEL.CARS} />
 				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
@@ -284,35 +239,23 @@ export default function Home() {
 							handleSubmitSearch={refetchGetCars}
 							getSearch={getSearch}
 							handleSearchChange={handleSearchChange}
-							handleClearSearch={handleClearSearch}
+							handleClearSearch={() => setSearch(defaultFilterData)}
 							options={options}
 						/>
 						<Divider />
-						<Stack direction="row" className="gap-8">
-							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total (${
-								cars?.length || 0
-							})`}</p>
-							<div className="grow" />
-							<ButtonCV2X
-								icon={BUTTON_LABEL.REGISTER}
-								label={BUTTON_LABEL.REGISTER_CAR}
-								variant="contained"
-								onClick={() =>
-									handleOpenModal(
-										defaultData,
-										setOpenRegisterModal,
-										setRegisterModalData
-									)
-								}
-							/>
-							<ButtonCV2X
-								icon={BUTTON_LABEL.REFRESH}
-								label={BUTTON_LABEL.REFRESH}
-								variant="outlined"
-								onClick={handleOnClickRefresh}
-							/>
-						</Stack>
-						<TableCV2X<ICar>
+						<TableController
+							numberOfRow={(cars ?? []).length}
+							registerLabel={BUTTON_LABEL.REGISTER_CAR}
+							handleOnClickRegister={() =>
+								handleOpenModal(
+									defaultData,
+									setOpenRegisterModal,
+									setRegisterModalData
+								)
+							}
+							handleOnClickRefresh={handleOnClickRefresh}
+						/>
+						<TableCV2X
 							columns={CarsTableTemplate}
 							rows={cars ?? []}
 							handleOnClickInformation={handleOpenInformModal}
