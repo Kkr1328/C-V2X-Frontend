@@ -226,7 +226,7 @@ export default function TableCV2X<T extends TableRowProps>(
 									} else {
 										return (
 											<React.Fragment key={index}>
-												{(row[column.id] as string).length === 0 ? (
+												{((row[column.id] as string) || '').length === 0 ? (
 													<MissingValueCell />
 												) : (
 													<StringCell column={column} row={row} />
