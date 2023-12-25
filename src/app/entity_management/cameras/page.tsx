@@ -35,20 +35,11 @@ import {
 // utilities
 import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
+import { WindowWidthObserver } from '@/utils/WidthObserver';
 
 export default function Home() {
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
+	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
