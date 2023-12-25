@@ -1,13 +1,13 @@
 'use client';
 // react
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
 import { Card, Divider, Stack } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
-import Filter from '@/components/module/Filter';
+import Filter from '@/components/module/Filter/Filter';
 import TableCV2X from '@/components/module/Table/TableCV2X';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
 import InputModal from '@/components/module/Modal/InputModal';
@@ -34,15 +34,31 @@ import {
 // utilities
 import { DefaultDataGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
-import { WindowWidthObserver } from '@/utils/WidthObserver';
+import {
+	FilterFieldPerRowGenerator,
+	WidthObserver,
+	WindowWidthObserver,
+} from '@/utils/WidthObserver';
 
 export default function Home() {
+	const filterRef = useRef<HTMLDivElement>(null);
+	const [filterWidth, setFilterWidth] = useState<number>(
+		filterRef.current?.clientWidth as number
+	);
+	useEffect(
+		() => WidthObserver(filterRef.current, setFilterWidth),
+		[filterRef.current]
+	);
+	const fieldPerRow = FilterFieldPerRowGenerator(filterWidth);
+
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
-	const defaultFilterData = DefaultDataGenerator(RSUFilterTemplate);
+	const defaultFilterData = DefaultDataGenerator(
+		RSUFilterTemplate(fieldPerRow)
+	);
 	const defaultData = DefaultDataGenerator(
 		RSUActionModalTemplate(isUseCompactModal)
 	);
@@ -104,17 +120,6 @@ export default function Home() {
 			}),
 	});
 
-	const getSearch = (id: keyof IGetRSUsRequest) => {
-		return search ? (search[id] as string) : '';
-	};
-
-	const handleSearchChange = (id: keyof IGetRSUsRequest, value: string) => {
-		setSearch({
-			...search,
-			[id]: value,
-		} as IGetRSUsRequest);
-	};
-
 	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
@@ -134,6 +139,7 @@ export default function Home() {
 
 	return (
 		<>
+			<div className="text-black">hi : {filterWidth}</div>
 			<InputModal
 				title={MODAL_LABEL.REGISTER_RSU}
 				variant={BUTTON_LABEL.REGISTER}
@@ -180,10 +186,12 @@ export default function Home() {
 				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Stack className="h-full flex flex-col gap-16">
 						<Filter
-							template={RSUFilterTemplate}
+							filterRef={filterRef}
+							template={RSUFilterTemplate(fieldPerRow)}
+							fieldPerRow={fieldPerRow}
 							handleSubmitSearch={refetchGetRSUs}
-							getSearch={getSearch}
-							handleSearchChange={handleSearchChange}
+							search={search}
+							setSearch={setSearch}
 							handleClearSearch={() => setSearch(defaultFilterData)}
 						/>
 						<Divider />

@@ -1,13 +1,13 @@
 'use client';
 // react
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
 import { Card, Divider, Stack } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
-import Filter from '@/components/module/Filter';
+import Filter from '@/components/module/Filter/Filter';
 import TableCV2X from '@/components/module/Table/TableCV2X';
 import TableController from '@/components/module/Table/TableController';
 import InputModal from '@/components/module/Modal/InputModal';
@@ -35,15 +35,31 @@ import {
 // utilities
 import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
-import { WindowWidthObserver } from '@/utils/WidthObserver';
+import {
+	FilterFieldPerRowGenerator,
+	WidthObserver,
+	WindowWidthObserver,
+} from '@/utils/WidthObserver';
 
 export default function Home() {
+	const filterRef = useRef<HTMLDivElement>(null);
+	const [filterWidth, setFilterWidth] = useState<number>(
+		filterRef.current?.clientWidth as number
+	);
+	useEffect(
+		() => WidthObserver(filterRef.current, setFilterWidth),
+		[filterRef.current]
+	);
+	const fieldPerRow = FilterFieldPerRowGenerator(filterWidth);
+
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
-	const defaultFilterData = DefaultDataGenerator(CameraFilterTemplate);
+	const defaultFilterData = DefaultDataGenerator(
+		CameraFilterTemplate(fieldPerRow)
+	);
 	const defaultData = DefaultDataGenerator(
 		CameraActionModalTemplate(isUseCompactModal)
 	);
@@ -204,10 +220,12 @@ export default function Home() {
 				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Stack className="h-full flex flex-col gap-16">
 						<Filter
-							template={CameraFilterTemplate}
+							filterRef={filterRef}
+							template={CameraFilterTemplate(fieldPerRow)}
+							fieldPerRow={fieldPerRow}
 							handleSubmitSearch={refetchGetCameras}
-							getSearch={getSearch}
-							handleSearchChange={handleSearchChange}
+							search={search}
+							setSearch={setSearch}
 							handleClearSearch={() => setSearch(defaultFilterData)}
 							options={options}
 						/>
