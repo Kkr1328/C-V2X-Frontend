@@ -99,10 +99,8 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 											) || null
 										}
 										onChange={(_, value) => {
-											if (value) {
-												props.resetError?.(inputField.id);
-												handleDataChange(inputField.id, value.value);
-											}
+											props.resetError?.(inputField.id);
+											handleDataChange(inputField.id, value ? value.value : '');
 										}}
 										options={getOption(inputField)}
 										isError={props.error && props.error?.[inputField.id] !== ''}
