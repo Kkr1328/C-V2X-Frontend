@@ -9,14 +9,10 @@ export function WidthObserver(
 		handleSizeChange(element?.clientWidth as number);
 	});
 
-	if (element) {
-		resizeObserver.observe(element);
-	}
+	if (element) resizeObserver.observe(element);
 
 	return () => {
-		if (element) {
-			resizeObserver.unobserve(element);
-		}
+		if (element) resizeObserver.unobserve(element);
 	};
 }
 
