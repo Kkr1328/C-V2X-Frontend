@@ -1,6 +1,6 @@
 'use client';
 // react
-import { Dispatch, Fragment, SetStateAction } from 'react';
+import { Dispatch, Fragment, RefObject, SetStateAction } from 'react';
 // material ui
 import { Stack } from '@mui/material';
 // components
@@ -13,6 +13,7 @@ import FilterActionButtons, {
 import { InputFieldProp, OptionTemplate, Option } from '@/types/COMMON';
 
 interface FilterProp<T> extends FilterActionButtonsProp {
+	filterRef: RefObject<HTMLDivElement>;
 	template: InputFieldProp<T>[];
 	fieldPerRow: number;
 	search: T;
@@ -45,7 +46,7 @@ export default function Filter<T>(props: FilterProp<T>) {
 	};
 
 	return (
-		<Stack className="w-full min-w-[240px] gap-8">
+		<Stack ref={props.filterRef} className="w-full min-w-[240px] gap-8">
 			{Array.from({ length: maxRow }, (_, index) => (
 				<Stack
 					key={`row ${index}`}
@@ -92,7 +93,11 @@ export default function Filter<T>(props: FilterProp<T>) {
 					{index + 1 === maxRow && (
 						<Fragment>
 							{Array.from(
-								{ length: (props.template.length + 1) % props.fieldPerRow },
+								{
+									length:
+										(props.fieldPerRow * maxRow - 1 - props.template.length) %
+										props.fieldPerRow,
+								},
 								(_, index) => (
 									<div className="w-full" key={index} />
 								)
