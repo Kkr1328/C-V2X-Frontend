@@ -1,6 +1,13 @@
 'use client';
 // react
-import { Dispatch, Fragment, RefObject, SetStateAction } from 'react';
+import {
+	Dispatch,
+	Fragment,
+	SetStateAction,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 // material ui
 import { Stack } from '@mui/material';
 // components
@@ -11,20 +18,34 @@ import FilterActionButtons, {
 } from './FilterActionButtons';
 // types
 import { InputFieldProp, OptionTemplate, Option } from '@/types/COMMON';
+import {
+	FilterFieldPerRowGenerator,
+	WidthObserver,
+} from '@/utils/WidthObserver';
 
 interface FilterProp<T> extends FilterActionButtonsProp {
-	filterRef: RefObject<HTMLDivElement>;
-	template: InputFieldProp<T>[];
-	fieldPerRow: number;
+	template: (_: number) => InputFieldProp<T>[];
 	search: T;
 	setSearch: Dispatch<SetStateAction<T>>;
 	options?: OptionTemplate[];
 }
 
 export default function Filter<T>(props: FilterProp<T>) {
+	const filterRef = useRef<HTMLDivElement>(null);
+	const [filterWidth, setFilterWidth] = useState<number>(
+		filterRef.current?.clientWidth as number
+	);
+	useEffect(
+		() => WidthObserver(filterRef.current, setFilterWidth),
+		[filterRef.current]
+	);
+	const fieldPerRow = FilterFieldPerRowGenerator(filterWidth);
+
+	const template = props.template(fieldPerRow);
+
 	const maxRow =
-		Math.max(...props.template.map((item) => item.row), 0) +
-		Number(props.template.length % props.fieldPerRow === 0);
+		Math.max(...template.map((item) => item.row), 0) +
+		Number(template.length % fieldPerRow === 0);
 
 	const getSearch = (id: keyof T) => {
 		return props.search ? (props.search[id] as string) : '';
@@ -46,14 +67,14 @@ export default function Filter<T>(props: FilterProp<T>) {
 	};
 
 	return (
-		<Stack ref={props.filterRef} className="w-full min-w-[240px] gap-8">
+		<Stack ref={filterRef} className="w-full min-w-[240px] gap-8">
 			{Array.from({ length: maxRow }, (_, index) => (
 				<Stack
 					key={`row ${index}`}
 					direction="row"
 					className="gap-16 items-end"
 				>
-					{props.template
+					{template
 						.filter((inputField) => inputField.row === index + 1)
 						.map((inputField) =>
 							inputField.type === 'TextField' ? (
@@ -95,14 +116,13 @@ export default function Filter<T>(props: FilterProp<T>) {
 							{Array.from(
 								{
 									length:
-										(props.fieldPerRow * maxRow - 1 - props.template.length) %
-										props.fieldPerRow,
+										(fieldPerRow * maxRow - 1 - template.length) % fieldPerRow,
 								},
 								(_, index) => (
 									<div className="w-full" key={index} />
 								)
 							)}
-							<FilterActionButtons {...props} />
+							<FilterActionButtons {...props} fieldPerRow={fieldPerRow} />
 						</Fragment>
 					)}
 				</Stack>
