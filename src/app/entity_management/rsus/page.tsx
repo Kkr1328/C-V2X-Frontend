@@ -1,17 +1,16 @@
 'use client';
 // react
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
 import { Card, Divider, Stack } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
-import Filter from '@/components/module/Filter';
-import ButtonCV2X from '@/components/common/ButtonCV2X';
-import TableCV2X from '@/components/module/TableCV2X';
-import ModalCV2X from '@/components/common/ModalCV2X';
-import ModalInputs from '@/components/module/ModalInputs';
+import Filter from '@/components/module/Filter/Filter';
+import DeleteModal from '@/components/module/Modal/DeleteModal';
+import InputModal from '@/components/module/Modal/InputModal';
+import InfoModal from '@/components/module/Modal/InfoModal';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
@@ -21,56 +20,88 @@ import { RSUFilterTemplate } from '@/templates/FILTER';
 import { RSUsTableTemplate } from '@/templates/ENTITY_TABLE';
 import { RSUInfoModalTemplate } from '@/templates/INFO_MODAL';
 import { RSUActionModalTemplate } from '@/templates/ACTION_MODAL';
-// redux
-import { useDispatch, useSelector } from '@/redux/store';
-import { selectGetRSUs } from '@/redux/get-rsus/get-rsus-selector';
-import { selectCreateRSU } from '@/redux/create-rsu/create-rsu-selector';
-import { selectUpdateRSU } from '@/redux/update-rsu/update-rsu-selector';
-import { selectDeleteRSU } from '@/redux/delete-rsu/delete-rsu-selector';
-import { FETCH_GET_RSUS } from '@/redux/get-rsus/get-rsus-action';
-import { FETCH_CREATE_RSU } from '@/redux/create-rsu/create-rsu-action';
-import { FETCH_UPDATE_RSU } from '@/redux/update-rsu/update-rsu-action';
-import { FETCH_DELETE_RSU } from '@/redux/delete-rsu/delete-rsu-action';
+// tanstack
+import { useMutation, useQuery } from '@tanstack/react-query';
+// services
+import {
+	createRSUAPI,
+	deleteRSUAPI,
+	getRSUsAPI,
+	updateRSUAPI,
+} from '@/services/api-call';
+// utilities
+import { DefaultDataGenerator } from '@/utils/DataGenerator';
+import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
+import { WindowWidthObserver } from '@/utils/WidthObserver';
+import Table from '@/components/module/Table/Table';
 
 export default function Home() {
-	const dispatch = useDispatch();
+	const [windowWidth, setWindowWidth] = useState(0);
+	useEffect(() => WindowWidthObserver(setWindowWidth), []);
+	const isUseCompactModal = windowWidth <= 640;
+
 	const { enqueueSnackbar } = useSnackbar();
-
-	const { data: rsus, loading: rsusLoading } = useSelector(selectGetRSUs);
-	const { error: registerRSUError, loading: registerRSULoading } =
-		useSelector(selectCreateRSU);
-	const { error: updateRSUError, loading: updateRSULoading } =
-		useSelector(selectUpdateRSU);
-	const { error: deleteRSUError, loading: deleteRSULoading } =
-		useSelector(selectDeleteRSU);
-
-	const defaultFilterData = RSUFilterTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as IGetRSUsRequest[keyof IGetRSUsRequest],
-		}),
-		{} as IGetRSUsRequest
+	const defaultFilterData = DefaultDataGenerator(RSUFilterTemplate(1));
+	const defaultData = DefaultDataGenerator(
+		RSUActionModalTemplate(isUseCompactModal)
 	);
 
-	// fiiter state
 	const [search, setSearch] = useState<IGetRSUsRequest>(defaultFilterData);
 
-	const getSearch = (id: keyof IGetRSUsRequest) => {
-		if (search) {
-			return search[id] as string;
-		}
-		return '';
-	};
-	const handleSearchChange = (id: keyof IGetRSUsRequest, value: string) => {
-		setSearch({
-			...search,
-			[id]: value,
-		} as IGetRSUsRequest);
-	};
-	const handleClearSearch = () => {
-		setSearch(defaultFilterData);
-	};
-	const handleOnSearch = () => dispatch(FETCH_GET_RSUS(search));
+	const {
+		isLoading: rsusLoading,
+		data: rsus,
+		refetch: refetchGetRSUs,
+	} = useQuery({
+		queryKey: ['getRSUs'],
+		queryFn: async () => await getRSUsAPI(search),
+	});
+
+	const createRSU = useMutation({
+		mutationFn: createRSUAPI,
+		onSuccess: () => {
+			refetchGetRSUs();
+			handleCloseModal(defaultData, setOpenRegisterModal, setRegisterModalData);
+			enqueueSnackbar('Register a RSU successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) => {
+			enqueueSnackbar(`Fail to create a RSU : ${error.message}`, {
+				variant: 'error',
+			});
+		},
+	});
+
+	const updateRSU = useMutation({
+		mutationFn: updateRSUAPI,
+		onSuccess: () => {
+			refetchGetRSUs();
+			handleCloseModal(defaultData, setOpenUpdateModal, setUpdateModalData);
+			enqueueSnackbar('Update a RSU successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) =>
+			enqueueSnackbar(`Fail to update a RSU : ${error.message}`, {
+				variant: 'error',
+			}),
+	});
+
+	const deleteRSU = useMutation({
+		mutationFn: deleteRSUAPI,
+		onSuccess: () => {
+			refetchGetRSUs();
+			handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData);
+			enqueueSnackbar('Delete a RSU successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) =>
+			enqueueSnackbar(`Fail to delete a RSU : ${error.message}`, {
+				variant: 'error',
+			}),
+	});
 
 	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
@@ -78,220 +109,99 @@ export default function Home() {
 	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
-	const defaultData = RSUActionModalTemplate.reduce(
-		(acc, item) => ({ ...acc, [item.id]: '' as IRSU[keyof IRSU] }),
-		{} as IRSU
-	);
-
 	// Modal data state
 	const [informModalData, setInformModalData] = useState<IRSU>(defaultData);
 	const [registerModalData, setRegisterModalData] = useState<IRSU>(defaultData);
 	const [updateModalData, setUpdateModalData] = useState<IRSU>(defaultData);
 	const [deleteModalData, setDeleteModalData] = useState<IRSU>(defaultData);
 
-	// Inform modal
-	const handleOpenInformModal = (informData: IRSU) => {
-		setInformModalData(informData);
-		setOpenInformModal(true);
+	const handleOnClickRefresh = async () => {
+		await setSearch(defaultFilterData);
+		refetchGetRSUs();
 	};
-	const handleCloseInformModal = () => setOpenInformModal(false);
-
-	// Register modal
-	const handleOpenRegisterModel = () => setOpenRegisterModal(true);
-	const handleCloseRegisterModal = () => {
-		setOpenRegisterModal(false);
-		setRegisterModalData(defaultData);
-	};
-	const handleRegisterNotification = () => {
-		if (!registerRSUError) {
-			enqueueSnackbar('Register a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to register a RSU', { variant: 'error' });
-		}
-	};
-	const handleSubmitRegisterModal = () => {
-		dispatch(FETCH_CREATE_RSU(registerModalData)).then(refetchData);
-		handleCloseRegisterModal();
-	};
-
-	// Update modal
-	const handleOpenUpdateModal = (updateData: IRSU) => {
-		setUpdateModalData(updateData);
-		setOpenUpdateModal(true);
-	};
-	const handleCloseUpdateModal = () => {
-		setOpenUpdateModal(false);
-		setUpdateModalData(defaultData);
-	};
-	const handleUpdateNotification = () => {
-		if (!updateRSUError) {
-			enqueueSnackbar('Update a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to update a RSU', { variant: 'error' });
-		}
-	};
-	const handleSubmitUpdateModal = () => {
-		dispatch(
-			FETCH_UPDATE_RSU({
-				query: updateModalData,
-				request: updateModalData,
-			})
-		).then(refetchData);
-		handleCloseUpdateModal();
-	};
-
-	// Delete modal
-	const handleOpenDeleteModal = (deleteData: IRSU) => {
-		setDeleteModalData(deleteData);
-		setOpenDeleteModal(true);
-	};
-	const handleCloseDeleteModal = () => {
-		setOpenDeleteModal(false);
-		setDeleteModalData(defaultData);
-	};
-	const handleDeleteNotification = () => {
-		if (!deleteRSUError) {
-			enqueueSnackbar('Delete a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to delete a RSU', { variant: 'error' });
-		}
-	};
-	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_RSU(deleteModalData)).then(refetchData);
-		handleCloseDeleteModal();
-	};
-
-	const refetchData = () => dispatch(FETCH_GET_RSUS({}));
-
-	const handleOnClickRefresh = () => {
-		handleClearSearch();
-		refetchData();
-	};
-
-	useEffect(() => {
-		refetchData();
-	}, []);
-
-	useEffect(() => {
-		if (!registerRSULoading && registerRSULoading !== undefined) {
-			handleRegisterNotification();
-		}
-	}, [registerRSULoading]);
-
-	useEffect(() => {
-		if (!updateRSULoading && updateRSULoading !== undefined) {
-			handleUpdateNotification();
-		}
-	}, [updateRSULoading]);
-
-	useEffect(() => {
-		if (!deleteRSULoading && deleteRSULoading !== undefined) {
-			handleDeleteNotification();
-		}
-	}, [deleteRSULoading]);
 
 	return (
-		<>
-			<ModalCV2X
+		<Fragment>
+			<InputModal
 				title={MODAL_LABEL.REGISTER_RSU}
 				variant={BUTTON_LABEL.REGISTER}
+				template={RSUActionModalTemplate(isUseCompactModal)}
 				open={openRegisterModal}
-				handleOnClose={handleCloseRegisterModal}
-				onSubmit={handleSubmitRegisterModal}
-			>
-				<ModalInputs
-					template={RSUActionModalTemplate}
-					data={registerModalData}
-					onDataChange={setRegisterModalData}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
+				onOpenChange={setOpenRegisterModal}
+				data={registerModalData}
+				onDataChange={setRegisterModalData}
+				onSubmit={() => createRSU.mutate(registerModalData)}
+			/>
+			<InfoModal
 				title={informModalData.name}
-				variant={'Inform'}
+				template={RSUInfoModalTemplate(isUseCompactModal)}
 				open={openInformModal}
-				handleOnClose={handleCloseInformModal}
-			>
-				<ModalInputs
-					template={RSUInfoModalTemplate}
-					data={informModalData}
-					onDataChange={setInformModalData}
-					isReadOnly={true}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
+				onOpenChange={setOpenInformModal}
+				data={informModalData}
+				onDataChange={setInformModalData}
+			/>
+			<InputModal
 				title={MODAL_LABEL.UPDATE_RSU + updateModalData.id}
 				variant={BUTTON_LABEL.UPDATE}
+				template={RSUActionModalTemplate(isUseCompactModal)}
 				open={openUpdateModal}
-				handleOnClose={handleCloseUpdateModal}
-				onSubmit={handleSubmitUpdateModal}
-			>
-				<ModalInputs
-					template={RSUActionModalTemplate}
-					data={updateModalData}
-					onDataChange={setUpdateModalData}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
-				title={MODAL_LABEL.ARE_YOU_SURE}
-				variant={BUTTON_LABEL.DELETE}
+				onOpenChange={setOpenUpdateModal}
+				data={updateModalData}
+				onDataChange={setUpdateModalData}
+				onSubmit={() =>
+					updateRSU.mutate({
+						query: updateModalData,
+						request: updateModalData,
+					})
+				}
+			/>
+			<DeleteModal
 				open={openDeleteModal}
-				handleOnClose={handleCloseDeleteModal}
-				onSubmit={handleSubmitDeleteModal}
-			>
-				<p>
-					{MODAL_LABEL.DO_YOU_REALLY_DELETE +
-						deleteModalData.id +
-						' RSU' +
-						MODAL_LABEL.THIS_PROCESS_CANNOT_UNDONE}
-				</p>
-			</ModalCV2X>
+				handleOnClose={() =>
+					handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData)
+				}
+				entity={deleteModalData.id + ' RSU'}
+				onSubmit={() => deleteRSU.mutate(deleteModalData)}
+			/>
 			<Stack className="gap-16">
 				<PageTitle title={NAVBAR_LABEL.RSUS} />
-				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
+				<Card className="max-w-full min-w-[306px] min-h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Stack className="h-full flex flex-col gap-16">
 						<Filter
 							template={RSUFilterTemplate}
-							handleSubmitSearch={handleOnSearch}
-							getSearch={getSearch}
-							handleSearchChange={handleSearchChange}
-							handleClearSearch={handleClearSearch}
+							handleSubmitSearch={refetchGetRSUs}
+							search={search}
+							setSearch={setSearch}
+							handleClearSearch={() => setSearch(defaultFilterData)}
 						/>
 						<Divider />
-						<Stack direction="row" className="gap-8">
-							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total (${
-								rsus?.length || 0
-							})`}</p>
-							<div className="grow" />
-							<ButtonCV2X
-								icon={BUTTON_LABEL.REGISTER}
-								label={BUTTON_LABEL.REGISTER_RSU}
-								variant="contained"
-								onClick={handleOpenRegisterModel}
-							/>
-							<ButtonCV2X
-								icon={BUTTON_LABEL.REFRESH}
-								label={BUTTON_LABEL.REFRESH}
-								variant="outlined"
-								onClick={handleOnClickRefresh}
-							/>
-						</Stack>
-						<TableCV2X<IRSU>
+						<Table
+							numberOfRow={(rsus ?? []).length}
+							registerLabel={BUTTON_LABEL.REGISTER_RSU}
+							handleOnClickRegister={() =>
+								handleOpenModal(
+									defaultData,
+									setOpenRegisterModal,
+									setRegisterModalData
+								)
+							}
+							handleOnClickRefresh={handleOnClickRefresh}
 							columns={RSUsTableTemplate}
 							rows={rsus ?? []}
-							handleOnClickInformation={handleOpenInformModal}
-							handleOnClickUpdate={handleOpenUpdateModal}
-							handleOnClickDelete={handleOpenDeleteModal}
+							handleOnClickInformation={(data) =>
+								handleOpenModal(data, setOpenInformModal, setInformModalData)
+							}
+							handleOnClickUpdate={(data) =>
+								handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
+							}
+							handleOnClickDelete={(data) =>
+								handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
+							}
 							isLoading={rsusLoading}
 						/>
 					</Stack>
 				</Card>
 			</Stack>
-		</>
+		</Fragment>
 	);
 }
