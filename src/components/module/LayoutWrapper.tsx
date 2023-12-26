@@ -22,7 +22,7 @@ export default function LayoutWrapper({
 				<Box className="w-screen h-screen flex bg-dark_background_grey">
 					<Header />
 					<Navbar />
-					<Box className="grow px-32 py-32">
+					<Box className="grow px-32 py-32 bg-dark_background_grey overflow-x-auto overflow-y-auto">
 						<Toolbar />
 						{children}
 					</Box>

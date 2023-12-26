@@ -165,7 +165,7 @@ export default function Home() {
 			/>
 			<Stack className="gap-16">
 				<PageTitle title={NAVBAR_LABEL.RSUS} />
-				<Card className="max-w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
+				<Card className="max-w-full min-w-[306px] min-h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Stack className="h-full flex flex-col gap-16">
 						<Filter
 							template={RSUFilterTemplate}
