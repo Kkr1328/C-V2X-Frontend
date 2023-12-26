@@ -36,7 +36,7 @@ export default function TableContent<T extends TableRowProps>(
 	props: TableContentProps<T>
 ) {
 	return (
-		<TableContainer className="flex flex-col grow h-full max-h-[342px] overflow-y-scroll overflow-x-auto">
+		<TableContainer className="flex flex-col grow h-full max-h-[80vh] overflow-y-scroll overflow-x-auto">
 			<Table stickyHeader sx={{ width: '100%', tableLayout: 'fixed' }}>
 				<TableHead>
 					<TableRow>

@@ -1,6 +1,6 @@
 'use client';
 // react
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
@@ -165,7 +165,7 @@ export default function Home() {
 	];
 
 	return (
-		<>
+		<Fragment>
 			<InputModal
 				title={MODAL_LABEL.REGISTER_CAR}
 				variant={BUTTON_LABEL.REGISTER}
@@ -247,6 +247,6 @@ export default function Home() {
 					</Stack>
 				</Card>
 			</Stack>
-		</>
+		</Fragment>
 	);
 }

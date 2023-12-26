@@ -3,7 +3,6 @@ import { Dispatch, SetStateAction } from 'react';
 
 export function FilterFieldPerRowGenerator(filterWidth: number) {
 	const fieldPerRow = Math.floor(filterWidth / 240);
-	if (fieldPerRow > 4) return 4;
 	if (fieldPerRow < 1) return 1;
 	return fieldPerRow;
 }
