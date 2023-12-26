@@ -1,6 +1,6 @@
 'use client';
 // react
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
@@ -8,8 +8,6 @@ import { Card, Divider, Stack } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter/Filter';
-import TableController from '@/components/module/Table/TableController';
-import TableCV2X from '@/components/module/Table/TableCV2X';
 import InputModal from '@/components/module/Modal/InputModal';
 import InfoModal from '@/components/module/Modal/InfoModal';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
@@ -36,31 +34,16 @@ import {
 // utilities
 import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
-import {
-	FilterFieldPerRowGenerator,
-	WidthObserver,
-	WindowWidthObserver,
-} from '@/utils/WidthObserver';
+import { WindowWidthObserver } from '@/utils/WidthObserver';
+import Table from '@/components/module/Table/Table';
 
 export default function Home() {
-	const filterRef = useRef<HTMLDivElement>(null);
-	const [filterWidth, setFilterWidth] = useState<number>(
-		filterRef.current?.clientWidth as number
-	);
-	useEffect(
-		() => WidthObserver(filterRef.current, setFilterWidth),
-		[filterRef.current]
-	);
-	const fieldPerRow = FilterFieldPerRowGenerator(filterWidth);
-
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
-	const defaultFilterData = DefaultDataGenerator(
-		CarFilterTemplate(fieldPerRow)
-	);
+	const defaultFilterData = DefaultDataGenerator(CarFilterTemplate(1));
 	const defaultData = DefaultDataGenerator(
 		CarActionModalTemplate(isUseCompactModal)
 	);
@@ -127,17 +110,6 @@ export default function Home() {
 		onError: () =>
 			enqueueSnackbar('Fail to delete a Car', { variant: 'error' }),
 	});
-
-	const getSearch = (id: keyof IGetCarsRequest) => {
-		return search ? (search[id] as string) : '';
-	};
-
-	const handleSearchChange = (id: keyof IGetCarsRequest, value: string) => {
-		setSearch({
-			...search,
-			[id]: value,
-		} as IGetCarsRequest);
-	};
 
 	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
@@ -242,9 +214,7 @@ export default function Home() {
 				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Stack className="h-full flex flex-col gap-16">
 						<Filter
-							filterRef={filterRef}
-							template={CarFilterTemplate(fieldPerRow)}
-							fieldPerRow={fieldPerRow}
+							template={CarFilterTemplate}
 							handleSubmitSearch={refetchGetCars}
 							search={search}
 							setSearch={setSearch}
@@ -252,7 +222,7 @@ export default function Home() {
 							options={options}
 						/>
 						<Divider />
-						<TableController
+						<Table
 							numberOfRow={(cars ?? []).length}
 							registerLabel={BUTTON_LABEL.REGISTER_CAR}
 							handleOnClickRegister={() =>
@@ -263,8 +233,6 @@ export default function Home() {
 								)
 							}
 							handleOnClickRefresh={handleOnClickRefresh}
-						/>
-						<TableCV2X
 							columns={CarsTableTemplate}
 							rows={cars ?? []}
 							handleOnClickInformation={handleOpenInformModal}

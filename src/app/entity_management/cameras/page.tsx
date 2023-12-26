@@ -8,8 +8,6 @@ import { Card, Divider, Stack } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter/Filter';
-import TableCV2X from '@/components/module/Table/TableCV2X';
-import TableController from '@/components/module/Table/TableController';
 import InputModal from '@/components/module/Modal/InputModal';
 import InfoModal from '@/components/module/Modal/InfoModal';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
@@ -35,31 +33,16 @@ import {
 // utilities
 import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
-import {
-	FilterFieldPerRowGenerator,
-	WidthObserver,
-	WindowWidthObserver,
-} from '@/utils/WidthObserver';
+import { WindowWidthObserver } from '@/utils/WidthObserver';
+import Table from '@/components/module/Table/Table';
 
 export default function Home() {
-	const filterRef = useRef<HTMLDivElement>(null);
-	const [filterWidth, setFilterWidth] = useState<number>(
-		filterRef.current?.clientWidth as number
-	);
-	useEffect(
-		() => WidthObserver(filterRef.current, setFilterWidth),
-		[filterRef.current]
-	);
-	const fieldPerRow = FilterFieldPerRowGenerator(filterWidth);
-
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
-	const defaultFilterData = DefaultDataGenerator(
-		CameraFilterTemplate(fieldPerRow)
-	);
+	const defaultFilterData = DefaultDataGenerator(CameraFilterTemplate(1));
 	const defaultData = DefaultDataGenerator(
 		CameraActionModalTemplate(isUseCompactModal)
 	);
@@ -120,16 +103,6 @@ export default function Home() {
 		onError: () =>
 			enqueueSnackbar('Fail to delete a Camera', { variant: 'error' }),
 	});
-
-	const getSearch = (id: keyof IGetCamerasRequest) => {
-		return search ? (search[id] as string) : '';
-	};
-	const handleSearchChange = (id: keyof IGetCamerasRequest, value: string) => {
-		setSearch({
-			...search,
-			[id]: value,
-		} as IGetCamerasRequest);
-	};
 
 	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
@@ -220,9 +193,7 @@ export default function Home() {
 				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Stack className="h-full flex flex-col gap-16">
 						<Filter
-							filterRef={filterRef}
-							template={CameraFilterTemplate(fieldPerRow)}
-							fieldPerRow={fieldPerRow}
+							template={CameraFilterTemplate}
 							handleSubmitSearch={refetchGetCameras}
 							search={search}
 							setSearch={setSearch}
@@ -230,7 +201,7 @@ export default function Home() {
 							options={options}
 						/>
 						<Divider />
-						<TableController
+						<Table
 							numberOfRow={(cameras ?? []).length}
 							registerLabel={BUTTON_LABEL.REGISTER_CAMERA}
 							handleOnClickRegister={() =>
@@ -241,9 +212,6 @@ export default function Home() {
 								)
 							}
 							handleOnClickRefresh={handleOnClickRefresh}
-						/>
-
-						<TableCV2X
 							columns={CamerasTableTemplate}
 							rows={(cameras as ICamera[]) ?? []}
 							handleOnClickInformation={(data) =>
