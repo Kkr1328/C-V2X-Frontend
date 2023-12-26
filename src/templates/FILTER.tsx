@@ -5,147 +5,163 @@ import { IGetCamerasRequest } from '@/types/models/camera.model';
 import { IGetDriversRequest } from '@/types/models/driver.model';
 import { IGetRSUsRequest } from '@/types/models/rsu.model';
 
-export const CarFilterTemplate: InputFieldProp<IGetCarsRequest>[] = [
-	{
-		id: 'id',
-		label: INPUT_LABEL.ID,
-		type: 'TextField',
-		placeholder: 'ex. ID01',
-		row: 1,
-	},
-	{
-		id: 'name',
-		label: INPUT_LABEL.NAME,
-		type: 'TextField',
-		placeholder: 'ex. Car01',
-		row: 1,
-	},
-	{
-		id: 'license_plate',
-		label: INPUT_LABEL.LICENSE_PLATE,
-		type: 'TextField',
-		placeholder: 'ex. กข 1234',
-		row: 1,
-	},
-	{
-		id: 'model',
-		label: INPUT_LABEL.MODEL,
-		type: 'TextField',
-		placeholder: 'ex. ABC Model',
-		row: 1,
-	},
-	{
-		id: 'front_cam_id',
-		label: INPUT_LABEL.FRONT_CAMERA,
-		type: 'Select',
-		placeholder: 'ex. Camera01',
-		row: 2,
-	},
-	{
-		id: 'back_cam_id',
-		label: INPUT_LABEL.BACK_CAMERA,
-		type: 'Select',
-		placeholder: 'ex. Camera01',
-		row: 2,
-	},
-	{
-		id: 'driver_id',
-		label: INPUT_LABEL.DRIVER,
-		type: 'Select',
-		placeholder: 'ex. สมชาย สวัสดี',
-		row: 2,
-	},
-];
+export function CarFilterTemplate(
+	fieldPerRow: number
+): InputFieldProp<IGetCarsRequest>[] {
+	return [
+		{
+			id: 'id',
+			label: INPUT_LABEL.ID,
+			type: 'TextField',
+			placeholder: 'ex. ID01',
+			row: Math.ceil(1 / fieldPerRow),
+		},
+		{
+			id: 'name',
+			label: INPUT_LABEL.NAME,
+			type: 'TextField',
+			placeholder: 'ex. Car01',
+			row: Math.ceil(2 / fieldPerRow),
+		},
+		{
+			id: 'license_plate',
+			label: INPUT_LABEL.LICENSE_PLATE,
+			type: 'TextField',
+			placeholder: 'ex. กข 1234',
+			row: Math.ceil(3 / fieldPerRow),
+		},
+		{
+			id: 'model',
+			label: INPUT_LABEL.MODEL,
+			type: 'TextField',
+			placeholder: 'ex. ABC Model',
+			row: Math.ceil(4 / fieldPerRow),
+		},
+		{
+			id: 'front_cam_id',
+			label: INPUT_LABEL.FRONT_CAMERA,
+			type: 'Select',
+			placeholder: 'ex. Camera01',
+			row: Math.ceil(5 / fieldPerRow),
+		},
+		{
+			id: 'back_cam_id',
+			label: INPUT_LABEL.BACK_CAMERA,
+			type: 'Select',
+			placeholder: 'ex. Camera01',
+			row: Math.ceil(6 / fieldPerRow),
+		},
+		{
+			id: 'driver_id',
+			label: INPUT_LABEL.DRIVER,
+			type: 'Select',
+			placeholder: 'ex. สมชาย สวัสดี',
+			row: Math.ceil(7 / fieldPerRow),
+		},
+	];
+}
 
-export const DriverFilterTemplate: InputFieldProp<IGetDriversRequest>[] = [
-	{
-		id: 'id',
-		label: INPUT_LABEL.ID,
-		type: 'TextField',
-		placeholder: 'ex. ID01',
-		row: 1,
-	},
-	{
-		id: 'first_name',
-		label: INPUT_LABEL.FIRST_NAME,
-		type: 'TextField',
-		placeholder: 'ex. สมชาย',
-		row: 1,
-	},
-	{
-		id: 'last_name',
-		label: INPUT_LABEL.LAST_NAME,
-		type: 'TextField',
-		placeholder: 'ex. สมชาย',
-		row: 1,
-	},
-	{
-		id: 'username',
-		label: INPUT_LABEL.USERNAME,
-		type: 'TextField',
-		placeholder: 'ex. somchai',
-		row: 1,
-	},
-	{
-		id: 'phone_no',
-		label: INPUT_LABEL.PHONE_NO,
-		type: 'TextField',
-		placeholder: 'ex. 0993336666',
-		row: 2,
-	},
-];
+export function DriverFilterTemplate(
+	fieldPerRow: number
+): InputFieldProp<IGetDriversRequest>[] {
+	return [
+		{
+			id: 'id',
+			label: INPUT_LABEL.ID,
+			type: 'TextField',
+			placeholder: 'ex. ID01',
+			row: Math.ceil(1 / fieldPerRow),
+		},
+		{
+			id: 'first_name',
+			label: INPUT_LABEL.FIRST_NAME,
+			type: 'TextField',
+			placeholder: 'ex. สมชาย',
+			row: Math.ceil(2 / fieldPerRow),
+		},
+		{
+			id: 'last_name',
+			label: INPUT_LABEL.LAST_NAME,
+			type: 'TextField',
+			placeholder: 'ex. สมชาย',
+			row: Math.ceil(3 / fieldPerRow),
+		},
+		{
+			id: 'username',
+			label: INPUT_LABEL.USERNAME,
+			type: 'TextField',
+			placeholder: 'ex. somchai',
+			row: Math.ceil(4 / fieldPerRow),
+		},
+		{
+			id: 'phone_no',
+			label: INPUT_LABEL.PHONE_NO,
+			type: 'TextField',
+			placeholder: 'ex. 0993336666',
+			row: Math.ceil(5 / fieldPerRow),
+		},
+	];
+}
 
-export const CameraFilterTemplate: InputFieldProp<IGetCamerasRequest>[] = [
-	{
-		id: 'id',
-		label: INPUT_LABEL.ID,
-		type: 'TextField',
-		placeholder: 'ex. ID01',
-		row: 1,
-	},
-	{
-		id: 'name',
-		label: INPUT_LABEL.NAME,
-		type: 'TextField',
-		placeholder: 'ex. Camera01',
-		row: 1,
-	},
-	{
-		id: 'position',
-		label: INPUT_LABEL.POSITION,
-		type: 'Select',
-		placeholder: 'ex. Front',
-		row: 1,
-	},
-	{
-		id: 'car_id',
-		label: INPUT_LABEL.CAR,
-		type: 'Select',
-		placeholder: 'ex. Car01',
-		row: 1,
-	},
-];
+export function CameraFilterTemplate(
+	fieldPerRow: number
+): InputFieldProp<IGetCamerasRequest>[] {
+	return [
+		{
+			id: 'id',
+			label: INPUT_LABEL.ID,
+			type: 'TextField',
+			placeholder: 'ex. ID01',
+			row: Math.ceil(1 / fieldPerRow),
+		},
+		{
+			id: 'name',
+			label: INPUT_LABEL.NAME,
+			type: 'TextField',
+			placeholder: 'ex. Camera01',
+			row: Math.ceil(2 / fieldPerRow),
+		},
+		{
+			id: 'position',
+			label: INPUT_LABEL.POSITION,
+			type: 'Select',
+			placeholder: 'ex. Front',
+			row: Math.ceil(3 / fieldPerRow),
+		},
+		{
+			id: 'car_id',
+			label: INPUT_LABEL.CAR,
+			type: 'Select',
+			placeholder: 'ex. Car01',
+			row: Math.ceil(4 / fieldPerRow),
+		},
+	];
+}
 
-export const RSUFilterTemplate: InputFieldProp<IGetRSUsRequest>[] = [
-	{
-		id: 'id',
-		label: INPUT_LABEL.ID,
-		type: 'TextField',
-		placeholder: 'ex. ID01',
-		row: 1,
-	},
-	{
-		id: 'name',
-		label: INPUT_LABEL.NAME,
-		type: 'TextField',
-		placeholder: 'ex. RSU01',
-		row: 1,
-	},
-	{
-		id: 'recommended_speed',
-		label: INPUT_LABEL.RECOMENDED_SPEED,
-		type: 'TextField',
-		placeholder: '50',
-		row: 1,
-	},
-];
+export function RSUFilterTemplate(
+	fieldPerRow: number
+): InputFieldProp<IGetRSUsRequest>[] {
+	return [
+		{
+			id: 'id',
+			label: INPUT_LABEL.ID,
+			type: 'TextField',
+			placeholder: 'ex. ID01',
+			row: Math.ceil(1 / fieldPerRow),
+		},
+		{
+			id: 'name',
+			label: INPUT_LABEL.NAME,
+			type: 'TextField',
+			placeholder: 'ex. RSU01',
+			row: Math.ceil(2 / fieldPerRow),
+		},
+		{
+			id: 'recommended_speed',
+			label: INPUT_LABEL.RECOMENDED_SPEED,
+			type: 'TextField',
+			placeholder: '50',
+			row: Math.ceil(3 / fieldPerRow),
+		},
+	];
+}

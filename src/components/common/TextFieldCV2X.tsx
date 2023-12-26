@@ -27,7 +27,7 @@ interface TextFieldCV2XProp {
 	isPassword?: boolean;
 	isRequired?: boolean;
 	isError?: boolean;
-	errorMessage?: string;
+	helperMessage?: string;
 }
 
 export default function TextFieldCV2X(props: TextFieldCV2XProp) {
@@ -129,7 +129,7 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 			{/* Helper text */}
 			{!props.isLoading && props.isError && (
 				<p className="inline-block align-baseline font-istok text-error_red text-p2">
-					{props.errorMessage}
+					{props.helperMessage}
 				</p>
 			)}
 		</Stack>
