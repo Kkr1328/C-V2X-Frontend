@@ -23,9 +23,8 @@ export default function EmergencyState(props: EmergencyStateProps) {
 					<Card
 						ref={provided.innerRef}
 						{...provided.droppableProps}
-						className={`h-[calc(100vh-192px)] ${
-							snapshot.isDraggingOver ? 'bg-light_background_blue' : 'bg-white'
-						} rounded-lg p-32 w-fit`}
+						className={`h-[calc(100vh-192px)] ${snapshot.isDraggingOver ? 'bg-light_background_blue' : 'bg-white'
+							} rounded-lg p-32 w-fit`}
 					>
 						<Stack className="items-center h-full">
 							<Stack direction="row" className="w-full">
@@ -53,9 +52,9 @@ export default function EmergencyState(props: EmergencyStateProps) {
 												key={emergency.id}
 												id={emergency.id}
 												index={index}
-												carName={emergency.carName}
+												carName={emergency.car_name}
 												time={emergency.time}
-												driverPhoneNo={emergency.driverPhoneNo}
+												driverPhoneNo={emergency.driver_phone_no}
 												state={props.title}
 											/>
 										);

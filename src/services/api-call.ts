@@ -111,3 +111,7 @@ export const updateRSUAPI = async (query: IUpdateRSUQuery) =>
 
 export const deleteRSUAPI = async (query: IDeleteRSUQuery) =>
 	executeApiCall((service) => service.RSU.DELETE_RSU(query));
+
+// Emergency
+export const getEmergencyListAPI = async () =>
+	executeApiCall((service) => service.EMERGENCY.GET_EMERGENCY_LIST());

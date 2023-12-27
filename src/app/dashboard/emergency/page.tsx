@@ -4,33 +4,49 @@ import PageTitle from '@/components/common/PageTitle';
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { Stack } from '@mui/material';
-import { useState } from 'react';
-import EmergencyCard from '@/components/common/EmergencyCard';
+import { useEffect, useState } from 'react';
 import EmergencyState from '@/components/module/EmergencyState';
-import {
-	MockedCompleteEmergency,
-	MockedInProgressEmergency,
-	MockedPendingEmergency,
-} from '@/mock/EMERGENCY';
 import { EmergencyColumn } from '@/types/COMMON';
 
-export default function Home() {
-	const initialColumns = {
-		pending: {
-			id: 'pending',
-			list: MockedPendingEmergency,
-		},
-		inProgress: {
-			id: 'inProgress',
-			list: MockedInProgressEmergency,
-		},
-		complete: {
-			id: 'complete',
-			list: MockedCompleteEmergency,
-		},
-	};
+// tanstack
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getEmergencyListAPI } from '@/services/api-call';
+import { IEmergency } from '@/types/models/emergency.model';
 
-	const [columns, setColumns] = useState(initialColumns);
+export default function Home() {
+	const {
+		isLoading: isEmergencyListLoading,
+		data: dataGetEmergencyList,
+		refetch: refetchGetEmergencyList,
+	} = useQuery({
+		queryKey: ['getEmergencyList'],
+		queryFn: async () => await getEmergencyListAPI()
+	});
+
+	useEffect(() => {
+		if (!isEmergencyListLoading) {
+			setColumns({
+				pending: {
+					id: 'pending',
+					list: dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === 'pending'),
+				},
+				inProgress: {
+					id: 'inProgress',
+					list: dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === 'inProgress'),
+				},
+				complete: {
+					id: 'complete',
+					list: dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === 'complete'),
+				},
+			});
+		}
+	}, [isEmergencyListLoading, dataGetEmergencyList]);
+
+	const [columns, setColumns] = useState({
+		pending: { id: 'pending', list: [] },
+		inProgress: { id: 'inProgress', list: [] },
+		complete: { id: 'complete', list: [] }
+	});
 
 	const onDragEnd = ({ source, destination }: DropResult) => {
 		// Make sure we have a valid destination
@@ -46,6 +62,7 @@ export default function Home() {
 		// Set start and end variables
 		const start = columns[source.droppableId as EmergencyColumn];
 		const end = columns[destination.droppableId as EmergencyColumn];
+		console.log(start, end);
 
 		// If start is the same as end, we're in the same column
 		if (start === end) {
@@ -108,21 +125,25 @@ export default function Home() {
 				<PageTitle title={NAVBAR_LABEL.EMERGENCY} />
 				<Stack direction="row" className="gap-32 justify-center">
 					<DragDropContext onDragEnd={onDragEnd}>
-						<EmergencyState
-							title="PENDING"
-							droppableId="pending"
-							emergencies={columns.pending.list}
-						/>
-						<EmergencyState
-							title="IN PROGRESS"
-							droppableId="inProgress"
-							emergencies={columns.inProgress.list}
-						/>
-						<EmergencyState
-							title="COMPLETE"
-							droppableId="complete"
-							emergencies={columns.complete.list}
-						/>
+						{!isEmergencyListLoading && (
+							<>
+								<EmergencyState
+									title="PENDING"
+									droppableId="pending"
+									emergencies={columns.pending.list}
+								/>
+								<EmergencyState
+									title="IN PROGRESS"
+									droppableId="inProgress"
+									emergencies={columns.inProgress.list}
+								/>
+								<EmergencyState
+									title="COMPLETE"
+									droppableId="complete"
+									emergencies={columns.complete.list}
+								/>
+							</>
+						)}
 					</DragDropContext>
 				</Stack>
 			</Stack>

@@ -1,6 +1,9 @@
+import { EmergencyColumn } from '../COMMON';
+
 export interface IEmergency {
 	id: string;
-	carName: string;
+	status: EmergencyColumn;
+	car_name: string;
 	time: string;
-	driverPhoneNo: string;
+	driver_phone_no: string;
 }
