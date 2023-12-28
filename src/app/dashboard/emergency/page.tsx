@@ -10,17 +10,27 @@ import { EmergencyColumn } from '@/types/COMMON';
 
 // tanstack
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getEmergencyListAPI } from '@/services/api-call';
+import { getEmergencyListAPI, updateEmergencyAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
+import { enqueueSnackbar } from 'notistack';
 
 export default function Home() {
 	const {
 		isLoading: isEmergencyListLoading,
-		data: dataGetEmergencyList,
-		refetch: refetchGetEmergencyList,
+		data: dataGetEmergencyList
 	} = useQuery({
 		queryKey: ['getEmergencyList'],
 		queryFn: async () => await getEmergencyListAPI()
+	});
+
+	const updateEmergency = useMutation({
+		mutationFn: updateEmergencyAPI,
+		onSuccess: () => {
+			enqueueSnackbar('Update Emergency successfully', { variant: 'success' });
+		},
+		onError: () => {
+			enqueueSnackbar('Fail to update Emergency', { variant: 'error' });
+		},
 	});
 
 	useEffect(() => {
@@ -42,7 +52,11 @@ export default function Home() {
 		}
 	}, [isEmergencyListLoading, dataGetEmergencyList]);
 
-	const [columns, setColumns] = useState({
+	const [columns, setColumns] = useState<{
+		pending: { id: string; list: IEmergency[] };
+		inProgress: { id: string; list: IEmergency[] };
+		complete: { id: string; list: IEmergency[] };
+	}>({
 		pending: { id: 'pending', list: [] },
 		inProgress: { id: 'inProgress', list: [] },
 		complete: { id: 'complete', list: [] }
@@ -62,7 +76,6 @@ export default function Home() {
 		// Set start and end variables
 		const start = columns[source.droppableId as EmergencyColumn];
 		const end = columns[destination.droppableId as EmergencyColumn];
-		console.log(start, end);
 
 		// If start is the same as end, we're in the same column
 		if (start === end) {
@@ -85,36 +98,49 @@ export default function Home() {
 			setColumns((state) => ({ ...state, [newCol.id]: newCol }));
 			return null;
 		} else {
-			// If start is different from end, we need to update multiple columns
-			// Filter the start list like before
-			const newStartList = start.list.filter(
-				(_: any, idx: number) => idx !== source.index
-			);
+			const targetEmergemcyTask = start['list'][source.index]
+			updateEmergency.mutate({
+				id: targetEmergemcyTask.id,
+				request: {
+					car_id: targetEmergemcyTask.car_id,
+					status: destination.droppableId as EmergencyColumn,
+				}
+			},
+				{
+					onSuccess: () => {
+						// If start is different from end, we need to update multiple columns
+						// Filter the start list like before
+						const newStartList = start.list.filter(
+							(_: any, idx: number) => idx !== source.index
+						);
 
-			// Create a new start column
-			const newStartCol = {
-				id: start.id,
-				list: newStartList,
-			};
+						// Create a new start column
+						const newStartCol = {
+							id: start.id,
+							list: newStartList,
+						};
 
-			// Make a new end list array
-			const newEndList = end.list;
+						// Make a new end list array
+						const newEndList = end.list;
 
-			// Insert the item into the end list
-			newEndList.splice(destination.index, 0, start.list[source.index]);
+						// Insert the item into the end list
+						newEndList.splice(destination.index, 0, start.list[source.index]);
 
-			// Create a new end column
-			const newEndCol = {
-				id: end.id,
-				list: newEndList,
-			};
+						// Create a new end column
+						const newEndCol = {
+							id: end.id,
+							list: newEndList,
+						};
 
-			// Update the state
-			setColumns((state) => ({
-				...state,
-				[newStartCol.id]: newStartCol,
-				[newEndCol.id]: newEndCol,
-			}));
+						// Update the state
+						setColumns((state) => ({
+							...state,
+							[newStartCol.id]: newStartCol,
+							[newEndCol.id]: newEndCol,
+						}));
+					}
+				}
+			)
 			return null;
 		}
 	};

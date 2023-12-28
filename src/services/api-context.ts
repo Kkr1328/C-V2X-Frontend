@@ -37,6 +37,7 @@ const API_CONTEXT = {
 	},
 	EMERGENCY: {
 		GET_EMERGENCY_LIST: `${PREFIX}/emergencies`,
+		UPDATE_EMERGENCY: ({ id }: IQuerry) => `${PREFIX}/emergencies/${id}`,
 	},
 };
 

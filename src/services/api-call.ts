@@ -19,6 +19,7 @@ import {
 	IGetDriversRequest,
 	IUpdateDriverQuery,
 } from '@/types/models/driver.model';
+import { IUpdateEmergencyQuery } from '@/types/models/emergency.model';
 import {
 	ICreateRSURequest,
 	IDeleteRSUQuery,
@@ -115,3 +116,8 @@ export const deleteRSUAPI = async (query: IDeleteRSUQuery) =>
 // Emergency
 export const getEmergencyListAPI = async () =>
 	executeApiCall((service) => service.EMERGENCY.GET_EMERGENCY_LIST());
+
+export const updateEmergencyAPI = async (query: IUpdateEmergencyQuery) =>
+	executeApiCall((service) =>
+		service.EMERGENCY.UPDATE_EMERGENCY(query, query.request)
+	);
