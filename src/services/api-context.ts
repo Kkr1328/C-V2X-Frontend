@@ -35,6 +35,10 @@ const API_CONTEXT = {
 		UPDATE_RSU: ({ id }: IQuerry) => `${PREFIX}/rsus/${id}`,
 		DELETE_RSU: ({ id }: IQuerry) => `${PREFIX}/rsus/${id}`,
 	},
+	EMERGENCY: {
+		GET_EMERGENCY_LIST: `${PREFIX}/emergencies`,
+		UPDATE_EMERGENCY: ({ id }: IQuerry) => `${PREFIX}/emergencies/${id}`,
+	},
 };
 
 export default API_CONTEXT;
