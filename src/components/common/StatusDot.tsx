@@ -1,7 +1,9 @@
-import IconMapper from '@/utils/IconMapper';
-
+// consts
 import { BUTTON_LABEL } from '@/constants/LABEL';
+//types
 import { StatusDotType } from '@/types/COMMON';
+// utilities
+import IconMapper from '@/utils/IconMapper';
 
 interface StatusDotProps {
 	variant: (typeof StatusDotType)[number];

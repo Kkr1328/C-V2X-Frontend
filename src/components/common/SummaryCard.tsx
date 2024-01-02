@@ -1,5 +1,6 @@
 // material ui
 import { Card, Divider, Skeleton } from '@mui/material';
+// components
 import Text from './Text';
 
 interface SummaryCardProps {
@@ -13,7 +14,7 @@ export default function SummaryCard(props: SummaryCardProps) {
 		<Skeleton
 			animation="wave"
 			variant="rectangular"
-			className="rounded-lg h-[121.59px] w-full"
+			className="rounded-lg h-120 w-full"
 		/>
 	) : (
 		<Card className="rounded-lg py-8 gap-12 w-full">
