@@ -1,9 +1,14 @@
-import { Card, Stack } from '@mui/material';
-import NoData from '../common/NoData';
-import { Emergency, EmergencyColumn } from '@/types/COMMON';
+// react
+import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
-import React, { Fragment } from 'react';
-import EmergencyCard from '../common/EmergencyCard';
+// material ui
+import { Card } from '@mui/material';
+// components
+import NoData from '@/components/common/NoData';
+import Text from '@/components/common/Text';
+import EmergencyCard from './EmergencyCard';
+// types
+import { Emergency, EmergencyColumn } from '@/types/COMMON';
 import { IEmergency } from '@/types/models/emergency.model';
 
 interface EmergencyStateProps {
@@ -23,28 +28,31 @@ export default function EmergencyState(props: EmergencyStateProps) {
 					<Card
 						ref={provided.innerRef}
 						{...provided.droppableProps}
-						className={`h-[calc(100vh-192px)] ${snapshot.isDraggingOver ? 'bg-light_background_blue' : 'bg-white'
-							} rounded-lg p-32 w-fit`}
+						className={`w-full min-w-[336px] h-full ${
+							snapshot.isDraggingOver ? 'bg-light_background_blue' : 'bg-white'
+						} rounded-lg p-32`}
 					>
-						<Stack className="items-center h-full">
-							<Stack direction="row" className="w-full">
-								<p className="inline-block align-baseline font-istok text-dark_text_grey text-h3">
-									{props.title}
-								</p>
+						<div className="flex flex-col w-full h-full items-center">
+							<div className="flex flex-row w-full">
+								<Text
+									style="text-dark_text_grey text-h3"
+									content={props.title}
+								/>
 								<div className="grow" />
-								<p className="inline-block align-baseline font-istok text-light_text_grey text-h3">
-									{emergenciesCount}
-								</p>
-							</Stack>
+								<Text
+									style="text-dark_text_grey text-h3"
+									content={emergenciesCount.toString()}
+								/>
+							</div>
 							{props.isLoading ? (
-								<Stack className="items-center h-full overflow-y-auto">
-									<EmergencyCard isLoading={true} />
-									<EmergencyCard isLoading={true} />
-									<EmergencyCard isLoading={true} />
-									<EmergencyCard isLoading={true} />
-								</Stack>
+								<div className="flex flex-col w-full min-w-max h-full pb-8 overflow-y-auto">
+									<EmergencyCard isLoading />
+									<EmergencyCard isLoading />
+									<EmergencyCard isLoading />
+									<EmergencyCard isLoading />
+								</div>
 							) : (
-								<Stack className="w-300 h-full flex items-center pb-8 overflow-y-auto">
+								<div className="flex flex-col w-full min-w-max h-full pb-8 overflow-y-auto">
 									{emergenciesCount === 0 && <NoData />}
 									{props.emergencies.map((emergency, index) => {
 										return (
@@ -59,9 +67,9 @@ export default function EmergencyState(props: EmergencyStateProps) {
 											/>
 										);
 									})}
-								</Stack>
+								</div>
 							)}
-						</Stack>
+						</div>
 						{provided.placeholder}
 					</Card>
 				);

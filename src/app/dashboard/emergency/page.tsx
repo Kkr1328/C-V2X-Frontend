@@ -3,9 +3,8 @@
 import PageTitle from '@/components/common/PageTitle';
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { Stack } from '@mui/material';
+import EmergencyState from '@/components/module/Emergency/EmergencyState';
 import { useEffect, useState } from 'react';
-import EmergencyState from '@/components/module/EmergencyState';
 import { EmergencyColumn } from '@/types/COMMON';
 
 // tanstack
@@ -15,13 +14,11 @@ import { IEmergency } from '@/types/models/emergency.model';
 import { enqueueSnackbar } from 'notistack';
 
 export default function Home() {
-	const {
-		isLoading: isEmergencyListLoading,
-		data: dataGetEmergencyList
-	} = useQuery({
-		queryKey: ['getEmergencyList'],
-		queryFn: async () => await getEmergencyListAPI()
-	});
+	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } =
+		useQuery({
+			queryKey: ['getEmergencyList'],
+			queryFn: async () => await getEmergencyListAPI(),
+		});
 
 	const updateEmergency = useMutation({
 		mutationFn: updateEmergencyAPI,
@@ -34,13 +31,18 @@ export default function Home() {
 	});
 
 	useEffect(() => {
-		setColumns(['pending', 'inProgress', 'complete'].reduce((acc, key) => {
-			acc[key] = {
-				id: key,
-				list: dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === key) ?? [],
-			}
-			return acc;
-		}, {} as any))
+		setColumns(
+			['pending', 'inProgress', 'complete'].reduce((acc, key) => {
+				acc[key] = {
+					id: key,
+					list:
+						dataGetEmergencyList?.filter(
+							(emergency: IEmergency) => emergency.status === key
+						) ?? [],
+				};
+				return acc;
+			}, {} as any)
+		);
 	}, [dataGetEmergencyList]);
 
 	const [columns, setColumns] = useState<{
@@ -50,7 +52,7 @@ export default function Home() {
 	}>({
 		pending: { id: 'pending', list: [] },
 		inProgress: { id: 'inProgress', list: [] },
-		complete: { id: 'complete', list: [] }
+		complete: { id: 'complete', list: [] },
 	});
 
 	const onDragEnd = ({ source, destination }: DropResult) => {
@@ -89,14 +91,15 @@ export default function Home() {
 			setColumns((state) => ({ ...state, [newCol.id]: newCol }));
 			return null;
 		} else {
-			const targetEmergemcyTask = start['list'][source.index]
-			updateEmergency.mutate({
-				id: targetEmergemcyTask.id,
-				request: {
-					car_id: targetEmergemcyTask.car_id,
-					status: destination.droppableId as EmergencyColumn,
-				}
-			},
+			const targetEmergemcyTask = start['list'][source.index];
+			updateEmergency.mutate(
+				{
+					id: targetEmergemcyTask.id,
+					request: {
+						car_id: targetEmergemcyTask.car_id,
+						status: destination.droppableId as EmergencyColumn,
+					},
+				},
 				{
 					onSuccess: () => {
 						// If start is different from end, we need to update multiple columns
@@ -129,18 +132,18 @@ export default function Home() {
 							[newStartCol.id]: newStartCol,
 							[newEndCol.id]: newEndCol,
 						}));
-					}
+					},
 				}
-			)
+			);
 			return null;
 		}
 	};
 
 	return (
 		<>
-			<Stack className="gap-16 ">
+			<div className="flex flex-col w-full h-full gap-16">
 				<PageTitle title={NAVBAR_LABEL.EMERGENCY} />
-				<Stack direction="row" className="gap-32 justify-center">
+				<div className="grid lg:grid-cols-3 grid-cols-1 gap-32 w-full h-full">
 					<DragDropContext onDragEnd={onDragEnd}>
 						{!isEmergencyListLoading && (
 							<>
@@ -162,8 +165,8 @@ export default function Home() {
 							</>
 						)}
 					</DragDropContext>
-				</Stack>
-			</Stack>
+				</div>
+			</div>
 		</>
 	);
 }
