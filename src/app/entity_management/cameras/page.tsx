@@ -1,10 +1,10 @@
 'use client';
 // react
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
-import { Card, Divider, Stack } from '@mui/material';
+import { Card, Divider } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter/Filter';
@@ -72,8 +72,10 @@ export default function Home() {
 				variant: 'success',
 			});
 		},
-		onError: () =>
-			enqueueSnackbar('Fail to update a Camera', { variant: 'error' }),
+		onError: (error) =>
+			enqueueSnackbar(`Fail to register a Camera : ${error.message}`, {
+				variant: 'error',
+			}),
 	});
 
 	const updateCamera = useMutation({
@@ -87,7 +89,9 @@ export default function Home() {
 		},
 		onError: (error) => {
 			console.log(error);
-			enqueueSnackbar('Fail to update a Camera', { variant: 'error' });
+			enqueueSnackbar(`Fail to update a Camera : ${error.message}`, {
+				variant: 'error',
+			});
 		},
 	});
 
@@ -100,8 +104,10 @@ export default function Home() {
 				variant: 'success',
 			});
 		},
-		onError: () =>
-			enqueueSnackbar('Fail to delete a Camera', { variant: 'error' }),
+		onError: (error) =>
+			enqueueSnackbar(`Fail to delete a Camera : ${error.message}`, {
+				variant: 'error',
+			}),
 	});
 
 	// Open-Close modal state
@@ -188,46 +194,44 @@ export default function Home() {
 				entity={deleteModalData.id + ' camera'}
 				onSubmit={() => deleteCamera.mutate(deleteModalData)}
 			/>
-			<Stack className="gap-16">
+			<div className="flex flex-col w-full h-full gap-16">
 				<PageTitle title={NAVBAR_LABEL.CAMERAS} />
-				<Card className="w-full min-w-[306px] min-h-[calc(100vh-192px)] rounded-lg px-32 py-24">
-					<Stack className="h-full flex flex-col gap-16">
-						<Filter
-							template={CameraFilterTemplate}
-							handleSubmitSearch={refetchGetCameras}
-							search={search}
-							setSearch={setSearch}
-							handleClearSearch={() => setSearch(defaultFilterData)}
-							options={options}
-						/>
-						<Divider />
-						<Table
-							numberOfRow={(cameras ?? []).length}
-							registerLabel={BUTTON_LABEL.REGISTER_CAMERA}
-							handleOnClickRegister={() =>
-								handleOpenModal(
-									defaultData,
-									setOpenRegisterModal,
-									setRegisterModalData
-								)
-							}
-							handleOnClickRefresh={handleOnClickRefresh}
-							columns={CamerasTableTemplate}
-							rows={(cameras as ICamera[]) ?? []}
-							handleOnClickInformation={(data) =>
-								handleOpenModal(data, setOpenInformModal, setInformModalData)
-							}
-							handleOnClickUpdate={(data) =>
-								handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
-							}
-							handleOnClickDelete={(data) =>
-								handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
-							}
-							isLoading={camerasLoading}
-						/>
-					</Stack>
+				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-full rounded-lg px-32 py-24">
+					<Filter
+						template={CameraFilterTemplate}
+						handleSubmitSearch={refetchGetCameras}
+						search={search}
+						setSearch={setSearch}
+						handleClearSearch={() => setSearch(defaultFilterData)}
+						options={options}
+					/>
+					<Divider />
+					<Table
+						numberOfRow={(cameras ?? []).length}
+						registerLabel={BUTTON_LABEL.REGISTER_CAMERA}
+						handleOnClickRegister={() =>
+							handleOpenModal(
+								defaultData,
+								setOpenRegisterModal,
+								setRegisterModalData
+							)
+						}
+						handleOnClickRefresh={handleOnClickRefresh}
+						columns={CamerasTableTemplate}
+						rows={(cameras as ICamera[]) ?? []}
+						handleOnClickInformation={(data) =>
+							handleOpenModal(data, setOpenInformModal, setInformModalData)
+						}
+						handleOnClickUpdate={(data) =>
+							handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
+						}
+						handleOnClickDelete={(data) =>
+							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
+						}
+						isLoading={camerasLoading}
+					/>
 				</Card>
-			</Stack>
+			</div>
 		</Fragment>
 	);
 }
