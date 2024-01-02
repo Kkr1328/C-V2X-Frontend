@@ -4,7 +4,7 @@ import PageTitle from '@/components/common/PageTitle';
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import EmergencyState from '@/components/module/Emergency/EmergencyState';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EmergencyColumn } from '@/types/COMMON';
 
 // tanstack
@@ -12,8 +12,19 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { getEmergencyListAPI, updateEmergencyAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
 import { enqueueSnackbar } from 'notistack';
+import { WidthObserver } from '@/utils/WidthObserver';
 
 export default function Home() {
+	const emergenciesRef = useRef<HTMLDivElement>(null);
+	const [emergenciesWidth, setEmergenciesWidth] = useState<number>(
+		emergenciesRef.current?.clientWidth as number
+	);
+	useEffect(
+		() => WidthObserver(emergenciesRef.current, setEmergenciesWidth),
+		[emergenciesRef.current]
+	);
+	const useCompact = emergenciesWidth <= 1136;
+
 	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } =
 		useQuery({
 			queryKey: ['getEmergencyList'],
@@ -25,8 +36,10 @@ export default function Home() {
 		onSuccess: () => {
 			enqueueSnackbar('Update Emergency successfully', { variant: 'success' });
 		},
-		onError: () => {
-			enqueueSnackbar('Fail to update Emergency', { variant: 'error' });
+		onError: (error) => {
+			enqueueSnackbar(`Fail to update Emergency : ${error.message}`, {
+				variant: 'error',
+			});
 		},
 	});
 
@@ -143,7 +156,12 @@ export default function Home() {
 		<>
 			<div className="flex flex-col w-full h-full gap-16">
 				<PageTitle title={NAVBAR_LABEL.EMERGENCY} />
-				<div className="grid lg:grid-cols-3 grid-cols-1 gap-32 w-full h-full">
+				<div
+					ref={emergenciesRef}
+					className={`flex ${
+						useCompact ? 'flex-col' : 'flex-row'
+					} gap-32 w-full h-full`}
+				>
 					<DragDropContext onDragEnd={onDragEnd}>
 						{!isEmergencyListLoading && (
 							<>
