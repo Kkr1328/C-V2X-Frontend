@@ -28,6 +28,10 @@ import {
 	IUpdateDriverRequest,
 } from '@/types/models/driver.model';
 import { IResponseList } from '@/types/common/responseList.model';
+import {
+	IEmergency,
+	IUpdateEmergencyRequest,
+} from '@/types/models/emergency.model';
 
 class ApiClient extends HttpClient {
 	constructor() {
@@ -143,6 +147,20 @@ class ApiClient extends HttpClient {
 				),
 			DELETE_RSU: (query: IQuerry) =>
 				this.delete<ResponseDataT<null>>(API_CONTEXT.RSU.DELETE_RSU(query)),
+		};
+	}
+
+	get EMERGENCY() {
+		return {
+			GET_EMERGENCY_LIST: () =>
+				this.get<ResponseDataT<IEmergency[]>>(
+					API_CONTEXT.EMERGENCY.GET_EMERGENCY_LIST
+				),
+			UPDATE_EMERGENCY: (query: IQuerry, request: IUpdateEmergencyRequest) =>
+				this.put<IUpdateEmergencyRequest, ResponseDataT<null>>(
+					API_CONTEXT.EMERGENCY.UPDATE_EMERGENCY(query),
+					request
+				),
 		};
 	}
 }
