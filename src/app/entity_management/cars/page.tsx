@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
-import { Card, Divider, Stack } from '@mui/material';
+import { Card, Divider } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter/Filter';
@@ -81,8 +81,10 @@ export default function Home() {
 				variant: 'success',
 			});
 		},
-		onError: () =>
-			enqueueSnackbar('Fail to update a Car', { variant: 'error' }),
+		onError: (error) =>
+			enqueueSnackbar(`Fail to register a Car : ${error.message}`, {
+				variant: 'error',
+			}),
 	});
 
 	const updateCar = useMutation({
@@ -94,8 +96,10 @@ export default function Home() {
 				variant: 'success',
 			});
 		},
-		onError: () =>
-			enqueueSnackbar('Fail to update a Car', { variant: 'error' }),
+		onError: (error) =>
+			enqueueSnackbar(`Fail to update a Car : ${error.message}`, {
+				variant: 'error',
+			}),
 	});
 
 	const deleteCar = useMutation({
@@ -107,8 +111,10 @@ export default function Home() {
 				variant: 'success',
 			});
 		},
-		onError: () =>
-			enqueueSnackbar('Fail to delete a Car', { variant: 'error' }),
+		onError: (error) =>
+			enqueueSnackbar(`Fail to delete a Car : ${error.message}`, {
+				variant: 'error',
+			}),
 	});
 
 	// Open-Close modal state
@@ -209,44 +215,42 @@ export default function Home() {
 				entity={deleteModalData.id + ' car'}
 				onSubmit={() => deleteCar.mutate(deleteModalData)}
 			/>
-			<Stack className="gap-16">
+			<div className="flex flex-col w-full h-full gap-16">
 				<PageTitle title={NAVBAR_LABEL.CARS} />
-				<Card className="w-full min-w-[306px] min-h-[calc(100vh-192px)] rounded-lg px-32 py-24">
-					<Stack className="h-full flex flex-col gap-16">
-						<Filter
-							template={CarFilterTemplate}
-							handleSubmitSearch={refetchGetCars}
-							search={search}
-							setSearch={setSearch}
-							handleClearSearch={() => setSearch(defaultFilterData)}
-							options={options}
-						/>
-						<Divider />
-						<Table
-							numberOfRow={(cars ?? []).length}
-							registerLabel={BUTTON_LABEL.REGISTER_CAR}
-							handleOnClickRegister={() =>
-								handleOpenModal(
-									defaultData,
-									setOpenRegisterModal,
-									setRegisterModalData
-								)
-							}
-							handleOnClickRefresh={handleOnClickRefresh}
-							columns={CarsTableTemplate}
-							rows={cars ?? []}
-							handleOnClickInformation={handleOpenInformModal}
-							handleOnClickUpdate={(data) =>
-								handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
-							}
-							handleOnClickDelete={(data) =>
-								handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
-							}
-							isLoading={carsLoading}
-						/>
-					</Stack>
+				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-full rounded-lg px-32 py-24">
+					<Filter
+						template={CarFilterTemplate}
+						handleSubmitSearch={refetchGetCars}
+						search={search}
+						setSearch={setSearch}
+						handleClearSearch={() => setSearch(defaultFilterData)}
+						options={options}
+					/>
+					<Divider />
+					<Table
+						numberOfRow={(cars ?? []).length}
+						registerLabel={BUTTON_LABEL.REGISTER_CAR}
+						handleOnClickRegister={() =>
+							handleOpenModal(
+								defaultData,
+								setOpenRegisterModal,
+								setRegisterModalData
+							)
+						}
+						handleOnClickRefresh={handleOnClickRefresh}
+						columns={CarsTableTemplate}
+						rows={cars ?? []}
+						handleOnClickInformation={handleOpenInformModal}
+						handleOnClickUpdate={(data) =>
+							handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
+						}
+						handleOnClickDelete={(data) =>
+							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
+						}
+						isLoading={carsLoading}
+					/>
 				</Card>
-			</Stack>
+			</div>
 		</Fragment>
 	);
 }

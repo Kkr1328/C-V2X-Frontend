@@ -1,8 +1,8 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+// react
+import { Fragment, useEffect, useState } from 'react';
+// next
 import { useRouter, usePathname } from 'next/navigation';
-
+// material ui
 import {
 	Badge,
 	Collapse,
@@ -12,9 +12,10 @@ import {
 } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-
-import IconMapper from '@/utils/IconMapper';
+// consts
 import { NAVBAR_LABEL } from '@/constants/LABEL';
+// utilities
+import IconMapper from '@/utils/IconMapper';
 
 interface MenuOptionProps {
 	label: string;
@@ -42,7 +43,7 @@ export default function NavbarMenu(props: NavbarMenuProps) {
 	}, [props.isExpanded]);
 
 	return (
-		<>
+		<Fragment>
 			{/* option */}
 			<ListItemButton
 				onClick={() => {
@@ -68,13 +69,13 @@ export default function NavbarMenu(props: NavbarMenuProps) {
 					<IconMapper icon={props.option.label} />
 				</Badge>
 				{props.isExpanded && (
-					<>
+					<Fragment>
 						<ListItemText
 							className="text-p2 truncate m-none"
 							primary={props.option.label}
 						/>
 						{openSubOptions ? <ExpandLess /> : <ExpandMore />}
-					</>
+					</Fragment>
 				)}
 			</ListItemButton>
 
@@ -115,6 +116,6 @@ export default function NavbarMenu(props: NavbarMenuProps) {
 					))}
 				</List>
 			</Collapse>
-		</>
+		</Fragment>
 	);
 }

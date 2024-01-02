@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Toolbar } from '@mui/material';
+import { Toolbar } from '@mui/material';
 
 import { SnackbarProvider } from 'notistack';
 
@@ -21,14 +21,14 @@ export default function LayoutWrapper({
 		<QueryClientProvider client={queryClient}>
 			<EmergencyWrapper>
 				<SnackbarProvider maxSnack={3}>
-					<Box className="w-[100vw] h-[100dvh] flex bg-dark_background_grey">
+					<div className="flex w-[100vw] h-[100vh] bg-dark_background_grey">
 						<Header />
 						<Navbar />
-						<Box className="flex flex-col w-full h-full px-32 py-32 bg-dark_background_grey overflow-x-auto overflow-y-auto">
+						<div className="flex flex-col w-full h-full px-32 py-32 bg-dark_background_grey overflow-x-auto overflow-y-auto">
 							<Toolbar />
 							{children}
-						</Box>
-					</Box>
+						</div>
+					</div>
 				</SnackbarProvider>
 			</EmergencyWrapper>
 		</QueryClientProvider>
