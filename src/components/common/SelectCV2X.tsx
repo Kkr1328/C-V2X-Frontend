@@ -34,7 +34,7 @@ interface SelectCV2XProp {
 	isLoading?: boolean;
 	isRequired?: boolean;
 	isError?: boolean;
-	errorMessage?: string;
+	helperMessage?: string;
 }
 
 export default function SelectCV2X(props: SelectCV2XProp) {
@@ -123,7 +123,7 @@ export default function SelectCV2X(props: SelectCV2XProp) {
 			{/* Helper text */}
 			{!props.isLoading && props.isError && (
 				<p className="inline-block align-baseline font-istok text-error_red text-p2">
-					{props.errorMessage}
+					{props.helperMessage}
 				</p>
 			)}
 		</Stack>

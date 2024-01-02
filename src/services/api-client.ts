@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import HttpClient from './http-client';
-import API_CONTEXT from './api.context';
+import API_CONTEXT from './api-context';
 import { ResponseDataT } from '@/types/common/responseT.model';
 import {
 	ICreateRSURequest,
