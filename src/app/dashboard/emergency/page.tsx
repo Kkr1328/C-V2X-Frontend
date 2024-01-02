@@ -34,23 +34,14 @@ export default function Home() {
 	});
 
 	useEffect(() => {
-		if (!isEmergencyListLoading) {
-			setColumns({
-				pending: {
-					id: 'pending',
-					list: dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === 'pending'),
-				},
-				inProgress: {
-					id: 'inProgress',
-					list: dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === 'inProgress'),
-				},
-				complete: {
-					id: 'complete',
-					list: dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === 'complete'),
-				},
-			});
-		}
-	}, [isEmergencyListLoading, dataGetEmergencyList]);
+		setColumns(['pending', 'inProgress', 'complete'].reduce((acc, key) => {
+			acc[key] = {
+				id: key,
+				list: dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === key) ?? [],
+			}
+			return acc;
+		}, {} as any))
+	}, [dataGetEmergencyList]);
 
 	const [columns, setColumns] = useState<{
 		pending: { id: string; list: IEmergency[] };
