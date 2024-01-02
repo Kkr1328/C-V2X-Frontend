@@ -1,5 +1,3 @@
-// react
-import { Fragment } from 'react';
 // material ui
 import { CircularProgress, Modal } from '@mui/material';
 
@@ -9,23 +7,19 @@ interface LoadingProps {
 }
 
 export default function Loading(props: LoadingProps) {
+	if (props.isBackdrop)
+		return (
+			<Modal open={true} className="flex items-center justify-center">
+				<CircularProgress
+					size={props.size || 24}
+					className="text-primary_blue"
+				/>
+			</Modal>
+		);
+
 	return (
-		<Fragment>
-			{props.isBackdrop ? (
-				<Modal open={true} className="flex items-center justify-center">
-					<CircularProgress
-						size={props.size || 24}
-						className="text-primary_blue"
-					/>
-				</Modal>
-			) : (
-				<div className="flex w-full h-full items-center justify-center">
-					<CircularProgress
-						size={props.size || 24}
-						className="text-primary_blue"
-					/>
-				</div>
-			)}
-		</Fragment>
+		<div className="flex w-full h-full items-center justify-center">
+			<CircularProgress size={props.size || 24} className="text-primary_blue" />
+		</div>
 	);
 }

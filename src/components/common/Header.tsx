@@ -1,7 +1,6 @@
-'use client';
-
+// next
 import Image from 'next/image';
-
+// meterial ui
 import { AppBar, Avatar, Toolbar } from '@mui/material';
 
 export default function Header() {
@@ -10,7 +9,7 @@ export default function Header() {
 			<Toolbar>
 				<Image src="/logo.svg" alt="5G-V2X logo" width={160} height={40} />
 				<div className="grow" />
-				<Avatar>K</Avatar>
+				{/* <Avatar>K</Avatar> */}
 			</Toolbar>
 		</AppBar>
 	);
