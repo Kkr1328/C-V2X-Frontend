@@ -19,13 +19,15 @@ export default function LayoutWrapper({
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<SnackbarProvider maxSnack={3}>
-				<Box className="w-[100vw] h-[100dvh] flex bg-dark_background_grey">
-					<Header />
-					<Navbar />
-					<Box className="flex flex-col w-full h-full px-32 py-32 bg-dark_background_grey overflow-x-auto overflow-y-auto">
-						<Toolbar />
-						{children}
+			<EmergencyWrapper>
+				<SnackbarProvider maxSnack={3}>
+					<Box className="w-[100vw] h-[100dvh] flex bg-dark_background_grey">
+						<Header />
+						<Navbar />
+						<Box className="flex flex-col w-full h-full px-32 py-32 bg-dark_background_grey overflow-x-auto overflow-y-auto">
+							<Toolbar />
+							{children}
+						</Box>
 					</Box>
 				</SnackbarProvider>
 			</EmergencyWrapper>
