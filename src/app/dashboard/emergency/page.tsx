@@ -5,14 +5,14 @@ import { NAVBAR_LABEL } from '@/constants/LABEL';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { Stack } from '@mui/material';
 import { useState } from 'react';
-import EmergencyCard from '@/components/common/EmergencyCard';
-import EmergencyState from '@/components/module/EmergencyState';
+import EmergencyState from '@/components/module/Emergency/EmergencyState';
 import {
 	MockedCompleteEmergency,
 	MockedInProgressEmergency,
 	MockedPendingEmergency,
 } from '@/mock/EMERGENCY';
 import { EmergencyColumn } from '@/types/COMMON';
+import EmergencyCard from '@/components/module/Emergency/EmergencyCard';
 
 export default function Home() {
 	const initialColumns = {
@@ -104,9 +104,9 @@ export default function Home() {
 
 	return (
 		<>
-			<Stack className="gap-16 ">
+			<div className="flex flex-col w-full h-full gap-16">
 				<PageTitle title={NAVBAR_LABEL.EMERGENCY} />
-				<Stack direction="row" className="gap-32 justify-center">
+				<div className="grid lg:grid-cols-3 grid-cols-1 gap-32 w-full h-full">
 					<DragDropContext onDragEnd={onDragEnd}>
 						<EmergencyState
 							title="PENDING"
@@ -124,8 +124,8 @@ export default function Home() {
 							emergencies={columns.complete.list}
 						/>
 					</DragDropContext>
-				</Stack>
-			</Stack>
+				</div>
+			</div>
 		</>
 	);
 }
