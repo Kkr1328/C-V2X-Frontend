@@ -1,3 +1,17 @@
+'use client';
+// react
+import { useEffect } from 'react';
+// next
+import { useRouter } from 'next/navigation';
+// const
+import { ROUTE } from '@/constants/ROUTE';
+
 export default function Home() {
-	return <p className="text-black">This is home page</p>;
+	const router = useRouter();
+
+	useEffect(() => {
+		router.push(ROUTE.OVERVIEW);
+	}, []);
+
+	return;
 }
