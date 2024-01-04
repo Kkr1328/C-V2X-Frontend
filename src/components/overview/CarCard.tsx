@@ -40,20 +40,23 @@ function CarCardDetail(props: CarCardDetailProps) {
       {/* head */}
       <div className="text-h4 flex items-center gap-16 mb-12">
         <div className="flex gap-8">
-          <CarAvatar status={props.car.status} />
+          {props.car.status && <CarAvatar status={props.car.status} />}
           {props.car.name}
         </div>
         {props.car.status !== PILL_LABEL.ACTIVE &&
-          <Pill variant={props.car.status} />
+          <Pill variant={props.car.status ?? "INACTIVE"} />
         }
       </div>
-
       {/* properties */}
-      <div>Speed : {props.car.speed ?? "null"}</div>
+      <div>Speed : {props.car.speed ?? "loading..."}</div>
       <Collapse in={expand} timeout="auto">
-        <div className='my-4'>Driver : {`${props.car.driver.first_name} ${props.car.driver.last_name}`}</div>
-        <div className='my-4'>Phone No. : {props.car.driver.phone_no ?? "null"}</div>
-        {props.car.cameras.map((camera) => (
+        {props.car.driver &&
+          <>
+            <div className='my-4'>Driver : {`${props.car.driver.first_name} ${props.car.driver.last_name}`}</div>
+            <div className='my-4'>Phone No. : {props.car.driver.phone_no ?? "null"}</div>
+          </>
+        }
+        {props.car.cameras?.map((camera) => (
           <div key={camera.id} className='my-4'>
             {camera.position + " camera"} : {camera.name}
           </div>

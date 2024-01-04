@@ -14,16 +14,41 @@ import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import RSUCard from '@/components/overview/RSUCard';
 import { useQuery } from '@tanstack/react-query';
-import { getEmergencyListAPI } from '@/services/api-call';
+import { getCarsListAPI, getEmergencyListAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
+import { IResponseList } from '@/types/common/responseList.model';
 
 export default function Home() {
 	const [focus, setFocus] = useState<FocusState | null>(null)
 	const [map, setMap] = useState<google.maps.Map>()
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
+
+	const [carListData, setCarListData] = useState<Object>({})
+
+	const {
+		isLoading: carsListLoading,
+		data: fetchCarsList
+	} = useQuery({
+		queryKey: ['getCarList'],
+		queryFn: async () => await getCarsListAPI()
+	});
+
+	useEffect(() => {
+		if (!fetchCarsList) return
+		fetchCarsList.forEach((element: IResponseList) => {
+			setCarListData((prev) => ({
+				...prev,
+				[element.id]: {
+					name: element.name,
+					status: PILL_LABEL.INACTIVE
+				}
+			}))
+		})
+		console.log(carListData)
+	}, [fetchCarsList])
 
 	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } =
 		useQuery({
@@ -59,7 +84,7 @@ export default function Home() {
 	if (!isLoaded) return <div>Loading...</div>
 	return (
 		<>
-			<PageTitle title={NAVBAR_LABEL.OVERVIEW} />
+			<div className='mb-16'><PageTitle title={NAVBAR_LABEL.OVERVIEW} /></div>
 			<div className='flex gap-32'>
 				<SummaryCard title={SUMMARY_LABEL.ACTIVE_CAR} value={'4 / 5'} />
 				<SummaryCard title={SUMMARY_LABEL.ACTIVE_DRIVER} value={'4 / 10'} />
@@ -78,6 +103,21 @@ export default function Home() {
 					mapContainerClassName="w-[70%]"
 					onLoad={map => setMap(map)}
 				>
+					{
+						Object.entries(carListData).map(([id, car]) =>
+							<Marker
+								icon={{
+									url: `${MAP_ASSETS.CAR_PIN}${car.status}.svg`,
+									scaledSize: focus?.id === id ?
+										new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) :
+										new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
+								}}
+								onClick={() => changeFocus({ id, type: 'CAR', location: car.location, status: car.status } as StuffLocation)}
+								position={car.location}
+								key={id}
+							/>
+						)
+					}
 					{
 						MockedCarLocation.map((CAR) =>
 							<Marker
@@ -114,17 +154,37 @@ export default function Home() {
 					/>
 					<List className='grow overflow-y-scroll'>
 						{focus?.type === "CAR" || focus === null ?
-							MockedCars
-								.filter((car) => car.status === pillMode || pillMode === PILL_LABEL.ALL)
-								.sort((car) => (car.id === focus?.id ? -1 : 1))
-								.map((car) =>
-									<CarCard
-										key={car.id}
-										car={car}
-										isFocus={car.id === focus?.id}
-										onClick={() => clickOnCarCard(car.id)}
-									/>
-								)
+							<>
+								{
+									Object.entries(carListData).map(([id, car]) =>
+										<CarCard
+											key={id}
+											car={{
+												id,
+												name: car.name,
+												status: car.status,
+												speed: car.speed,
+												driver: car.driver,
+												cameras: car.cameras,
+											}}
+											isFocus={id === focus?.id}
+											onClick={() => clickOnCarCard(car.id)}
+										/>
+									)
+								}
+								{
+									MockedCars
+										.filter((car) => car.status === pillMode || pillMode === PILL_LABEL.ALL)
+										.sort((car) => (car.id === focus?.id ? -1 : 1))
+										.map((car) =>
+											<CarCard
+												key={car.id}
+												car={car}
+												isFocus={car.id === focus?.id}
+												onClick={() => clickOnCarCard(car.id)}
+											/>
+										)}
+							</>
 							:
 							MockedRSU
 								.filter(all => all.id === focus?.id)
