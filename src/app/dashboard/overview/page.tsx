@@ -16,11 +16,20 @@ import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
 import { useState } from 'react';
 import RSUCard from '@/components/overview/RSUCard';
+import { useQuery } from '@tanstack/react-query';
+import { getEmergencyListAPI } from '@/services/api-call';
+import { IEmergency } from '@/types/models/emergency.model';
 
 export default function Home() {
 	const [focus, setFocus] = useState<FocusState | null>(null)
 	const [map, setMap] = useState<google.maps.Map>()
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
+
+	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } =
+		useQuery({
+			queryKey: ['getEmergencyList'],
+			queryFn: async () => await getEmergencyListAPI(),
+		});
 
 	const { isLoaded } = useLoadScript({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "<GOOGLE-MAP-KEY>",
@@ -38,40 +47,44 @@ export default function Home() {
 	}
 
 	function changePillMode(value: PILL_LABEL) {
-		setFocus({ id: focus?.id ?? "", type: 'CAR'})
+		setFocus({ id: focus?.id ?? "", type: 'CAR' })
 		if (value !== null) { setPillMode(value) }
 	}
-	
+
 	function clickOnCarCard(carID: string) {
 		let target = MockedCarLocation.find((value) => value.id === carID) ?? null
 		changeFocus(target)
 	}
 
-	if(!isLoaded) return <div>Loading...</div>
+	if (!isLoaded) return <div>Loading...</div>
 	return (
 		<>
 			<PageTitle title={NAVBAR_LABEL.OVERVIEW} />
 			<div className='flex gap-32'>
 				<SummaryCard title={SUMMARY_LABEL.ACTIVE_CAR} value={'4 / 5'} />
 				<SummaryCard title={SUMMARY_LABEL.ACTIVE_DRIVER} value={'4 / 10'} />
-				<SummaryCard title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY} value={'7'} />
-				<SummaryCard title={SUMMARY_LABEL.PENDING_EMERGENCY} value={'3'} />
+				<SummaryCard title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY} value={(dataGetEmergencyList?.filter(
+					(emergency: IEmergency) => emergency.status === "inProgress"
+				) ?? []).length} isLoading={isEmergencyListLoading} />
+				<SummaryCard title={SUMMARY_LABEL.PENDING_EMERGENCY} value={(dataGetEmergencyList?.filter(
+					(emergency: IEmergency) => emergency.status === "pending"
+				) ?? []).length} isLoading={isEmergencyListLoading} />
 			</div>
 			<Card className='flex w-full h-[60%] my-32 rounded-lg px-32 py-24'>
-				<GoogleMap 
-					options={{ disableDefaultUI : true }} 
-					zoom={14} 
+				<GoogleMap
+					options={{ disableDefaultUI: true }}
+					zoom={14}
 					center={MockedCarLocation[0].location}
 					mapContainerClassName="w-[70%]"
-					onLoad={ map => setMap(map) }
+					onLoad={map => setMap(map)}
 				>
 					{
 						MockedCarLocation.map((CAR) =>
 							<Marker
 								icon={{
 									url: `${MAP_ASSETS.CAR_PIN}${CAR.status}.svg`,
-									scaledSize: focus?.id === CAR.id ? 
-										new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) : 
+									scaledSize: focus?.id === CAR.id ?
+										new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) :
 										new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
 								}}
 								onClick={() => changeFocus(CAR)}
@@ -81,7 +94,7 @@ export default function Home() {
 						)
 					}
 					{
-						MockedRSU.map((RSU) => 
+						MockedRSU.map((RSU) =>
 							<RSUMarker
 								location={RSU.location}
 								radius={RSU.radius}
@@ -89,27 +102,27 @@ export default function Home() {
 								onClick={() => changeFocus(RSU)}
 								key={RSU.id}
 							/>
-						) 
+						)
 					}
 				</GoogleMap>
 				<Divider className='border mx-24' orientation='vertical' />
 				<div className='flex flex-col w-[30%]'>
-					<ToggleButtonCV2X 
-						options={[PILL_LABEL.ALL, PILL_LABEL.EMERGENCY, PILL_LABEL.WARNING]} 
-						value={pillMode ?? ""} 
+					<ToggleButtonCV2X
+						options={[PILL_LABEL.ALL, PILL_LABEL.EMERGENCY, PILL_LABEL.WARNING]}
+						value={pillMode ?? ""}
 						onChange={(_event, value) => changePillMode(value)}
 					/>
 					<List className='grow overflow-y-scroll'>
-						{ focus?.type === "CAR" || focus === null ?
+						{focus?.type === "CAR" || focus === null ?
 							MockedCars
 								.filter((car) => car.status === pillMode || pillMode === PILL_LABEL.ALL)
 								.sort((car) => (car.id === focus?.id ? -1 : 1))
 								.map((car) =>
 									<CarCard
 										key={car.id}
-										car={car} 
+										car={car}
 										isFocus={car.id === focus?.id}
-										onClick={() => clickOnCarCard(car.id)}							
+										onClick={() => clickOnCarCard(car.id)}
 									/>
 								)
 							:
@@ -117,10 +130,10 @@ export default function Home() {
 								.filter(all => all.id === focus?.id)
 								.map((RSU) =>
 									<RSUCard
-										key={RSU.id} 
+										key={RSU.id}
 										name={RSU.name}
 										recommendSpeed={RSU.recommendSpeed}
-										connectedCar={RSU.connectedCar}					
+										connectedCar={RSU.connectedCar}
 									/>
 								)
 						}
