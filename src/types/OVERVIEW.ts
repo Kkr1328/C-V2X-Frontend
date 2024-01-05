@@ -50,3 +50,19 @@ export interface CONNECTED_CAR_ON_RSU {
 	name: string;
 	speed: string;
 }
+
+type SPEED = { velocity: number; unit: string };
+export interface FLEET_OBJECT {
+	[key: string]: {
+		name: string;
+		status: PILL_LABEL;
+		speed: SPEED;
+		location: Location;
+	};
+}
+export interface FLEET_CAR_LOCATION {
+	id: string;
+	latitude: number;
+	longitude: number;
+	timestamp: string;
+}

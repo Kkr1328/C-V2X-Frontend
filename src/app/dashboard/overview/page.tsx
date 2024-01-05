@@ -9,8 +9,8 @@ import RSUMarker from '@/components/overview/RSUMarker';
 import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
-import { MockedCars, MockedCarLocation, MockedRSU } from '@/mock/ENTITY_OVERVIEW';
-import { FocusState, StuffLocation } from '@/types/OVERVIEW';
+import { MockedCarLocation, MockedRSU } from '@/mock/ENTITY_OVERVIEW';
+import { FLEET_CAR_LOCATION, FLEET_OBJECT, FocusState, StuffLocation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
@@ -20,13 +20,14 @@ import { useQuery } from '@tanstack/react-query';
 import { getCarsListAPI, getEmergencyListAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
 import { IResponseList } from '@/types/common/responseList.model';
+import { io } from 'socket.io-client';
 
 export default function Home() {
 	const [focus, setFocus] = useState<FocusState | null>(null)
 	const [map, setMap] = useState<google.maps.Map>()
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
 
-	const [carListData, setCarListData] = useState<Object>({})
+	const [carListData, setCarListData] = useState<FLEET_OBJECT>({})
 
 	const {
 		isLoading: carsListLoading,
@@ -37,13 +38,41 @@ export default function Home() {
 	});
 
 	useEffect(() => {
+		const socket = io('ws://localhost:3426');
+		socket.on('connect', () => {
+			console.log('overview:connected websocket');
+		})
+
+		socket.on('car_location', (message) => {
+			const car_location: FLEET_CAR_LOCATION = JSON.parse(message);
+			setCarListData((prev) => ({
+				...prev,
+				[car_location.id]: {
+					...prev[car_location.id],
+					status: PILL_LABEL.ACTIVE,
+					location: {
+						lat: car_location.latitude,
+						lng: car_location.longitude
+					}
+				}
+			}))
+		})
+
+		return () => {
+			socket.disconnect();
+			console.log('overview:disconnected websocket');
+		}
+	}, [])
+
+	useEffect(() => {
 		if (!fetchCarsList) return
 		fetchCarsList.forEach((element: IResponseList) => {
 			setCarListData((prev) => ({
 				...prev,
 				[element.id]: {
+					...prev[element.id],
 					name: element.name,
-					status: PILL_LABEL.INACTIVE
+					status: PILL_LABEL.INACTIVE,
 				}
 			}))
 		})
@@ -86,14 +115,22 @@ export default function Home() {
 		<>
 			<div className='mb-16'><PageTitle title={NAVBAR_LABEL.OVERVIEW} /></div>
 			<div className='flex gap-32'>
-				<SummaryCard title={SUMMARY_LABEL.ACTIVE_CAR} value={'4 / 5'} />
-				<SummaryCard title={SUMMARY_LABEL.ACTIVE_DRIVER} value={'4 / 10'} />
-				<SummaryCard title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY} value={(dataGetEmergencyList?.filter(
-					(emergency: IEmergency) => emergency.status === "inProgress"
-				) ?? []).length} isLoading={isEmergencyListLoading} />
-				<SummaryCard title={SUMMARY_LABEL.PENDING_EMERGENCY} value={(dataGetEmergencyList?.filter(
-					(emergency: IEmergency) => emergency.status === "pending"
-				) ?? []).length} isLoading={isEmergencyListLoading} />
+				<SummaryCard
+					title={SUMMARY_LABEL.ACTIVE_CAR}
+					value={`- / ${fetchCarsList.length}`}
+					isLoading={carsListLoading}
+				/>
+				<SummaryCard title={SUMMARY_LABEL.ACTIVE_DRIVER} value={'- / -'} />
+				<SummaryCard
+					title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
+					value={(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress") ?? []).length}
+					isLoading={isEmergencyListLoading}
+				/>
+				<SummaryCard
+					title={SUMMARY_LABEL.PENDING_EMERGENCY}
+					value={(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending") ?? []).length}
+					isLoading={isEmergencyListLoading}
+				/>
 			</div>
 			<Card className='flex w-full h-[60%] my-32 rounded-lg px-32 py-24'>
 				<GoogleMap
@@ -115,21 +152,6 @@ export default function Home() {
 								onClick={() => changeFocus({ id, type: 'CAR', location: car.location, status: car.status } as StuffLocation)}
 								position={car.location}
 								key={id}
-							/>
-						)
-					}
-					{
-						MockedCarLocation.map((CAR) =>
-							<Marker
-								icon={{
-									url: `${MAP_ASSETS.CAR_PIN}${CAR.status}.svg`,
-									scaledSize: focus?.id === CAR.id ?
-										new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) :
-										new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
-								}}
-								onClick={() => changeFocus(CAR)}
-								position={CAR.location}
-								key={CAR.id}
 							/>
 						)
 					}
@@ -156,34 +178,22 @@ export default function Home() {
 						{focus?.type === "CAR" || focus === null ?
 							<>
 								{
-									Object.entries(carListData).map(([id, car]) =>
-										<CarCard
-											key={id}
-											car={{
-												id,
-												name: car.name,
-												status: car.status,
-												speed: car.speed,
-												driver: car.driver,
-												cameras: car.cameras,
-											}}
-											isFocus={id === focus?.id}
-											onClick={() => clickOnCarCard(car.id)}
-										/>
-									)
-								}
-								{
-									MockedCars
-										.filter((car) => car.status === pillMode || pillMode === PILL_LABEL.ALL)
-										.sort((car) => (car.id === focus?.id ? -1 : 1))
-										.map((car) =>
+									Object.entries(carListData)
+										.filter(([_id, car]) => (car.status === pillMode || pillMode === PILL_LABEL.ALL) && car.status !== PILL_LABEL.INACTIVE)
+										.map(([id, car]) =>
 											<CarCard
-												key={car.id}
-												car={car}
-												isFocus={car.id === focus?.id}
-												onClick={() => clickOnCarCard(car.id)}
+												key={id}
+												car={{
+													id,
+													name: car.name,
+													status: car.status,
+													speed: 'loading...',
+												}}
+												isFocus={id === focus?.id}
+												onClick={() => clickOnCarCard(id)}
 											/>
-										)}
+										)
+								}
 							</>
 							:
 							MockedRSU
