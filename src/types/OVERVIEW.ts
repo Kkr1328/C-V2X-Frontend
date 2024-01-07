@@ -24,6 +24,7 @@ export interface CarCard {
 export interface FocusState {
 	id: string;
 	type: 'CAR' | 'RSU';
+	location: Location;
 }
 
 export interface StuffLocation {

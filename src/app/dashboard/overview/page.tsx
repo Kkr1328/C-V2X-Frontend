@@ -9,7 +9,7 @@ import RSUMarker from '@/components/overview/RSUMarker';
 import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
-import { MockedCarLocation, MockedRSU } from '@/mock/ENTITY_OVERVIEW';
+import { MockedRSU } from '@/mock/ENTITY_OVERVIEW';
 import { FLEET_CAR_LOCATION, FLEET_OBJECT, FocusState, StuffLocation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
@@ -23,7 +23,11 @@ import { IResponseList } from '@/types/common/responseList.model';
 import { io } from 'socket.io-client';
 
 export default function Home() {
-	const [focus, setFocus] = useState<FocusState | null>(null)
+	const [focus, setFocus] = useState<FocusState>({
+		id: "",
+		type: 'CAR',
+		location: MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER
+	})
 	const [map, setMap] = useState<google.maps.Map>()
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
 
@@ -38,7 +42,7 @@ export default function Home() {
 	});
 
 	useEffect(() => {
-		const socket = io('ws://localhost:3426');
+		const socket = io(process.env.NEXT_PUBLIC_FLEET_WEB_SOCKET_URL ?? "<SOCKET-URL>");
 		socket.on('connect', () => {
 			console.log('overview:connected websocket');
 		})
@@ -76,7 +80,6 @@ export default function Home() {
 				}
 			}))
 		})
-		console.log(carListData)
 	}, [fetchCarsList])
 
 	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } =
@@ -85,88 +88,99 @@ export default function Home() {
 			queryFn: async () => await getEmergencyListAPI(),
 		});
 
-	const { isLoaded } = useLoadScript({
+	const { isLoaded: isMapLoadFinish } = useLoadScript({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "<GOOGLE-MAP-KEY>",
 	})
 
-	function changeFocus(node: StuffLocation | null) {
-		if (node === null || node.id === focus?.id) {
-			setFocus(null)
+	useEffect(() => {
+		const { id, type } = focus
+		if (!carListData[id] || type === 'RSU') return
+		setFocus({ id, type: 'CAR', location: carListData[id].location })
+	}, [carListData])
+
+	useEffect(() => {
+		map?.panTo(focus?.location ?? MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER)
+	}, [focus])
+
+	function changeFocus(node: StuffLocation) {
+		const { id, type, location, status } = node
+		if (id === focus?.id && type === focus?.type) {
+			setFocus({ ...focus, id: '', type: 'CAR' })
 			setPillMode(PILL_LABEL.ALL)
 		} else {
-			setFocus({ id: node.id, type: node.type })
-			setPillMode(node.status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : node.status ?? PILL_LABEL.ALL)
-			map?.panTo(node.location)
+			setFocus({ id, type, location })
+			setPillMode(status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : node.status ?? PILL_LABEL.ALL)
 		}
 	}
 
 	function changePillMode(value: PILL_LABEL) {
-		setFocus({ id: focus?.id ?? "", type: 'CAR' })
+		setFocus({ id: focus?.id ?? "", type: 'CAR', location: focus?.location ?? MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER })
 		if (value !== null) { setPillMode(value) }
 	}
 
-	function clickOnCarCard(carID: string) {
-		let target = MockedCarLocation.find((value) => value.id === carID) ?? null
-		changeFocus(target)
+	function clickOnCarCard(id: string) {
+		const { location, status } = carListData[id]
+		changeFocus({ id, type: 'CAR', location, status })
 	}
 
-	if (!isLoaded) return <div>Loading...</div>
 	return (
 		<>
 			<div className='mb-16'><PageTitle title={NAVBAR_LABEL.OVERVIEW} /></div>
 			<div className='flex gap-32'>
 				<SummaryCard
 					title={SUMMARY_LABEL.ACTIVE_CAR}
-					value={`- / ${fetchCarsList.length}`}
+					value={`- / ${fetchCarsList?.length ?? '-'}`}
 					isLoading={carsListLoading}
 				/>
 				<SummaryCard title={SUMMARY_LABEL.ACTIVE_DRIVER} value={'- / -'} />
 				<SummaryCard
 					title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
-					value={(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress") ?? []).length}
+					value={(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress"))?.length ?? "-"}
 					isLoading={isEmergencyListLoading}
 				/>
 				<SummaryCard
 					title={SUMMARY_LABEL.PENDING_EMERGENCY}
-					value={(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending") ?? []).length}
+					value={(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"))?.length ?? "-"}
 					isLoading={isEmergencyListLoading}
 				/>
 			</div>
 			<Card className='flex w-full h-[60%] my-32 rounded-lg px-32 py-24'>
-				<GoogleMap
-					options={{ disableDefaultUI: true }}
-					zoom={14}
-					center={MockedCarLocation[0].location}
-					mapContainerClassName="w-[70%]"
-					onLoad={map => setMap(map)}
-				>
-					{
-						Object.entries(carListData).map(([id, car]) =>
-							<Marker
-								icon={{
-									url: `${MAP_ASSETS.CAR_PIN}${car.status}.svg`,
-									scaledSize: focus?.id === id ?
-										new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) :
-										new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
-								}}
-								onClick={() => changeFocus({ id, type: 'CAR', location: car.location, status: car.status } as StuffLocation)}
-								position={car.location}
-								key={id}
-							/>
-						)
-					}
-					{
-						MockedRSU.map((RSU) =>
-							<RSUMarker
-								location={RSU.location}
-								radius={RSU.radius}
-								isFocus={focus?.id === RSU.id}
-								onClick={() => changeFocus(RSU)}
-								key={RSU.id}
-							/>
-						)
-					}
-				</GoogleMap>
+				{isMapLoadFinish &&
+					<GoogleMap
+						options={{ disableDefaultUI: true }}
+						zoom={14}
+						center={MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER}
+						mapContainerClassName="w-[70%]"
+						onLoad={map => setMap(map)}
+					>
+						{
+							Object.entries(carListData).map(([id, car]) =>
+								<Marker
+									icon={{
+										url: `${MAP_ASSETS.CAR_PIN}${car.status}.svg`,
+										scaledSize: focus?.id === id ?
+											new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) :
+											new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
+									}}
+									onClick={() => changeFocus({ id, type: 'CAR', location: car.location, status: car.status } as StuffLocation)}
+									position={car.location}
+									key={id}
+								/>
+							)
+						}
+						{
+							MockedRSU.map((RSU) =>
+								<RSUMarker
+									location={RSU.location}
+									radius={RSU.radius}
+									isFocus={focus?.id === RSU.id}
+									onClick={() => changeFocus(RSU)}
+									key={RSU.id}
+								/>
+							)
+						}
+					</GoogleMap>
+				}
 				<Divider className='border mx-24' orientation='vertical' />
 				<div className='flex flex-col w-[30%]'>
 					<ToggleButtonCV2X

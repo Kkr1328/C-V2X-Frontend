@@ -6,7 +6,7 @@ export default function EmergencyWrapper(props: { children: React.ReactNode }) {
     const queryClient = useQueryClient()
 
     useEffect(() => {
-        const socket = io('ws://localhost:3426');
+        const socket = io(process.env.NEXT_PUBLIC_FLEET_WEB_SOCKET_URL ?? "<SOCKET-URL>");
         socket.on('connect', () => {
             console.log('connected websocket');
         })
