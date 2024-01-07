@@ -10,7 +10,7 @@ import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL 
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 import { MockedRSU } from '@/mock/ENTITY_OVERVIEW';
-import { FLEET_CAR_LOCATION, FLEET_OBJECT, FocusState, StuffLocation } from '@/types/OVERVIEW';
+import { FLEET_CAR_LOCATION, FLEET_HEARTBEAT, FLEET_OBJECT, FocusState, StuffLocation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
@@ -50,13 +50,27 @@ export default function Home() {
 			console.log('overview:connected websocket');
 		})
 
+		socket.on('heartbeat', (message) => {
+			const heartbeat: FLEET_HEARTBEAT = JSON.parse(message);
+			if (heartbeat.type === 'CAR') {
+				setCarListData((prev) => ({
+					...prev,
+					[heartbeat.id]: {
+						...prev[heartbeat.id],
+						status: heartbeat.data.status,
+					}
+				}))
+			} else if (heartbeat.type === 'RSU') {
+				// TODO: update RSU heartbeat
+			}
+		})
+
 		socket.on('car_location', (message) => {
 			const car_location: FLEET_CAR_LOCATION = JSON.parse(message);
 			setCarListData((prev) => ({
 				...prev,
 				[car_location.id]: {
 					...prev[car_location.id],
-					status: PILL_LABEL.ACTIVE,
 					location: {
 						lat: car_location.latitude,
 						lng: car_location.longitude

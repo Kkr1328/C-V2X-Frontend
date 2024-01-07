@@ -67,3 +67,14 @@ export interface FLEET_CAR_LOCATION {
 	longitude: number;
 	timestamp: string;
 }
+
+export interface FLEET_HEARTBEAT {
+	id: string;
+	type: 'CAR' | 'RSU';
+	data: {
+		status: PILL_LABEL;
+		front_camera: PILL_LABEL;
+		back_camera: PILL_LABEL;
+	};
+	timestamp: string;
+}
