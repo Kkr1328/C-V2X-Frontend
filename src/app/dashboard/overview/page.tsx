@@ -99,12 +99,12 @@ export default function Home() {
 	}, [carListData])
 
 	useEffect(() => {
-		map?.panTo(focus?.location ?? MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER)
+		map?.panTo(focus.location)
 	}, [focus])
 
 	function changeFocus(node: StuffLocation) {
 		const { id, type, location, status } = node
-		if (id === focus?.id && type === focus?.type) {
+		if (id === focus.id && type === focus.type) {
 			setFocus({ ...focus, id: '', type: 'CAR' })
 			setPillMode(PILL_LABEL.ALL)
 		} else {
@@ -114,7 +114,7 @@ export default function Home() {
 	}
 
 	function changePillMode(value: PILL_LABEL) {
-		setFocus({ id: focus?.id ?? "", type: 'CAR', location: focus?.location ?? MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER })
+		setFocus({ id: focus.id, type: 'CAR', location: focus.location })
 		if (value !== null) { setPillMode(value) }
 	}
 
@@ -158,7 +158,7 @@ export default function Home() {
 								<Marker
 									icon={{
 										url: `${MAP_ASSETS.CAR_PIN}${car.status}.svg`,
-										scaledSize: focus?.id === id ?
+										scaledSize: focus.id === id ?
 											new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) :
 											new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
 									}}
@@ -173,7 +173,7 @@ export default function Home() {
 								<RSUMarker
 									location={RSU.location}
 									radius={RSU.radius}
-									isFocus={focus?.id === RSU.id}
+									isFocus={focus.id === RSU.id}
 									onClick={() => changeFocus(RSU)}
 									key={RSU.id}
 								/>
@@ -189,11 +189,11 @@ export default function Home() {
 						onChange={(_event, value) => changePillMode(value)}
 					/>
 					<List className='grow overflow-y-scroll'>
-						{focus?.type === "CAR" || focus === null ?
+						{focus.type === "CAR" || focus === null ?
 							<>
 								{
 									Object.entries(carListData)
-										.filter(([_id, car]) => (car.status === pillMode || pillMode === PILL_LABEL.ALL) && car.status !== PILL_LABEL.INACTIVE)
+										.filter(([_id, car]) => car.status && (car.status === pillMode || pillMode === PILL_LABEL.ALL) && car.status !== PILL_LABEL.INACTIVE)
 										.map(([id, car]) =>
 											<CarCard
 												key={id}
@@ -203,7 +203,7 @@ export default function Home() {
 													status: car.status,
 													speed: 'loading...',
 												}}
-												isFocus={id === focus?.id}
+												isFocus={id === focus.id}
 												onClick={() => clickOnCarCard(id)}
 											/>
 										)
@@ -211,7 +211,7 @@ export default function Home() {
 							</>
 							:
 							MockedRSU
-								.filter(all => all.id === focus?.id)
+								.filter(all => all.id === focus.id)
 								.map((RSU) =>
 									<RSUCard
 										key={RSU.id}
