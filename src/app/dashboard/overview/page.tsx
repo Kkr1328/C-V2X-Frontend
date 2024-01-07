@@ -149,7 +149,7 @@ export default function Home() {
 			<div className='flex gap-32'>
 				<SummaryCard
 					title={SUMMARY_LABEL.ACTIVE_CAR}
-					value={`- / ${fetchCarsList?.length ?? '-'}`}
+					value={`${Object.entries(carListData).filter(([_id, car]) => car.status === PILL_LABEL.ACTIVE).length} / ${fetchCarsList?.length ?? '-'}`}
 					isLoading={carsListLoading}
 				/>
 				<SummaryCard title={SUMMARY_LABEL.ACTIVE_DRIVER} value={'- / -'} />
