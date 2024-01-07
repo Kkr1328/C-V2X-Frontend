@@ -14,7 +14,7 @@ import { FLEET_CAR_LOCATION, FLEET_OBJECT, FocusState, StuffLocation } from '@/t
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import RSUCard from '@/components/overview/RSUCard';
 import { useQuery } from '@tanstack/react-query';
 import { getCarsListAPI, getEmergencyListAPI } from '@/services/api-call';
@@ -28,6 +28,9 @@ export default function Home() {
 		type: 'CAR',
 		location: MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER
 	})
+	const focusRef = useRef(focus);
+	focusRef.current = focus;
+
 	const [map, setMap] = useState<google.maps.Map>()
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
 
@@ -60,6 +63,15 @@ export default function Home() {
 					}
 				}
 			}))
+			if (focusRef.current.id === car_location.id && focusRef.current.type === 'CAR') {
+				setFocus((prev) => ({
+					...prev,
+					location: {
+						lat: car_location.latitude,
+						lng: car_location.longitude
+					}
+				}))
+			}
 		})
 
 		return () => {
@@ -91,12 +103,6 @@ export default function Home() {
 	const { isLoaded: isMapLoadFinish } = useLoadScript({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "<GOOGLE-MAP-KEY>",
 	})
-
-	useEffect(() => {
-		const { id, type } = focus
-		if (!carListData[id] || type === 'RSU') return
-		setFocus({ id, type: 'CAR', location: carListData[id].location })
-	}, [carListData])
 
 	useEffect(() => {
 		map?.panTo(focus.location)
