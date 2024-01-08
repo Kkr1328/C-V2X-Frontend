@@ -10,7 +10,7 @@ import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL 
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 import { MockedRSU } from '@/mock/ENTITY_OVERVIEW';
-import { FLEET_CAR_LOCATION, FLEET_HEARTBEAT, FLEET_OBJECT, FocusState, StuffLocation } from '@/types/OVERVIEW';
+import { FLEET_CAR_LOCATION, FLEET_CAR_SPEED, FLEET_HEARTBEAT, FLEET_OBJECT, FocusState, StuffLocation } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
@@ -86,6 +86,22 @@ export default function Home() {
 					}
 				}))
 			}
+		})
+
+		socket.on('car_speed', (message) => {
+			const car_speed: FLEET_CAR_SPEED = JSON.parse(message);
+			console.log(car_speed)
+			if (!carListData[car_speed.id]) { return }
+			setCarListData((prev) => ({
+				...prev,
+				[car_speed.id]: {
+					...prev[car_speed.id],
+					speed: {
+						velocity: car_speed.velocity,
+						unit: car_speed.unit
+					},
+				}
+			}))
 		})
 
 		return () => {
@@ -221,7 +237,7 @@ export default function Home() {
 													id,
 													name: car.name,
 													status: car.status,
-													speed: 'loading...',
+													speed: `${car.speed?.velocity.toString() ?? 'loading...'} ${car.speed?.unit.toString() ?? ''}`,
 												}}
 												isFocus={id === focus.id}
 												onClick={() => clickOnCarCard(id)}
@@ -231,7 +247,7 @@ export default function Home() {
 							</>
 							:
 							MockedRSU
-								.filter(all => all.id === focus.id)
+								.filter(RSU => RSU.id === focus.id)
 								.map((RSU) =>
 									<RSUCard
 										key={RSU.id}

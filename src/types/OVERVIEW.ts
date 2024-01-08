@@ -78,3 +78,8 @@ export interface FLEET_HEARTBEAT {
 	};
 	timestamp: string;
 }
+
+export interface FLEET_CAR_SPEED extends SPEED {
+	id: string;
+	timestamp: string;
+}
