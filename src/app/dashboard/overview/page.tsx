@@ -285,7 +285,7 @@ export default function Home() {
 							</>
 							:
 							<RSUCard
-								name={rsuListData[focus.id].name}
+								id={focus.id}
 								connectedCar={
 									rsuListData[focus.id].connected_OBU?.map((id) => ({
 										name: carListData[id].name,
