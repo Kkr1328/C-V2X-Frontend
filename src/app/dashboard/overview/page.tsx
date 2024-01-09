@@ -90,8 +90,6 @@ export default function Home() {
 
 		socket.on('car_speed', (message) => {
 			const car_speed: FLEET_CAR_SPEED = JSON.parse(message);
-			console.log(car_speed)
-			if (!carListData[car_speed.id]) { return }
 			setCarListData((prev) => ({
 				...prev,
 				[car_speed.id]: {
