@@ -53,7 +53,7 @@ export interface CONNECTED_CAR_ON_RSU {
 }
 
 type SPEED = { velocity: number; unit: string };
-export interface FLEET_OBJECT {
+export interface FLEET_CAR {
 	[key: string]: {
 		name: string;
 		status: PILL_LABEL;
@@ -61,8 +61,20 @@ export interface FLEET_OBJECT {
 		location: Location;
 	};
 }
+
+export interface FLEET_RSU {
+	[key: string]: {
+		name: string;
+		status: PILL_LABEL;
+		recommendSpeed: SPEED;
+		connected_OBU: string[];
+		location: Location;
+	};
+}
+
 export interface FLEET_CAR_LOCATION {
 	id: string;
+	type: 'CAR' | 'RSU';
 	latitude: number;
 	longitude: number;
 	timestamp: string;
@@ -75,9 +87,12 @@ export interface FLEET_HEARTBEAT {
 		status: PILL_LABEL;
 		front_camera: PILL_LABEL;
 		back_camera: PILL_LABEL;
+		connected_OBU: string[];
 	};
 	timestamp: string;
 }
+
+export interface FLEET_HEAR<T, U> extends FLEET_HEARTBEAT {}
 
 export interface FLEET_CAR_SPEED extends SPEED {
 	id: string;

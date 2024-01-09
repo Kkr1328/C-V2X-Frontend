@@ -9,15 +9,14 @@ import RSUMarker from '@/components/overview/RSUMarker';
 import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
-import { MockedRSU } from '@/mock/ENTITY_OVERVIEW';
-import { FLEET_CAR_LOCATION, FLEET_CAR_SPEED, FLEET_HEARTBEAT, FLEET_OBJECT, FocusState, StuffLocation } from '@/types/OVERVIEW';
+import { FLEET_CAR_LOCATION, FLEET_CAR_SPEED, FLEET_HEARTBEAT, FLEET_CAR, FocusState, StuffLocation, FLEET_RSU } from '@/types/OVERVIEW';
 
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import RSUCard from '@/components/overview/RSUCard';
 import { useQuery } from '@tanstack/react-query';
-import { getCarsListAPI, getEmergencyListAPI } from '@/services/api-call';
+import { getCarsListAPI, getEmergencyListAPI, getRSUsListAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
 import { IResponseList } from '@/types/common/responseList.model';
 import { io } from 'socket.io-client';
@@ -34,7 +33,10 @@ export default function Home() {
 	const [map, setMap] = useState<google.maps.Map>()
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL)
 
-	const [carListData, setCarListData] = useState<FLEET_OBJECT>({})
+	const [carListData, setCarListData] = useState<FLEET_CAR>({})
+	const [rsuListData, setRSUListData] = useState<FLEET_RSU>({})
+
+	const activeCar = useMemo(() => Object.entries(carListData).filter(([_id, car]) => car.status === PILL_LABEL.ACTIVE).length, [carListData])
 
 	const {
 		isLoading: carsListLoading,
@@ -42,6 +44,13 @@ export default function Home() {
 	} = useQuery({
 		queryKey: ['getCarList'],
 		queryFn: async () => await getCarsListAPI()
+	});
+
+	const {
+		data: fetchRSUsList
+	} = useQuery({
+		queryKey: ['fleet:getRSUsList'],
+		queryFn: async () => await getRSUsListAPI()
 	});
 
 	useEffect(() => {
@@ -61,28 +70,47 @@ export default function Home() {
 					}
 				}))
 			} else if (heartbeat.type === 'RSU') {
-				// TODO: update RSU heartbeat
+				setRSUListData((prev) => ({
+					...prev,
+					[heartbeat.id]: {
+						...prev[heartbeat.id],
+						connected_OBU: heartbeat.data.connected_OBU,
+					}
+				}))
 			}
 		})
 
 		socket.on('location', (message) => {
-			const car_location: FLEET_CAR_LOCATION = JSON.parse(message);
-			setCarListData((prev) => ({
-				...prev,
-				[car_location.id]: {
-					...prev[car_location.id],
-					location: {
-						lat: car_location.latitude,
-						lng: car_location.longitude
+			const location: FLEET_CAR_LOCATION = JSON.parse(message);
+			if (location.type === 'CAR') {
+				setCarListData((prev) => ({
+					...prev,
+					[location.id]: {
+						...prev[location.id],
+						location: {
+							lat: location.latitude,
+							lng: location.longitude
+						}
 					}
-				}
-			}))
-			if (focusRef.current.id === car_location.id && focusRef.current.type === 'CAR') {
+				}))
+			} else if (location.type === 'RSU') {
+				setRSUListData((prev) => ({
+					...prev,
+					[location.id]: {
+						...prev[location.id],
+						location: {
+							lat: location.latitude,
+							lng: location.longitude
+						}
+					}
+				}))
+			}
+			if (focusRef.current.id === location.id && focusRef.current.type === location.type) {
 				setFocus((prev) => ({
 					...prev,
 					location: {
-						lat: car_location.latitude,
-						lng: car_location.longitude
+						lat: location.latitude,
+						lng: location.longitude
 					}
 				}))
 			}
@@ -121,6 +149,19 @@ export default function Home() {
 			}))
 		})
 	}, [fetchCarsList])
+
+	useEffect(() => {
+		if (!fetchRSUsList) return
+		fetchRSUsList.forEach((element: IResponseList) => {
+			setRSUListData((prev) => ({
+				...prev,
+				[element.id]: {
+					...prev[element.id],
+					name: element.name
+				}
+			}))
+		})
+	}, [fetchRSUsList])
 
 	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } =
 		useQuery({
@@ -163,7 +204,7 @@ export default function Home() {
 			<div className='flex gap-32'>
 				<SummaryCard
 					title={SUMMARY_LABEL.ACTIVE_CAR}
-					value={`${Object.entries(carListData).filter(([_id, car]) => car.status === PILL_LABEL.ACTIVE).length} / ${fetchCarsList?.length ?? '-'}`}
+					value={`${activeCar} / ${fetchCarsList?.length ?? '-'}`}
 					isLoading={carsListLoading}
 				/>
 				<SummaryCard title={SUMMARY_LABEL.ACTIVE_DRIVER} value={'- / -'} />
@@ -203,12 +244,12 @@ export default function Home() {
 							)
 						}
 						{
-							MockedRSU.map((RSU) =>
+							Object.entries(rsuListData).map(([id, RSU]) =>
 								<RSUMarker
 									location={RSU.location}
-									isFocus={focus.id === RSU.id}
-									onClick={() => changeFocus(RSU)}
-									key={RSU.id}
+									isFocus={focus.id === id}
+									onClick={() => changeFocus({ id, type: 'RSU', location: RSU.location } as StuffLocation)}
+									key={id}
 								/>
 							)
 						}
@@ -222,7 +263,7 @@ export default function Home() {
 						onChange={(_event, value) => changePillMode(value)}
 					/>
 					<List className='grow overflow-y-scroll'>
-						{focus.type === "CAR" || focus === null ?
+						{focus.type === "CAR" ?
 							<>
 								{
 									Object.entries(carListData)
@@ -243,16 +284,16 @@ export default function Home() {
 								}
 							</>
 							:
-							MockedRSU
-								.filter(RSU => RSU.id === focus.id)
-								.map((RSU) =>
-									<RSUCard
-										key={RSU.id}
-										name={RSU.name}
-										recommendSpeed={RSU.recommendSpeed}
-										connectedCar={RSU.connectedCar}
-									/>
-								)
+							<RSUCard
+								name={rsuListData[focus.id].name}
+								connectedCar={
+									rsuListData[focus.id].connected_OBU?.map((id) => ({
+										name: carListData[id].name,
+										status: carListData[id].status,
+										speed: `${carListData[id].speed?.velocity.toString() ?? 'loading...'} ${carListData[id].speed?.unit ?? ''}`
+									}))
+								}
+							/>
 						}
 					</List>
 				</div>

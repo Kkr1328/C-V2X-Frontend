@@ -8,11 +8,10 @@ import CarAvatar from "./CarAvatar";
 
 interface RSUCardProps {
     name: string,
-    recommendSpeed: string,
     connectedCar: CONNECTED_CAR_ON_RSU[]
 }
 
-export default function RSUCard(props : RSUCardProps) {
+export default function RSUCard(props: RSUCardProps) {
     return (
         <Card className='bg-light_background_grey text-p1 rounded-lg my-16 p-8 flex flex-col gap-8'>
             <div className='flex items-center gap-8'>
@@ -24,18 +23,20 @@ export default function RSUCard(props : RSUCardProps) {
                 />
                 <div className='text-h4'>{props.name}</div>
             </div>
-            <div className='text-p1'>Recommended speed : {props.recommendSpeed}</div>
-            <Divider className="my-4" />
-            {
-                props.connectedCar.map((car) =>
-                    <div key={car.name} className='flex flex-row items-center px-8'>
-                        <div className='flex w-1/2 items-center'>
-                            <CarAvatar status={car.status} />
-                            <div className='mx-8 text-h5'>{car.name}</div>
+            {/* <div className='text-p1'>Recommended speed : {props.recommendSpeed}</div> */}
+            {props.connectedCar &&
+                <>
+                    <Divider className="my-4" />
+                    {props.connectedCar.map((car) =>
+                        <div key={car.name} className='flex flex-row items-center px-8'>
+                            <div className='flex w-1/2 items-center'>
+                                <CarAvatar status={car.status} />
+                                <div className='mx-8 text-h5'>{car.name}</div>
+                            </div>
+                            <div>Speed : {car.speed}</div>
                         </div>
-                        <div>Speed : {car.speed}</div>
-                    </div>
-                )
+                    )}
+                </>
             }
         </Card>
     )
