@@ -65,7 +65,7 @@ export default function Home() {
 			}
 		})
 
-		socket.on('car_location', (message) => {
+		socket.on('location', (message) => {
 			const car_location: FLEET_CAR_LOCATION = JSON.parse(message);
 			setCarListData((prev) => ({
 				...prev,
