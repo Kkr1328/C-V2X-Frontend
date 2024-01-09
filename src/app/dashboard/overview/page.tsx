@@ -208,7 +208,6 @@ export default function Home() {
 							MockedRSU.map((RSU) =>
 								<RSUMarker
 									location={RSU.location}
-									radius={RSU.radius}
 									isFocus={focus.id === RSU.id}
 									onClick={() => changeFocus(RSU)}
 									key={RSU.id}
