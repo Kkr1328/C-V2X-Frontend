@@ -23,6 +23,8 @@ export interface IGetCarsRequest {
 	driver_id?: string;
 	front_cam_id?: string;
 	back_cam_id?: string;
+	left_cam_id?: string;
+	right_cam_id?: string;
 }
 export interface ICreateCarRequest extends ICarRequest {}
 export interface IUpdateCarRequest extends ICarRequest {}
