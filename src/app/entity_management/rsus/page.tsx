@@ -163,9 +163,9 @@ export default function Home() {
 				entity={deleteModalData.id + ' RSU'}
 				onSubmit={() => deleteRSU.mutate(deleteModalData)}
 			/>
-			<div className="flex flex-col w-full h-full gap-16">
+			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.RSUS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-full rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={RSUFilterTemplate}
 						handleSubmitSearch={refetchGetRSUs}
