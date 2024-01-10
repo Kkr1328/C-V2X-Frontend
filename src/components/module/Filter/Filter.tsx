@@ -35,10 +35,7 @@ export default function Filter<T>(props: FilterProp<T>) {
 	const [filterWidth, setFilterWidth] = useState<number>(
 		filterRef.current?.clientWidth as number
 	);
-	useEffect(
-		() => WidthObserver(filterRef.current, setFilterWidth),
-		[filterRef.current]
-	);
+	useEffect(() => WidthObserver(filterRef.current, setFilterWidth), []);
 	const fieldPerRow = FilterFieldPerRowGenerator(filterWidth);
 
 	const template = props.template(fieldPerRow);
