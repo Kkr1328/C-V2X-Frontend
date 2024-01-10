@@ -1,43 +1,54 @@
 import { IQuerry } from '@/types/common/query.model';
 
-const PREFIX = 'http://localhost:5000/api';
-
 const API_CONTEXT = {
 	CAR: {
-		GET_CARS: `${PREFIX}/cars`,
-		GET_CARS_LIST: `${PREFIX}/cars/list`,
-		GET_CAR: ({ id }: IQuerry) => `${PREFIX}/cars/${id}`,
-		CREATE_CAR: `${PREFIX}/cars`,
-		UPDATE_CAR: ({ id }: IQuerry) => `${PREFIX}/cars/${id}`,
-		DELETE_CAR: ({ id }: IQuerry) => `${PREFIX}/cars/${id}`,
+		GET_CARS: `${process.env.NEXT_PUBLIC_API_URL}/cars`,
+		GET_CARS_LIST: `${process.env.NEXT_PUBLIC_API_URL}/cars/list`,
+		GET_CAR: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/cars/${id}`,
+		CREATE_CAR: `${process.env.NEXT_PUBLIC_API_URL}/cars`,
+		UPDATE_CAR: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/cars/${id}`,
+		DELETE_CAR: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/cars/${id}`,
 	},
 	DRIVER: {
-		GET_DRIVERS: `${PREFIX}/drivers`,
-		GET_DRIVERS_LIST: `${PREFIX}/drivers/list`,
-		GET_DRIVER: ({ id }: IQuerry) => `${PREFIX}/drivers/${id}`,
-		CREATE_DRIVER: `${PREFIX}/drivers`,
-		UPDATE_DRIVER: ({ id }: IQuerry) => `${PREFIX}/drivers/${id}`,
-		DELETE_DRIVER: ({ id }: IQuerry) => `${PREFIX}/drivers/${id}`,
+		GET_DRIVERS: `${process.env.NEXT_PUBLIC_API_URL}/drivers`,
+		GET_DRIVERS_LIST: `${process.env.NEXT_PUBLIC_API_URL}/drivers/list`,
+		GET_DRIVER: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/drivers/${id}`,
+		CREATE_DRIVER: `${process.env.NEXT_PUBLIC_API_URL}/drivers`,
+		UPDATE_DRIVER: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/drivers/${id}`,
+		DELETE_DRIVER: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/drivers/${id}`,
 	},
 	CAMERA: {
-		GET_CAMERAS: `${PREFIX}/cameras`,
-		GET_CAMERAS_LIST: `${PREFIX}/cameras/list`,
-		GET_CAMERA: ({ id }: IQuerry) => `${PREFIX}/cameras/${id}`,
-		CREATE_CAMERA: `${PREFIX}/cameras`,
-		UPDATE_CAMERA: ({ id }: IQuerry) => `${PREFIX}/cameras/${id}`,
-		DELETE_CAMERA: ({ id }: IQuerry) => `${PREFIX}/cameras/${id}`,
+		GET_CAMERAS: `${process.env.NEXT_PUBLIC_API_URL}/cameras`,
+		GET_CAMERAS_LIST: `${process.env.NEXT_PUBLIC_API_URL}/cameras/list`,
+		GET_CAMERA: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/cameras/${id}`,
+		CREATE_CAMERA: `${process.env.NEXT_PUBLIC_API_URL}/cameras`,
+		UPDATE_CAMERA: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/cameras/${id}`,
+		DELETE_CAMERA: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/cameras/${id}`,
 	},
 	RSU: {
-		GET_RSUS: `${PREFIX}/rsus`,
-		GET_RSUS_LIST: `${PREFIX}/rsus/list`,
-		GET_RSU: ({ id }: IQuerry) => `${PREFIX}/rsus/${id}`,
-		CREATE_RSU: `${PREFIX}/rsus`,
-		UPDATE_RSU: ({ id }: IQuerry) => `${PREFIX}/rsus/${id}`,
-		DELETE_RSU: ({ id }: IQuerry) => `${PREFIX}/rsus/${id}`,
+		GET_RSUS: `${process.env.NEXT_PUBLIC_API_URL}/rsus`,
+		GET_RSUS_LIST: `${process.env.NEXT_PUBLIC_API_URL}/rsus/list`,
+		GET_RSU: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/rsus/${id}`,
+		CREATE_RSU: `${process.env.NEXT_PUBLIC_API_URL}/rsus`,
+		UPDATE_RSU: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/rsus/${id}`,
+		DELETE_RSU: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/rsus/${id}`,
 	},
 	EMERGENCY: {
-		GET_EMERGENCY_LIST: `${PREFIX}/emergencies`,
-		UPDATE_EMERGENCY: ({ id }: IQuerry) => `${PREFIX}/emergencies/${id}`,
+		GET_EMERGENCY_LIST: `${process.env.NEXT_PUBLIC_API_URL}/emergencies`,
+		UPDATE_EMERGENCY: ({ id }: IQuerry) =>
+			`${process.env.NEXT_PUBLIC_API_URL}/emergencies/${id}`,
 	},
 };
 
