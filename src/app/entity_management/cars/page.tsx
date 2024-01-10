@@ -165,6 +165,14 @@ export default function Home() {
 			option: OptionGenerator(camerasList),
 		},
 		{
+			id: 'left_cam_id',
+			option: OptionGenerator(camerasList),
+		},
+		{
+			id: 'right_cam_id',
+			option: OptionGenerator(camerasList),
+		},
+		{
 			id: 'driver_id',
 			option: OptionGenerator(driversList),
 		},
@@ -215,9 +223,9 @@ export default function Home() {
 				entity={deleteModalData.id + ' car'}
 				onSubmit={() => deleteCar.mutate(deleteModalData)}
 			/>
-			<div className="flex flex-col w-full h-full gap-16">
+			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CARS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-full rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={CarFilterTemplate}
 						handleSubmitSearch={refetchGetCars}

@@ -1,3 +1,4 @@
+'use client';
 import ButtonCV2X from '@/components/common/ButtonCV2X';
 import PageTitle from '@/components/common/PageTitle';
 import StatusDot from '@/components/common/StatusDot';

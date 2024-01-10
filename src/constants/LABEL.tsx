@@ -18,6 +18,8 @@ export enum INPUT_LABEL {
 	CAMERAS = 'Cameras',
 	FRONT_CAMERA = 'Front Camera',
 	BACK_CAMERA = 'Back Camera',
+	LEFT_CAMERA = 'Left Camera',
+	RIGHT_CAMERA = 'Right Camera',
 	NAME = 'Name',
 	LICENSE_PLATE = 'License Plate',
 	MODEL = 'Model',

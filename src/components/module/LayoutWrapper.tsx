@@ -21,11 +21,10 @@ export default function LayoutWrapper({
 		<QueryClientProvider client={queryClient}>
 			<EmergencyWrapper>
 				<SnackbarProvider maxSnack={3}>
-					<div className="flex w-[100vw] h-[100vh] bg-dark_background_grey">
+					<div className="flex w-[100dvw] h-[100dvh] bg-dark_background_grey">
 						<Header />
 						<Navbar />
-						<div className="flex flex-col w-full h-full px-32 py-32 bg-dark_background_grey overflow-x-auto overflow-y-auto">
-							<Toolbar />
+						<div className="pt-[96px] flex flex-col w-[100dvw] h-[100dvh] px-32 py-32 bg-dark_background_grey overflow-x-auto overflow-y-auto">
 							{children}
 						</div>
 					</div>
