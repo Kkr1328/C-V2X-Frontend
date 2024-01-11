@@ -1,19 +1,13 @@
-'use client';
-
+// react
 import { SyntheticEvent } from 'react';
-
-import {
-	Stack,
-	Autocomplete,
-	TextField,
-	IconButton,
-	Skeleton,
-} from '@mui/material';
-
+// material ui
+import { Autocomplete, TextField, IconButton, Skeleton } from '@mui/material';
+// components
 import Pill from './Pill';
-import IconMapper from '@/utils/IconMapper';
-
+// consts
 import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
+//utilities
+import IconMapper from '@/utils/IconMapper';
 
 export interface SelectOption {
 	value: string;
@@ -34,16 +28,16 @@ interface SelectCV2XProp {
 	isLoading?: boolean;
 	isRequired?: boolean;
 	isError?: boolean;
-	errorMessage?: string;
+	helperMessage?: string;
 }
 
 export default function SelectCV2X(props: SelectCV2XProp) {
 	return (
-		<Stack className="w-full gap-4">
+		<div className="flex flex-col gap-4 w-full">
 			{/* Title */}
 			{props.title && (
-				<Stack direction="row" className="gap-16 items-center">
-					<Stack direction="row" className="gap-4">
+				<div className="flex flex-row gap-16 items-center">
+					<div className="flex flex-row gap-4">
 						<p className="inline-block align-baseline font-istok text-black text-h5">
 							{props.title}
 						</p>
@@ -62,9 +56,9 @@ export default function SelectCV2X(props: SelectCV2XProp) {
 								<IconMapper icon={BUTTON_LABEL.LOCATION} />
 							</IconButton>
 						)}
-					</Stack>
+					</div>
 					{!props.isLoading && props.pill && <Pill variant={props.pill} />}
-				</Stack>
+				</div>
 			)}
 			{/* Input field */}
 			{props.isLoading ? (
@@ -123,9 +117,9 @@ export default function SelectCV2X(props: SelectCV2XProp) {
 			{/* Helper text */}
 			{!props.isLoading && props.isError && (
 				<p className="inline-block align-baseline font-istok text-error_red text-p2">
-					{props.errorMessage}
+					{props.helperMessage}
 				</p>
 			)}
-		</Stack>
+		</div>
 	);
 }

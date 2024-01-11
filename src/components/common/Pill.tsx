@@ -1,5 +1,6 @@
+// material ui
 import { Chip } from '@mui/material';
-
+// consts
 import { PILL_LABEL } from '@/constants/LABEL';
 
 interface PillProps {

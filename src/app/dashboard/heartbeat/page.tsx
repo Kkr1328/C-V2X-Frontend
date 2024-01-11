@@ -1,7 +1,8 @@
+'use client';
 import ButtonCV2X from '@/components/common/ButtonCV2X';
 import PageTitle from '@/components/common/PageTitle';
 import StatusDot from '@/components/common/StatusDot';
-import TableCV2X from '@/components/module/TableCV2X';
+import TableCV2X from '@/components/module/Table/TableContent';
 import { BUTTON_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 import {
 	MockedCarsHeartbeatTableContent,

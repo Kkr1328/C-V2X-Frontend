@@ -1,5 +1,6 @@
-import { Stack } from '@mui/material';
-
+// components
+import Text from './Text';
+// utilities
 import IconMapper from '@/utils/IconMapper';
 
 interface PageTitleProp {
@@ -8,11 +9,9 @@ interface PageTitleProp {
 
 export default function PageTitle(props: PageTitleProp) {
 	return (
-		<Stack direction="row" className="gap-16 items-center text-black">
+		<div className="flex flex-row gap-16 items-center text-black">
 			<IconMapper icon={props.title} size="48px" />
-			<p className="inline-block align-baseline font-istok text-h2 text-black">
-				{props.title}
-			</p>
-		</Stack>
+			<Text style="text-h2 text-black" content={props.title} />
+		</div>
 	);
 }

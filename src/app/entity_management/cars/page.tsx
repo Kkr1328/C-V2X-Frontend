@@ -1,17 +1,16 @@
 'use client';
 // react
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
-import { Card, Divider, Stack } from '@mui/material';
+import { Card, Divider } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
-import Filter from '@/components/module/Filter';
-import ButtonCV2X from '@/components/common/ButtonCV2X';
-import TableCV2X from '@/components/module/TableCV2X';
-import ModalCV2X from '@/components/common/ModalCV2X';
-import ModalInputs from '@/components/module/ModalInputs';
+import Filter from '@/components/module/Filter/Filter';
+import InputModal from '@/components/module/Modal/InputModal';
+import InfoModal from '@/components/module/Modal/InfoModal';
+import DeleteModal from '@/components/module/Modal/DeleteModal';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
@@ -21,84 +20,108 @@ import { CarFilterTemplate } from '@/templates/FILTER';
 import { CarsTableTemplate } from '@/templates/ENTITY_TABLE';
 import { CarInfoModalTemplate } from '@/templates/INFO_MODAL';
 import { CarActionModalTemplate } from '@/templates/ACTION_MODAL';
-// redux
-import { useDispatch, useSelector } from '@/redux/store';
-import { selectGetCars } from '@/redux/get-cars/get-cars-selector';
-import { selectCreateCar } from '@/redux/create-car/create-car-selector';
-import { selectUpdateCar } from '@/redux/update-car/update-car-selector';
-import { selectDeleteCar } from '@/redux/delete-car/delete-car-selector';
-import { selectGetCamerasList } from '@/redux/get-cameras-list/get-cameras-list-selector';
-import { selectGetDriversList } from '@/redux/get-drivers-list/get-drivers-list-selector';
-import { FETCH_GET_CARS } from '@/redux/get-cars/get-cars-action';
-import { FETCH_CREATE_CAR } from '@/redux/create-car/create-car-action';
-import { FETCH_UPDATE_CAR } from '@/redux/update-car/update-car-action';
-import { FETCH_DELETE_CAR } from '@/redux/delete-car/delete-car-action';
-import { FETCH_GET_CAMERAS_LIST } from '@/redux/get-cameras-list/get-cameras-list-action';
-import { FETCH_GET_DRIVERS_LIST } from '@/redux/get-drivers-list/get-drivers-list-action';
+// tanstack
+import { useMutation, useQuery } from '@tanstack/react-query';
+// services
+import {
+	createCarAPI,
+	deleteCarAPI,
+	getCamerasListAPI,
+	getCarsAPI,
+	getDriversListAPI,
+	updateCarAPI,
+} from '@/services/api-call';
+// utilities
+import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
+import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
+import { WindowWidthObserver } from '@/utils/WidthObserver';
+import Table from '@/components/module/Table/Table';
 
 export default function Home() {
-	const dispatch = useDispatch();
+	const [windowWidth, setWindowWidth] = useState(0);
+	useEffect(() => WindowWidthObserver(setWindowWidth), []);
+	const isUseCompactModal = windowWidth <= 640;
+
 	const { enqueueSnackbar } = useSnackbar();
-
-	const { data: cars, loading: carsLoading } = useSelector(selectGetCars);
-	const { data: camerasList } = useSelector(selectGetCamerasList);
-	const { data: driversList } = useSelector(selectGetDriversList);
-	const { error: registerCarError, loading: registerCarLoading } =
-		useSelector(selectCreateCar);
-	const { error: updateCarError, loading: updateCarLoading } =
-		useSelector(selectUpdateCar);
-	const { error: deleteCarError, loading: deleteCarLoading } =
-		useSelector(selectDeleteCar);
-
-	const defaultFilterData = CarFilterTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as IGetCarsRequest[keyof IGetCarsRequest],
-		}),
-		{} as IGetCarsRequest
+	const defaultFilterData = DefaultDataGenerator(CarFilterTemplate(1));
+	const defaultData = DefaultDataGenerator(
+		CarActionModalTemplate(isUseCompactModal)
+	);
+	const defaultInfoData = DefaultDataGenerator(
+		CarInfoModalTemplate(isUseCompactModal)
 	);
 
-	// fiiter state
 	const [search, setSearch] = useState<IGetCarsRequest>(defaultFilterData);
 
-	const getSearch = (id: keyof IGetCarsRequest) => {
-		if (search) {
-			return search[id] as string;
-		}
-		return '';
-	};
-	const handleSearchChange = (id: keyof IGetCarsRequest, value: string) => {
-		setSearch({
-			...search,
-			[id]: value,
-		} as IGetCarsRequest);
-	};
-	const handleClearSearch = () => {
-		setSearch(defaultFilterData);
-	};
-	const handleOnSearch = () => dispatch(FETCH_GET_CARS(search));
+	const {
+		isLoading: carsLoading,
+		data: cars,
+		refetch: refetchGetCars,
+	} = useQuery({
+		queryKey: ['getCars'],
+		queryFn: async () => await getCarsAPI(search),
+	});
+
+	const { data: camerasList, refetch: refetchGetCamerasList } = useQuery({
+		queryKey: ['getCamerasList'],
+		queryFn: async () => await getCamerasListAPI(),
+	});
+
+	const { data: driversList, refetch: refetchGetDriversList } = useQuery({
+		queryKey: ['getDriversList'],
+		queryFn: async () => await getDriversListAPI(),
+	});
+
+	const createCar = useMutation({
+		mutationFn: createCarAPI,
+		onSuccess: () => {
+			refetchGetCars();
+			handleCloseModal(defaultData, setOpenRegisterModal, setRegisterModalData);
+			enqueueSnackbar('Register a Car successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) =>
+			enqueueSnackbar(`Fail to register a Car : ${error.message}`, {
+				variant: 'error',
+			}),
+	});
+
+	const updateCar = useMutation({
+		mutationFn: updateCarAPI,
+		onSuccess: () => {
+			refetchGetCars();
+			handleCloseModal(defaultData, setOpenUpdateModal, setUpdateModalData);
+			enqueueSnackbar('Update a Car successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) =>
+			enqueueSnackbar(`Fail to update a Car : ${error.message}`, {
+				variant: 'error',
+			}),
+	});
+
+	const deleteCar = useMutation({
+		mutationFn: deleteCarAPI,
+		onSuccess: () => {
+			refetchGetCars();
+			handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData);
+			enqueueSnackbar('Delete a Car successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) =>
+			enqueueSnackbar(`Fail to delete a Car : ${error.message}`, {
+				variant: 'error',
+			}),
+	});
 
 	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
 	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-
-	const defaultData = CarActionModalTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as ICar[keyof ICar],
-		}),
-		{} as ICar
-	);
-
-	const defaultInfoData = CarActionModalTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as ICarInfo[keyof ICarInfo],
-		}),
-		{} as ICarInfo
-	);
 
 	// Modal data state
 	const [informModalData, setInformModalData] =
@@ -124,248 +147,118 @@ export default function Home() {
 		});
 		setOpenInformModal(true);
 	};
-	const handleCloseInformModal = () => setOpenInformModal(false);
 
-	// Register modal
-	const handleOpenRegisterModel = () => setOpenRegisterModal(true);
-	const handleCloseRegisterModal = () => {
-		setOpenRegisterModal(false);
-		setRegisterModalData(defaultData);
-	};
-	const handleRegisterNotification = () => {
-		if (!registerCarError) {
-			enqueueSnackbar('Register a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to register a RSU', { variant: 'error' });
-		}
-	};
-	const handleSubmitRegisterModal = () => {
-		dispatch(
-			FETCH_CREATE_CAR({
-				name: registerModalData.name,
-				license_plate: registerModalData.license_plate,
-				model: registerModalData.model,
-				driver_id: registerModalData.driver_id || '',
-			})
-		).then(refetchData);
-		handleCloseRegisterModal();
+	const handleOnClickRefresh = async () => {
+		await setSearch(defaultFilterData);
+		refetchGetCars();
+		refetchGetCamerasList();
+		refetchGetDriversList();
 	};
 
-	// Update modal
-	const handleOpenUpdateModal = (updateData: ICar) => {
-		setUpdateModalData(updateData);
-		setOpenUpdateModal(true);
-	};
-	const handleCloseUpdateModal = () => {
-		setOpenUpdateModal(false);
-		setUpdateModalData(defaultData);
-	};
-	const handleUpdateNotification = () => {
-		if (!updateCarError) {
-			enqueueSnackbar('Update a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to update a RSU', { variant: 'error' });
-		}
-	};
-	const handleSubmitUpdateModal = () => {
-		dispatch(
-			FETCH_UPDATE_CAR({
-				query: { id: updateModalData.id },
-				request: {
-					name: updateModalData.name,
-					license_plate: updateModalData.license_plate,
-					model: updateModalData.model,
-					driver_id: updateModalData.driver_id || '',
-				},
-			})
-		).then(refetchData);
-		handleCloseUpdateModal();
-	};
-
-	// Delete modal
-	const handleOpenDeleteModal = (deleteData: ICar) => {
-		setDeleteModalData(deleteData);
-		setOpenDeleteModal(true);
-	};
-	const handleCloseDeleteModal = () => {
-		setOpenDeleteModal(false);
-		setDeleteModalData(defaultData);
-	};
-	const handleDeleteNotification = () => {
-		if (!deleteCarError) {
-			enqueueSnackbar('Delete a RSU successfully', {
-				variant: 'success',
-			});
-		} else {
-			enqueueSnackbar('Fail to delete a RSU', { variant: 'error' });
-		}
-	};
-	const handleSubmitDeleteModal = () => {
-		dispatch(FETCH_DELETE_CAR({ id: deleteModalData.id })).then(refetchData);
-		handleCloseDeleteModal();
-	};
-
-	const refetchData = () => {
-		dispatch(FETCH_GET_CARS({}));
-		dispatch(FETCH_GET_CAMERAS_LIST());
-		dispatch(FETCH_GET_DRIVERS_LIST());
-	};
-
-	const handleOnClickRefresh = () => {
-		handleClearSearch();
-		refetchData();
-	};
-
-	const generateOptions = () => {
-		const cameraOption =
-			camerasList?.map((camera) => {
-				return { value: camera.id, label: camera.name };
-			}) || [];
-		const driverOption =
-			driversList?.map((driver) => {
-				return { value: driver.id, label: driver.name };
-			}) || [];
-		return [
-			{
-				id: 'front_cam_id',
-				option: cameraOption,
-			},
-			{
-				id: 'back_cam_id',
-				option: cameraOption,
-			},
-			{
-				id: 'driver_id',
-				option: driverOption,
-			},
-		];
-	};
-
-	useEffect(() => {
-		refetchData();
-	}, []);
-
-	useEffect(() => {
-		if (!registerCarLoading && registerCarLoading !== undefined) {
-			handleRegisterNotification();
-		}
-	}, [registerCarLoading]);
-
-	useEffect(() => {
-		if (!updateCarLoading && updateCarLoading !== undefined) {
-			handleUpdateNotification();
-		}
-	}, [updateCarLoading]);
-
-	useEffect(() => {
-		if (!deleteCarLoading && deleteCarLoading !== undefined) {
-			handleDeleteNotification();
-		}
-	}, [deleteCarLoading]);
+	const options = [
+		{
+			id: 'front_cam_id',
+			option: OptionGenerator(camerasList),
+		},
+		{
+			id: 'back_cam_id',
+			option: OptionGenerator(camerasList),
+		},
+		{
+			id: 'left_cam_id',
+			option: OptionGenerator(camerasList),
+		},
+		{
+			id: 'right_cam_id',
+			option: OptionGenerator(camerasList),
+		},
+		{
+			id: 'driver_id',
+			option: OptionGenerator(driversList),
+		},
+	];
 
 	return (
-		<>
-			<ModalCV2X
+		<Fragment>
+			<InputModal
 				title={MODAL_LABEL.REGISTER_CAR}
 				variant={BUTTON_LABEL.REGISTER}
+				template={CarActionModalTemplate(isUseCompactModal)}
 				open={openRegisterModal}
-				handleOnClose={handleCloseRegisterModal}
-				onSubmit={handleSubmitRegisterModal}
-			>
-				<ModalInputs
-					template={CarActionModalTemplate}
-					data={registerModalData}
-					onDataChange={setRegisterModalData}
-					options={generateOptions()}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
+				onOpenChange={setOpenRegisterModal}
+				data={registerModalData}
+				onDataChange={setRegisterModalData}
+				onSubmit={() => createCar.mutate(registerModalData)}
+				options={options}
+			/>
+			<InfoModal
 				title={informModalData.name}
-				variant={'Inform'}
+				template={CarInfoModalTemplate(isUseCompactModal)}
 				open={openInformModal}
-				handleOnClose={handleCloseInformModal}
-			>
-				<ModalInputs
-					template={CarInfoModalTemplate}
-					data={informModalData}
-					onDataChange={setInformModalData}
-					isReadOnly={true}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
+				onOpenChange={setOpenInformModal}
+				data={informModalData}
+				onDataChange={setInformModalData}
+			/>
+			<InputModal
 				title={MODAL_LABEL.UPDATE_CAR + updateModalData.id}
 				variant={BUTTON_LABEL.UPDATE}
+				template={CarActionModalTemplate(isUseCompactModal)}
 				open={openUpdateModal}
-				handleOnClose={handleCloseUpdateModal}
-				onSubmit={handleSubmitUpdateModal}
-			>
-				<ModalInputs
-					template={CarActionModalTemplate}
-					data={updateModalData}
-					onDataChange={setUpdateModalData}
-					options={generateOptions()}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
-				title={MODAL_LABEL.ARE_YOU_SURE}
-				variant={BUTTON_LABEL.DELETE}
+				onOpenChange={setOpenUpdateModal}
+				data={updateModalData}
+				onDataChange={setUpdateModalData}
+				onSubmit={() =>
+					updateCar.mutate({
+						query: updateModalData,
+						request: updateModalData,
+					})
+				}
+				options={options}
+			/>
+			<DeleteModal
 				open={openDeleteModal}
-				handleOnClose={handleCloseDeleteModal}
-				onSubmit={handleSubmitDeleteModal}
-			>
-				<p>
-					{MODAL_LABEL.DO_YOU_REALLY_DELETE +
-						deleteModalData.id +
-						' car' +
-						MODAL_LABEL.THIS_PROCESS_CANNOT_UNDONE}
-				</p>
-			</ModalCV2X>
-			<Stack className="gap-16">
+				handleOnClose={() =>
+					handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData)
+				}
+				entity={deleteModalData.id + ' car'}
+				onSubmit={() => deleteCar.mutate(deleteModalData)}
+			/>
+			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CARS} />
-				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
-					<Stack className="h-full flex flex-col gap-16">
-						<Filter
-							template={CarFilterTemplate}
-							handleSubmitSearch={handleOnSearch}
-							getSearch={getSearch}
-							handleSearchChange={handleSearchChange}
-							handleClearSearch={handleClearSearch}
-							options={generateOptions()}
-						/>
-						<Divider />
-						<Stack direction="row" className="gap-8">
-							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total (${
-								cars?.length || 0
-							})`}</p>
-							<div className="grow" />
-							<ButtonCV2X
-								icon={BUTTON_LABEL.REGISTER}
-								label={BUTTON_LABEL.REGISTER_CAR}
-								variant="contained"
-								onClick={handleOpenRegisterModel}
-							/>
-							<ButtonCV2X
-								icon={BUTTON_LABEL.REFRESH}
-								label={BUTTON_LABEL.REFRESH}
-								variant="outlined"
-								onClick={handleOnClickRefresh}
-							/>
-						</Stack>
-						<TableCV2X<ICar>
-							columns={CarsTableTemplate}
-							rows={cars ?? []}
-							handleOnClickInformation={handleOpenInformModal}
-							handleOnClickUpdate={handleOpenUpdateModal}
-							handleOnClickDelete={handleOpenDeleteModal}
-							isLoading={carsLoading}
-						/>
-					</Stack>
+				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
+					<Filter
+						template={CarFilterTemplate}
+						handleSubmitSearch={refetchGetCars}
+						search={search}
+						setSearch={setSearch}
+						handleClearSearch={() => setSearch(defaultFilterData)}
+						options={options}
+					/>
+					<Divider />
+					<Table
+						numberOfRow={(cars ?? []).length}
+						registerLabel={BUTTON_LABEL.REGISTER_CAR}
+						handleOnClickRegister={() =>
+							handleOpenModal(
+								defaultData,
+								setOpenRegisterModal,
+								setRegisterModalData
+							)
+						}
+						handleOnClickRefresh={handleOnClickRefresh}
+						columns={CarsTableTemplate}
+						rows={cars ?? []}
+						handleOnClickInformation={handleOpenInformModal}
+						handleOnClickUpdate={(data) =>
+							handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
+						}
+						handleOnClickDelete={(data) =>
+							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
+						}
+						isLoading={carsLoading}
+					/>
 				</Card>
-			</Stack>
-		</>
+			</div>
+		</Fragment>
 	);
 }
