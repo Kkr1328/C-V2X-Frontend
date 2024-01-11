@@ -23,10 +23,7 @@ export default function Table<T extends TableRowProps>(props: TableProp<T>) {
 	const [buttonsWidth, setButtonsWidth] = useState<number>(
 		buttonsRef.current?.clientWidth as number
 	);
-	useEffect(
-		() => WidthObserver(buttonsRef.current, setButtonsWidth),
-		[buttonsRef.current]
-	);
+	useEffect(() => WidthObserver(buttonsRef.current, setButtonsWidth), []);
 	const buttonsSize = buttonsWidth < 380 ? 's' : buttonsWidth < 500 ? 'm' : 'l';
 
 	return (
