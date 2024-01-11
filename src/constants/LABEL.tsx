@@ -18,6 +18,8 @@ export enum INPUT_LABEL {
 	CAMERAS = 'Cameras',
 	FRONT_CAMERA = 'Front Camera',
 	BACK_CAMERA = 'Back Camera',
+	LEFT_CAMERA = 'Left Camera',
+	RIGHT_CAMERA = 'Right Camera',
 	NAME = 'Name',
 	LICENSE_PLATE = 'License Plate',
 	MODEL = 'Model',
@@ -45,7 +47,7 @@ export enum BUTTON_LABEL {
 	REFRESH = 'Refresh',
 	UPDATE = 'Update',
 	DELETE = 'Delete',
-	CANCLE = 'Cancle',
+	CANCEL = 'Cancel',
 	CONFIRM = 'Confirm',
 	ZOOM = 'Zoom',
 	MISSING = 'Missing',
@@ -57,6 +59,7 @@ export enum BUTTON_LABEL {
 }
 
 export enum PILL_LABEL {
+	ALL = 'ALL',
 	ACTIVE = 'ACTIVE',
 	INACTIVE = 'INACTIVE',
 	EMERGENCY = 'EMERGENCY',
@@ -85,4 +88,19 @@ export enum TAB_LABEL {
 	ORIGINAL = 'ORIGINAL',
 	OBJECT = 'OBJ DETECTION',
 	PANOPTIC = 'PANAOPTIC',
+}
+export enum OVERVIEW_SUMMARY_CARD_LABEL {
+	ACTIVE_CAR = 'Active car(s)',
+	ACTIVE_DRIVER = 'Active driver(s)',
+	PENDING_EMERGENCY = 'PENDING emergency',
+	IN_PROGRESS_EMERGENCY = 'IN PROGRESS emergency',
+}
+
+export enum HEARTBEAT_TABLE_LABEL {
+	CAR = 'Car',
+	FRONT_CAM = 'Front camera',
+	BACK_CAM = 'Back camera',
+	RSU = 'RSU',
+	STATUS = 'Status',
+	ACTION = 'Action',
 }

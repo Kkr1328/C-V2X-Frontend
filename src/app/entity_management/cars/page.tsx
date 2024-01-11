@@ -1,128 +1,264 @@
 'use client';
-
-import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
+// react
+import { Fragment, useEffect, useState } from 'react';
+// notisnack
+import { useSnackbar } from 'notistack';
+// material ui
+import { Card, Divider } from '@mui/material';
+// components
 import PageTitle from '@/components/common/PageTitle';
-import { Card, Divider, Stack } from '@mui/material';
-import Filter from '@/components/module/Filter';
-import ButtonCV2X from '@/components/common/ButtonCV2X';
-import ModalCV2X from '@/components/common/ModalCV2X';
-import ModalInputs from '@/components/module/ModalInputs';
-import { useState } from 'react';
-import TableCV2X from '@/components/module/TableCV2X';
-import { CarsTableTemplate } from '@/templates/ENTITY_TABLE';
-import { MockedCarsTableContent } from '@/mock/ENTITY_TABLE';
+import Filter from '@/components/module/Filter/Filter';
+import InputModal from '@/components/module/Modal/InputModal';
+import InfoModal from '@/components/module/Modal/InfoModal';
+import DeleteModal from '@/components/module/Modal/DeleteModal';
+// consts
+import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
+// types
+import { ICar, ICarInfo, IGetCarsRequest } from '@/types/models/car.model';
+// templates
 import { CarFilterTemplate } from '@/templates/FILTER';
-import { CarActionModalTemplate } from '@/templates/ACTION_MODAL';
-import { CarsProps } from '@/types/ENTITY';
+import { CarsTableTemplate } from '@/templates/ENTITY_TABLE';
 import { CarInfoModalTemplate } from '@/templates/INFO_MODAL';
+import { CarActionModalTemplate } from '@/templates/ACTION_MODAL';
+// tanstack
+import { useMutation, useQuery } from '@tanstack/react-query';
+// services
+import {
+	createCarAPI,
+	deleteCarAPI,
+	getCamerasListAPI,
+	getCarsAPI,
+	getDriversListAPI,
+	updateCarAPI,
+} from '@/services/api-call';
+// utilities
+import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
+import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
+import { WindowWidthObserver } from '@/utils/WidthObserver';
+import Table from '@/components/module/Table/Table';
 
 export default function Home() {
+	const [windowWidth, setWindowWidth] = useState(0);
+	useEffect(() => WindowWidthObserver(setWindowWidth), []);
+	const isUseCompactModal = windowWidth <= 640;
+
+	const { enqueueSnackbar } = useSnackbar();
+	const defaultFilterData = DefaultDataGenerator(CarFilterTemplate(1));
+	const defaultData = DefaultDataGenerator(
+		CarActionModalTemplate(isUseCompactModal)
+	);
+	const defaultInfoData = DefaultDataGenerator(
+		CarInfoModalTemplate(isUseCompactModal)
+	);
+
+	const [search, setSearch] = useState<IGetCarsRequest>(defaultFilterData);
+
+	const {
+		isLoading: carsLoading,
+		data: cars,
+		refetch: refetchGetCars,
+	} = useQuery({
+		queryKey: ['getCars'],
+		queryFn: async () => await getCarsAPI(search),
+	});
+
+	const { data: camerasList, refetch: refetchGetCamerasList } = useQuery({
+		queryKey: ['getCamerasList'],
+		queryFn: async () => await getCamerasListAPI(),
+	});
+
+	const { data: driversList, refetch: refetchGetDriversList } = useQuery({
+		queryKey: ['getDriversList'],
+		queryFn: async () => await getDriversListAPI(),
+	});
+
+	const createCar = useMutation({
+		mutationFn: createCarAPI,
+		onSuccess: () => {
+			refetchGetCars();
+			handleCloseModal(defaultData, setOpenRegisterModal, setRegisterModalData);
+			enqueueSnackbar('Register a Car successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) =>
+			enqueueSnackbar(`Fail to register a Car : ${error.message}`, {
+				variant: 'error',
+			}),
+	});
+
+	const updateCar = useMutation({
+		mutationFn: updateCarAPI,
+		onSuccess: () => {
+			refetchGetCars();
+			handleCloseModal(defaultData, setOpenUpdateModal, setUpdateModalData);
+			enqueueSnackbar('Update a Car successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) =>
+			enqueueSnackbar(`Fail to update a Car : ${error.message}`, {
+				variant: 'error',
+			}),
+	});
+
+	const deleteCar = useMutation({
+		mutationFn: deleteCarAPI,
+		onSuccess: () => {
+			refetchGetCars();
+			handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData);
+			enqueueSnackbar('Delete a Car successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) =>
+			enqueueSnackbar(`Fail to delete a Car : ${error.message}`, {
+				variant: 'error',
+			}),
+	});
+
+	// Open-Close modal state
 	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
 	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
-	const defaultData = CarActionModalTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as CarsProps[keyof CarsProps],
-		}),
-		{} as CarsProps
-	);
-
+	// Modal data state
 	const [informModalData, setInformModalData] =
-		useState<CarsProps>(defaultData);
-	const [updateModalData, setUpdateModalData] =
-		useState<CarsProps>(defaultData);
-	const [deleteModalData, setDeleteModalData] =
-		useState<CarsProps>(defaultData);
+		useState<ICarInfo>(defaultInfoData);
+	const [registerModalData, setRegisterModalData] = useState<ICar>(defaultData);
+	const [updateModalData, setUpdateModalData] = useState<ICar>(defaultData);
+	const [deleteModalData, setDeleteModalData] = useState<ICar>(defaultData);
+
+	// Inform modal
+	const handleOpenInformModal = (informData: ICar) => {
+		const front_cam =
+			informData.cameras.length !== 0 &&
+			informData.cameras.filter((camera) => camera.position === 'Front')[0];
+		const back_cam =
+			informData.cameras.length !== 0 &&
+			informData.cameras.filter((camera) => camera.position === 'Back')[0];
+		setInformModalData({
+			...informData,
+			front_cam_position: front_cam ? front_cam.position : '',
+			front_cam_name: front_cam ? front_cam.name : '',
+			back_cam_position: back_cam ? back_cam.position : '',
+			back_cam_name: back_cam ? back_cam.name : '',
+		});
+		setOpenInformModal(true);
+	};
+
+	const handleOnClickRefresh = async () => {
+		await setSearch(defaultFilterData);
+		refetchGetCars();
+		refetchGetCamerasList();
+		refetchGetDriversList();
+	};
+
+	const options = [
+		{
+			id: 'front_cam_id',
+			option: OptionGenerator(camerasList),
+		},
+		{
+			id: 'back_cam_id',
+			option: OptionGenerator(camerasList),
+		},
+		{
+			id: 'left_cam_id',
+			option: OptionGenerator(camerasList),
+		},
+		{
+			id: 'right_cam_id',
+			option: OptionGenerator(camerasList),
+		},
+		{
+			id: 'driver_id',
+			option: OptionGenerator(driversList),
+		},
+	];
 
 	return (
-		<>
-			<ModalCV2X
+		<Fragment>
+			<InputModal
 				title={MODAL_LABEL.REGISTER_CAR}
 				variant={BUTTON_LABEL.REGISTER}
+				template={CarActionModalTemplate(isUseCompactModal)}
 				open={openRegisterModal}
-				handleOnClose={() => setOpenRegisterModal(false)}
-			>
-				<ModalInputs template={CarActionModalTemplate} />
-			</ModalCV2X>
-			<ModalCV2X
+				onOpenChange={setOpenRegisterModal}
+				data={registerModalData}
+				onDataChange={setRegisterModalData}
+				onSubmit={() => createCar.mutate(registerModalData)}
+				options={options}
+			/>
+			<InfoModal
 				title={informModalData.name}
-				variant={'Inform'}
+				template={CarInfoModalTemplate(isUseCompactModal)}
 				open={openInformModal}
-				handleOnClose={() => setOpenInformModal(false)}
-			>
-				<ModalInputs
-					template={CarInfoModalTemplate}
-					initiateValue={informModalData}
-					isReadOnly={true}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
+				onOpenChange={setOpenInformModal}
+				data={informModalData}
+				onDataChange={setInformModalData}
+			/>
+			<InputModal
 				title={MODAL_LABEL.UPDATE_CAR + updateModalData.id}
 				variant={BUTTON_LABEL.UPDATE}
+				template={CarActionModalTemplate(isUseCompactModal)}
 				open={openUpdateModal}
-				handleOnClose={() => setOpenUpdateModal(false)}
-			>
-				<ModalInputs
-					template={CarActionModalTemplate}
-					initiateValue={updateModalData}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
-				title={MODAL_LABEL.ARE_YOU_SURE}
-				variant={BUTTON_LABEL.DELETE}
+				onOpenChange={setOpenUpdateModal}
+				data={updateModalData}
+				onDataChange={setUpdateModalData}
+				onSubmit={() =>
+					updateCar.mutate({
+						query: updateModalData,
+						request: updateModalData,
+					})
+				}
+				options={options}
+			/>
+			<DeleteModal
 				open={openDeleteModal}
-				handleOnClose={() => setOpenDeleteModal(false)}
-			>
-				<p>
-					{MODAL_LABEL.DO_YOU_REALLY_DELETE +
-						deleteModalData.id +
-						' car' +
-						MODAL_LABEL.THIS_PROCESS_CANNOT_UNDONE}
-				</p>
-			</ModalCV2X>
-			<Stack className="gap-16">
+				handleOnClose={() =>
+					handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData)
+				}
+				entity={deleteModalData.id + ' car'}
+				onSubmit={() => deleteCar.mutate(deleteModalData)}
+			/>
+			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CARS} />
-				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
-					<Stack className="h-full flex flex-col gap-16">
-						<Filter template={CarFilterTemplate} />
-						<Divider />
-						<Stack direction="row" className="gap-8">
-							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
-							<div className="grow" />
-							<ButtonCV2X
-								icon={BUTTON_LABEL.REGISTER}
-								label={BUTTON_LABEL.REGISTER_CAR}
-								variant="contained"
-								onClick={() => setOpenRegisterModal(true)}
-							/>
-							<ButtonCV2X
-								icon={BUTTON_LABEL.REFRESH}
-								label={BUTTON_LABEL.REFRESH}
-								variant="outlined"
-							/>
-						</Stack>
-						<TableCV2X<CarsProps>
-							columns={CarsTableTemplate}
-							rows={MockedCarsTableContent}
-							handleOnClickInformation={(informData: CarsProps) => {
-								setInformModalData(informData);
-								setOpenInformModal(true);
-							}}
-							handleOnClickUpdate={(updateData: CarsProps) => {
-								setUpdateModalData(updateData);
-								setOpenUpdateModal(true);
-							}}
-							handleOnClickDelete={(deleteData: CarsProps) => {
-								setDeleteModalData(deleteData);
-								setOpenDeleteModal(true);
-							}}
-						/>
-					</Stack>
+				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
+					<Filter
+						template={CarFilterTemplate}
+						handleSubmitSearch={refetchGetCars}
+						search={search}
+						setSearch={setSearch}
+						handleClearSearch={() => setSearch(defaultFilterData)}
+						options={options}
+					/>
+					<Divider />
+					<Table
+						numberOfRow={(cars ?? []).length}
+						registerLabel={BUTTON_LABEL.REGISTER_CAR}
+						handleOnClickRegister={() =>
+							handleOpenModal(
+								defaultData,
+								setOpenRegisterModal,
+								setRegisterModalData
+							)
+						}
+						handleOnClickRefresh={handleOnClickRefresh}
+						columns={CarsTableTemplate}
+						rows={cars ?? []}
+						handleOnClickInformation={handleOpenInformModal}
+						handleOnClickUpdate={(data) =>
+							handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
+						}
+						handleOnClickDelete={(data) =>
+							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
+						}
+						isLoading={carsLoading}
+					/>
 				</Card>
-			</Stack>
-		</>
+			</div>
+		</Fragment>
 	);
 }

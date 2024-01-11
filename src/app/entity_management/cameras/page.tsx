@@ -1,128 +1,245 @@
 'use client';
-
-import ButtonCV2X from '@/components/common/ButtonCV2X';
-import ModalCV2X from '@/components/common/ModalCV2X';
+// react
+import { Fragment, useEffect, useState } from 'react';
+// notisnack
+import { useSnackbar } from 'notistack';
+// material ui
+import { Card, Divider } from '@mui/material';
+// components
 import PageTitle from '@/components/common/PageTitle';
-import Filter from '@/components/module/Filter';
-import ModalInputs from '@/components/module/ModalInputs';
-import TableCV2X from '@/components/module/TableCV2X';
+import Filter from '@/components/module/Filter/Filter';
+import InputModal from '@/components/module/Modal/InputModal';
+import InfoModal from '@/components/module/Modal/InfoModal';
+import DeleteModal from '@/components/module/Modal/DeleteModal';
+// consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
-import { MockedCamerasTableContent } from '@/mock/ENTITY_TABLE';
-import { CameraActionModalTemplate } from '@/templates/ACTION_MODAL';
-import { CamerasTableTemplate } from '@/templates/ENTITY_TABLE';
+// types
+import { ICamera, IGetCamerasRequest } from '@/types/models/camera.model';
+// templates
 import { CameraFilterTemplate } from '@/templates/FILTER';
+import { CamerasTableTemplate } from '@/templates/ENTITY_TABLE';
 import { CameraInfoModalTemplate } from '@/templates/INFO_MODAL';
-import { CamerasProps } from '@/types/ENTITY';
-import { Card, Divider, Stack } from '@mui/material';
-import { useState } from 'react';
+import { CameraActionModalTemplate } from '@/templates/ACTION_MODAL';
+// tanstack
+import { useMutation, useQuery } from '@tanstack/react-query';
+// services
+import {
+	createCameraAPI,
+	deleteCameraAPI,
+	getCamerasAPI,
+	getCarsListAPI,
+	updateCameraAPI,
+} from '@/services/api-call';
+// utilities
+import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
+import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
+import { WindowWidthObserver } from '@/utils/WidthObserver';
+import Table from '@/components/module/Table/Table';
 
 export default function Home() {
-	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
+	const [windowWidth, setWindowWidth] = useState(0);
+	useEffect(() => WindowWidthObserver(setWindowWidth), []);
+	const isUseCompactModal = windowWidth <= 640;
+
+	const { enqueueSnackbar } = useSnackbar();
+	const defaultFilterData = DefaultDataGenerator(CameraFilterTemplate(1));
+	const defaultData = DefaultDataGenerator(
+		CameraActionModalTemplate(isUseCompactModal)
+	);
+
+	const [search, setSearch] = useState<IGetCamerasRequest>(defaultFilterData);
+
+	const {
+		isLoading: camerasLoading,
+		data: cameras,
+		refetch: refetchGetCameras,
+	} = useQuery({
+		queryKey: ['getCameras'],
+		queryFn: async () => await getCamerasAPI(search),
+	});
+
+	const { data: carsList, refetch: refetchGetCarsList } = useQuery({
+		queryKey: ['getCarsList'],
+		queryFn: async () => await getCarsListAPI(),
+	});
+
+	const createCamera = useMutation({
+		mutationFn: createCameraAPI,
+		onSuccess: () => {
+			refetchGetCameras();
+			handleCloseModal(defaultData, setOpenRegisterModal, setRegisterModalData);
+			enqueueSnackbar('Register a Camera successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) =>
+			enqueueSnackbar(`Fail to register a Camera : ${error.message}`, {
+				variant: 'error',
+			}),
+	});
+
+	const updateCamera = useMutation({
+		mutationFn: updateCameraAPI,
+		onSuccess: () => {
+			refetchGetCameras();
+			handleCloseModal(defaultData, setOpenUpdateModal, setUpdateModalData);
+			enqueueSnackbar('Update a Camera successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) => {
+			console.log(error);
+			enqueueSnackbar(`Fail to update a Camera : ${error.message}`, {
+				variant: 'error',
+			});
+		},
+	});
+
+	const deleteCamera = useMutation({
+		mutationFn: deleteCameraAPI,
+		onSuccess: () => {
+			refetchGetCameras();
+			handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData);
+			enqueueSnackbar('Delete a Camera successfully', {
+				variant: 'success',
+			});
+		},
+		onError: (error) =>
+			enqueueSnackbar(`Fail to delete a Camera : ${error.message}`, {
+				variant: 'error',
+			}),
+	});
+
+	// Open-Close modal state
 	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
+	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
 	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
-	const defaultData = CameraActionModalTemplate.reduce(
-		(acc, item) => ({
-			...acc,
-			[item.id]: '' as CamerasProps[keyof CamerasProps],
-		}),
-		{} as CamerasProps
-	);
+	// Modal data state
+	const [informModalData, setInformModalData] = useState<ICamera>(defaultData);
+	const [registerModalData, setRegisterModalData] =
+		useState<ICamera>(defaultData);
+	const [updateModalData, setUpdateModalData] = useState<ICamera>(defaultData);
+	const [deleteModalData, setDeleteModalData] = useState<ICamera>(defaultData);
 
-	const [informModalData, setInformModalData] =
-		useState<CamerasProps>(defaultData);
-	const [updateModalData, setUpdateModalData] =
-		useState<CamerasProps>(defaultData);
-	const [deleteModalData, setDeleteModalData] =
-		useState<CamerasProps>(defaultData);
+	const handleOnClickRefresh = async () => {
+		await setSearch(defaultFilterData);
+		refetchGetCameras();
+		refetchGetCarsList();
+	};
+
+	const options = [
+		{
+			id: 'position',
+			option: [
+				{
+					value: 'Front',
+					label: 'Front',
+				},
+				{
+					value: 'Back',
+					label: 'Back',
+				},
+				{
+					value: 'Left',
+					label: 'Left',
+				},
+				{
+					value: 'Right',
+					label: 'Right',
+				},
+			],
+		},
+		{
+			id: 'car_id',
+			option: OptionGenerator(carsList),
+		},
+	];
 
 	return (
-		<>
-			<ModalCV2X
+		<Fragment>
+			<InputModal
 				title={MODAL_LABEL.REGISTER_CAMERA}
 				variant={BUTTON_LABEL.REGISTER}
+				template={CameraActionModalTemplate(isUseCompactModal)}
 				open={openRegisterModal}
-				handleOnClose={() => setOpenRegisterModal(false)}
-			>
-				<ModalInputs template={CameraActionModalTemplate} />
-			</ModalCV2X>
-			<ModalCV2X
+				onOpenChange={setOpenRegisterModal}
+				data={registerModalData}
+				onDataChange={setRegisterModalData}
+				onSubmit={() => createCamera.mutate(registerModalData)}
+				options={options}
+			/>
+			<InfoModal
 				title={informModalData.name}
-				variant={'Inform'}
+				template={CameraInfoModalTemplate(isUseCompactModal)}
 				open={openInformModal}
-				handleOnClose={() => setOpenInformModal(false)}
-			>
-				<ModalInputs
-					template={CameraInfoModalTemplate}
-					initiateValue={informModalData}
-					isReadOnly={true}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
+				onOpenChange={setOpenInformModal}
+				data={informModalData}
+				onDataChange={setInformModalData}
+			/>
+			<InputModal
 				title={MODAL_LABEL.UPDATE_CAMERA + updateModalData.id}
 				variant={BUTTON_LABEL.UPDATE}
+				template={CameraActionModalTemplate(isUseCompactModal)}
 				open={openUpdateModal}
-				handleOnClose={() => setOpenUpdateModal(false)}
-			>
-				<ModalInputs
-					template={CameraActionModalTemplate}
-					initiateValue={updateModalData}
-				/>
-			</ModalCV2X>
-			<ModalCV2X
-				title={MODAL_LABEL.ARE_YOU_SURE}
-				variant={BUTTON_LABEL.DELETE}
+				onOpenChange={setOpenUpdateModal}
+				data={updateModalData}
+				onDataChange={setUpdateModalData}
+				onSubmit={() =>
+					updateCamera.mutate({
+						query: updateModalData,
+						request: updateModalData,
+					})
+				}
+				options={options}
+			/>
+			<DeleteModal
 				open={openDeleteModal}
-				handleOnClose={() => setOpenDeleteModal(false)}
-			>
-				<p>
-					{MODAL_LABEL.DO_YOU_REALLY_DELETE +
-						deleteModalData.id +
-						' camera' +
-						MODAL_LABEL.THIS_PROCESS_CANNOT_UNDONE}
-				</p>
-			</ModalCV2X>
-			<Stack className="gap-16">
+				handleOnClose={() =>
+					handleCloseModal(defaultData, setOpenDeleteModal, setDeleteModalData)
+				}
+				entity={deleteModalData.id + ' camera'}
+				onSubmit={() => deleteCamera.mutate(deleteModalData)}
+			/>
+			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CAMERAS} />
-				<Card className="w-full h-[calc(100vh-192px)] rounded-lg px-32 py-24">
-					<Stack className="h-full flex flex-col gap-16">
-						<Filter template={CameraFilterTemplate} />
-						<Divider />
-						<Stack direction="row" className="gap-8">
-							<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 self-center">{`Total(10)`}</p>
-							<div className="grow" />
-							<ButtonCV2X
-								icon={BUTTON_LABEL.REGISTER}
-								label={BUTTON_LABEL.REGISTER_CAMERA}
-								variant="contained"
-								onClick={() => setOpenRegisterModal(true)}
-							/>
-							<ButtonCV2X
-								icon={BUTTON_LABEL.REFRESH}
-								label={BUTTON_LABEL.REFRESH}
-								variant="outlined"
-							/>
-						</Stack>
-						<TableCV2X<CamerasProps>
-							columns={CamerasTableTemplate}
-							rows={MockedCamerasTableContent}
-							handleOnClickInformation={(informData: CamerasProps) => {
-								setInformModalData(informData);
-								setOpenInformModal(true);
-							}}
-							handleOnClickUpdate={(updateData: CamerasProps) => {
-								setUpdateModalData(updateData);
-								setOpenUpdateModal(true);
-							}}
-							handleOnClickDelete={(deleteData: CamerasProps) => {
-								setDeleteModalData(deleteData);
-								setOpenDeleteModal(true);
-							}}
-						/>
-					</Stack>
+				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
+					<Filter
+						template={CameraFilterTemplate}
+						handleSubmitSearch={refetchGetCameras}
+						search={search}
+						setSearch={setSearch}
+						handleClearSearch={() => setSearch(defaultFilterData)}
+						options={options}
+					/>
+					<Divider />
+					<Table
+						numberOfRow={(cameras ?? []).length}
+						registerLabel={BUTTON_LABEL.REGISTER_CAMERA}
+						handleOnClickRegister={() =>
+							handleOpenModal(
+								defaultData,
+								setOpenRegisterModal,
+								setRegisterModalData
+							)
+						}
+						handleOnClickRefresh={handleOnClickRefresh}
+						columns={CamerasTableTemplate}
+						rows={(cameras as ICamera[]) ?? []}
+						handleOnClickInformation={(data) =>
+							handleOpenModal(data, setOpenInformModal, setInformModalData)
+						}
+						handleOnClickUpdate={(data) =>
+							handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
+						}
+						handleOnClickDelete={(data) =>
+							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
+						}
+						isLoading={camerasLoading}
+					/>
 				</Card>
-			</Stack>
-		</>
+			</div>
+		</Fragment>
 	);
 }

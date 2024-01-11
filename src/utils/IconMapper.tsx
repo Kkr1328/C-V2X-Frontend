@@ -1,5 +1,4 @@
-import { BUTTON_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
-
+// material ui
 import InsertChartRoundedIcon from '@mui/icons-material/InsertChartRounded';
 import PieChartRoundedIcon from '@mui/icons-material/PieChartRounded';
 import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
@@ -25,6 +24,8 @@ import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
+// const
+import { BUTTON_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 
 interface IconMapperProps {
 	icon: string;
@@ -59,7 +60,7 @@ export default function IconMapper(props: IconMapperProps) {
 			return <KeyboardDoubleArrowRightRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.COLLAPSE:
 			return <KeyboardDoubleArrowLeftRoundedIcon sx={iconStyle} />;
-		case BUTTON_LABEL.CANCLE:
+		case BUTTON_LABEL.CANCEL:
 			return <CloseRoundedIcon sx={iconStyle} />;
 		case BUTTON_LABEL.CLEAR:
 			return <RefreshRoundedIcon sx={iconStyle} />;

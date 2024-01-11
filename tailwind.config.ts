@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
+	important: '#__next',
 	content: [
 		'./src/pages/**/*.{js,ts,jsx,tsx,mdx}',
 		'./src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -67,6 +68,10 @@ const config: Config = {
 			'48': '48px',
 			'64': '64px',
 			'72': '72px',
+			'84': '84px',
+			'120': '120px',
+			'272': '272px',
+			'336': '336px',
 			'280': '280px',
 			'300': '300px',
 			'600': '600px',

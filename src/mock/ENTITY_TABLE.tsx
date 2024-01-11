@@ -1,21 +1,20 @@
-import {
-	CamerasProps,
-	CarsProps,
-	DriversProps,
-	RSUsProps,
-} from '@/types/ENTITY';
+import { ICar } from '@/types/models/car.model';
+import { ICamera } from '@/types/models/camera.model';
+import { IDriver } from '@/types/models/driver.model';
+import { IRSU } from '@/types/models/rsu.model';
 
-export const MockedCarsTableContent: CarsProps[] = [
+export const MockedCarsTableContent: ICar[] = [
 	{
 		id: 'carxxx01',
 		name: 'Car01',
 		license_plate: 'AB 0001',
 		model: 'Model01',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver01',
+		driver: 'Driver01',
 	},
 	{
 		id: 'carxxx02',
@@ -23,10 +22,11 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0002',
 		model: 'Model02',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver02',
+		driver: 'Driver02',
 	},
 	{
 		id: 'carxxx03',
@@ -34,10 +34,11 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0003',
 		model: 'Model03',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver03',
+		driver: 'Driver03',
 	},
 	{
 		id: 'carxxx04',
@@ -45,10 +46,11 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0004',
 		model: 'Model04',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver04',
+		driver: 'Driver04',
 	},
 	{
 		id: 'carxxx05',
@@ -56,10 +58,11 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0005',
 		model: 'Model05',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver05',
+		driver: 'Driver05',
 	},
 	{
 		id: 'carxxx06',
@@ -67,10 +70,11 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0006',
 		model: 'Model06',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver06',
+		driver: 'Driver06',
 	},
 	{
 		id: 'carxxx07',
@@ -78,13 +82,14 @@ export const MockedCarsTableContent: CarsProps[] = [
 		license_plate: 'AB 0007',
 		model: 'Model07',
 		cameras: [
-			{ name: 'Cam01', position: 'Front' },
-			{ name: 'Cam02', position: 'Back' },
+			{ id: 'Came01', name: 'Cam01', position: 'Front' },
+			{ id: 'Came02', name: 'Cam02', position: 'Back' },
 		],
 		driver_id: 'Driver07',
+		driver: 'Driver07',
 	},
 ];
-export const MockedDriversTableContent: DriversProps[] = [
+export const MockedDriversTableContent: IDriver[] = [
 	{
 		id: 'driverxxx01',
 		name: 'Driver01 driver01',
@@ -142,85 +147,92 @@ export const MockedDriversTableContent: DriversProps[] = [
 		phone_no: '098xxxx007',
 	},
 ];
-export const MockedCamerasTableContent: CamerasProps[] = [
+export const MockedCamerasTableContent: ICamera[] = [
 	{
 		id: 'cameraxxx01',
 		name: 'Camera01',
 		position: 'Front',
 		car_id: 'Car01',
+		car: 'Car01',
 	},
 	{
 		id: 'cameraxxx02',
 		name: 'Camera02',
 		position: 'Back',
 		car_id: 'Car02',
+		car: 'Car02',
 	},
 	{
 		id: 'cameraxxx03',
 		name: 'Camera03',
 		position: 'Front',
 		car_id: 'Car03',
+		car: 'Car03',
 	},
 	{
 		id: 'cameraxxx04',
 		name: 'Camera04',
 		position: 'Back',
 		car_id: 'Car04',
+		car: 'Car04',
 	},
 	{
 		id: 'cameraxxx05',
 		name: 'Camera05',
 		position: 'Front',
 		car_id: 'Car05',
+		car: 'Car05',
 	},
 	{
 		id: 'cameraxxx06',
 		name: 'Camera06',
 		position: 'Back',
 		car_id: 'Car06',
+		car: 'Car06',
 	},
 	{
 		id: 'cameraxxx07',
 		name: 'Camera07',
 		position: 'Front',
 		car_id: 'Car07',
+		car: 'Car07',
 	},
 ];
 
-export const MockedRSUsTableContent: RSUsProps[] = [
+export const MockedRSUsTableContent: IRSU[] = [
 	{
 		id: 'rsuxxx01',
 		name: 'RSU01',
-		rec_speed: '50',
+		recommended_speed: '50',
 	},
 	{
 		id: 'rsuxxx02',
 		name: 'RSU02',
-		rec_speed: '70',
+		recommended_speed: '70',
 	},
 	{
 		id: 'rsuxxx03',
 		name: 'RSU03',
-		rec_speed: '30',
+		recommended_speed: '30',
 	},
 	{
 		id: 'rsuxxx04',
 		name: 'RSU04',
-		rec_speed: '90',
+		recommended_speed: '90',
 	},
 	{
 		id: 'rsuxxx05',
 		name: 'RSU05',
-		rec_speed: '80',
+		recommended_speed: '80',
 	},
 	{
 		id: 'rsuxxx06',
 		name: 'RSU06',
-		rec_speed: '20',
+		recommended_speed: '20',
 	},
 	{
 		id: 'rsuxxx07',
 		name: 'RSU07',
-		rec_speed: '40',
+		recommended_speed: '40',
 	},
 ];
