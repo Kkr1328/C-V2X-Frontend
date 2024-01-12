@@ -8,6 +8,7 @@ import PageTitle from '@/components/common/PageTitle';
 import CarCameraCard from '@/components/module/CarCameraCard';
 
 import { NAVBAR_LABEL, PILL_LABEL } from '@/constants/LABEL';
+import Script from 'next/script'
 
 const MockedCarCamerasContent = [
 	{
@@ -52,6 +53,8 @@ export default function Home() {
 	};
 	return (
 		<>
+		<Script src="https://muazkhan.com:9001/dist/RTCMultiConnection.min.js" strategy='beforeInteractive'/>
+        <Script src="https://muazkhan.com:9001/socket.io/socket.io.js" strategy='beforeInteractive'/>
 			<PageTitle title={NAVBAR_LABEL.CAMERA} />
 			<Grid container spacing={2}>
 				{MockedCarCamerasContent.map((data) => (

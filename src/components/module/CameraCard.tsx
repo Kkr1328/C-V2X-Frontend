@@ -32,7 +32,7 @@ export default function CameraCard(props: CameraCardProps) {
 					open={openModal}
 					handleOnClose={() => setOpenModal(false)}
 				>
-					<TabCameraPanel size="large" />
+					<TabCameraPanel size="large" carName={props.carName} cameraName={props.cameraName} />
 				</ModalCamera>
 			)}
 			<Box className="w-300">
@@ -47,7 +47,7 @@ export default function CameraCard(props: CameraCardProps) {
 				</Stack>
 				{/* Content */}
 				<Box sx={{ position: 'relative' }} className="pb-16 px-16">
-					<TabCameraPanel size="small" />
+					<TabCameraPanel size="small" carName={props.carName} cameraName={props.cameraName}/>
 					{/* Zoom Button */}
 					{!openModal && (
 						<Box sx={{ position: 'absolute', bottom: 20, right: 20 }}>

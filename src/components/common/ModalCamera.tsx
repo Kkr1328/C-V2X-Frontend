@@ -23,7 +23,7 @@ export default function ModalCamera(props: ModalCameraProp) {
 			onClose={props.handleOnClose}
 			className="flex items-center justify-center"
 		>
-			<Card className="w-1200 rounded-lg">
+			<Card className="rounded-lg">
 				{/* Header */}
 				<Stack direction="row" className="p-16 gap-16 items-center">
 					<Stack direction="row" className="gap-4">

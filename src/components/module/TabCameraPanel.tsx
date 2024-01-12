@@ -5,9 +5,12 @@ import { Stack, Box } from '@mui/material';
 import TabCV2X from '../common/TabCV2X';
 
 import { TAB_LABEL } from '@/constants/LABEL';
+import VideoReceiver from '../videoReceiver/videoReceiver';
 
 interface PanelProps {
 	size?: 'small' | 'large';
+	carName: String;
+	cameraName: String;
 }
 
 export default function TabCameraPanel(props: PanelProps) {
@@ -36,11 +39,35 @@ export default function TabCameraPanel(props: PanelProps) {
 				{/* Sample Object */}
 				<Box
 					sx={{
-						height: '25vh',
-						backgroundColor: 'primary.dark',
+						height: props.size == "small" ? '28vh':"75vh",
+						width: props.size == "small" ? '100%':"100vh",
+						// minHeight:props.size == "small" ? '28vh':"65vh",
+						backgroundColor: 'text.disabled',
+						position: 'relative',
+						display: "flex",
+						justifyContent: 'center',
+						alignItems: 'center',
+						overflow: "hidden"
 					}}
-				>
-					{currentChild}
+				>	
+					{currentChild && (
+						<div
+						style={{
+							position: 'absolute',
+							top: 0,
+							left: 10,
+							right: 0,
+							bottom: 0,
+							zIndex: 0, // Set a higher z-index for currentChild
+							color:"white"
+						}}
+						>
+						{currentChild}
+						</div>
+					)}
+					<div>
+						<VideoReceiver camNumber={props.cameraName} carID={props.carName} />
+					</div>
 				</Box>
 			</Stack>
 		</>
