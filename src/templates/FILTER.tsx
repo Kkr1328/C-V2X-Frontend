@@ -52,11 +52,25 @@ export function CarFilterTemplate(
 			row: Math.ceil(6 / fieldPerRow),
 		},
 		{
+			id: 'left_cam_id',
+			label: INPUT_LABEL.LEFT_CAMERA,
+			type: 'Select',
+			placeholder: 'ex. Camera01',
+			row: Math.ceil(7 / fieldPerRow),
+		},
+		{
+			id: 'right_cam_id',
+			label: INPUT_LABEL.RIGHT_CAMERA,
+			type: 'Select',
+			placeholder: 'ex. Camera01',
+			row: Math.ceil(8 / fieldPerRow),
+		},
+		{
 			id: 'driver_id',
 			label: INPUT_LABEL.DRIVER,
 			type: 'Select',
 			placeholder: 'ex. สมชาย สวัสดี',
-			row: Math.ceil(7 / fieldPerRow),
+			row: Math.ceil(9 / fieldPerRow),
 		},
 	];
 }

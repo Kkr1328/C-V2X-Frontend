@@ -36,7 +36,7 @@ export default function TableContent<T extends TableRowProps>(
 	props: TableContentProps<T>
 ) {
 	return (
-		<TableContainer className="h-full overflow-x-auto overflow-y-scroll">
+		<TableContainer className="flex flex-col max-h-[60vh] h-auto min-h-[200px] overflow-x-auto overflow-y-scroll">
 			<Table stickyHeader sx={{ width: '100%', tableLayout: 'fixed' }}>
 				<TableHead>
 					<TableRow>
@@ -67,7 +67,9 @@ export default function TableContent<T extends TableRowProps>(
 											/>
 										) : column.id === 'status' ||
 										  column.id === 'front_cam' ||
-										  column.id === 'back_cam' ? (
+										  column.id === 'back_cam' ||
+										  column.id === 'left_cam' ||
+										  column.id === 'right_cam' ? (
 											<TableStatusCell variant={row[column.id]} />
 										) : column.id === 'cameras' ? (
 											<TableCameraCell column={column} row={row} />

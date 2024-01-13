@@ -54,7 +54,7 @@ export default function Home() {
 	});
 
 	useEffect(() => {
-		const socket = io(process.env.NEXT_PUBLIC_FLEET_WEB_SOCKET_URL ?? "<SOCKET-URL>");
+		const socket = io(process.env.NEXT_PUBLIC_WEB_SOCKET_URL ?? "<SOCKET-URL>");
 		socket.on('connect', () => {
 			console.log('overview:connected websocket');
 		})

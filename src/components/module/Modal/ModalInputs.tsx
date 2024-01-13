@@ -41,21 +41,6 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 		} as T);
 	};
 
-	const useTextField = (inputField: InputFieldProp<T>) => {
-		return (
-			(props.isReadOnly || inputField.type === 'TextField') &&
-			((inputField.id !== 'front_cam_name' &&
-				inputField.id !== 'front_cam_position' &&
-				inputField.id !== 'back_cam_name' &&
-				inputField.id !== 'back_cam_position') ||
-				getData(inputField.id) !== '')
-		);
-	};
-
-	const useSelect = (inputField: InputFieldProp<T>) => {
-		return inputField.type === 'Select';
-	};
-
 	const getOption = (inputField: InputFieldProp<T>): Option[] => {
 		return (
 			props.options?.filter(
@@ -71,7 +56,12 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 					{props.template
 						.filter((inputField) => inputField.row === index + 1)
 						.map((inputField) =>
-							useTextField(inputField) ? (
+							(props.isReadOnly || inputField.type === 'TextField') &&
+							((inputField.id !== 'front_cam_name' &&
+								inputField.id !== 'front_cam_position' &&
+								inputField.id !== 'back_cam_name' &&
+								inputField.id !== 'back_cam_position') ||
+								getData(inputField.id) !== '') ? (
 								<TextFieldCV2X
 									{...props}
 									{...inputField}
@@ -86,7 +76,7 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 									helperMessage={props.error && props.error?.[inputField.id]}
 								/>
 							) : (
-								useSelect(inputField) && (
+								inputField.type === 'Select' && (
 									<SelectCV2X
 										{...props}
 										{...inputField}

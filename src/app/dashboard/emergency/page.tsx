@@ -21,7 +21,7 @@ export default function Home() {
 	);
 	useEffect(
 		() => WidthObserver(emergenciesRef.current, setEmergenciesWidth),
-		[emergenciesRef.current]
+		[]
 	);
 	const useCompact = emergenciesWidth <= 1136;
 

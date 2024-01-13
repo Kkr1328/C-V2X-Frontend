@@ -37,7 +37,7 @@ import { WindowWidthObserver } from '@/utils/WidthObserver';
 import Table from '@/components/module/Table/Table';
 
 export default function Home() {
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+	const [windowWidth, setWindowWidth] = useState(0);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
@@ -141,6 +141,14 @@ export default function Home() {
 					value: 'Back',
 					label: 'Back',
 				},
+				{
+					value: 'Left',
+					label: 'Left',
+				},
+				{
+					value: 'Right',
+					label: 'Right',
+				},
 			],
 		},
 		{
@@ -194,9 +202,9 @@ export default function Home() {
 				entity={deleteModalData.id + ' camera'}
 				onSubmit={() => deleteCamera.mutate(deleteModalData)}
 			/>
-			<div className="flex flex-col w-full h-full gap-16">
+			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CAMERAS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-full rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={CameraFilterTemplate}
 						handleSubmitSearch={refetchGetCameras}
