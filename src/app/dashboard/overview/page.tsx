@@ -54,13 +54,12 @@ export default function Home() {
 	});
 
 	useEffect(() => {
-		const socket = io(process.env.NEXT_PUBLIC_WEB_SOCKET_URL ?? "<SOCKET-URL>");
+		const socket = io(process.env.NEXT_PUBLIC_WEB_SOCKET_URL ?? "<SOCKET-URL>", { transports: ['websocket', 'polling'] });
 		socket.on('connect', () => {
 			console.log('overview:connected websocket');
 		})
 
-		socket.on('heartbeat', (message) => {
-			const heartbeat: FLEET_HEARTBEAT = JSON.parse(message);
+		socket.on('heartbeat', (heartbeat: FLEET_HEARTBEAT) => {
 			if (heartbeat.type === 'CAR') {
 				setCarListData((prev) => ({
 					...prev,
@@ -80,8 +79,7 @@ export default function Home() {
 			}
 		})
 
-		socket.on('location', (message) => {
-			const location: FLEET_CAR_LOCATION = JSON.parse(message);
+		socket.on('location', (location: FLEET_CAR_LOCATION) => {
 			if (location.type === 'CAR') {
 				setCarListData((prev) => ({
 					...prev,
@@ -116,8 +114,7 @@ export default function Home() {
 			}
 		})
 
-		socket.on('car_speed', (message) => {
-			const car_speed: FLEET_CAR_SPEED = JSON.parse(message);
+		socket.on('car_speed', (car_speed: FLEET_CAR_SPEED) => {
 			setCarListData((prev) => ({
 				...prev,
 				[car_speed.id]: {
