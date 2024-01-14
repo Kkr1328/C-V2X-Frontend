@@ -9,6 +9,9 @@ import Loading from '@/components/common/Loading';
 // consts
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 // types
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import EmergencyState from '@/components/module/Emergency/EmergencyState';
+import { useEffect, useRef, useState } from 'react';
 import { EmergencyColumn } from '@/types/COMMON';
 import { IEmergency } from '@/types/models/emergency.model';
 // services
@@ -18,6 +21,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 // notistack
 import { enqueueSnackbar } from 'notistack';
 // utilities
+import { WidthObserver } from '@/utils/WidthObserver';
+
+// tanstack
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getEmergencyListAPI, updateEmergencyAPI } from '@/services/api-call';
+import { IEmergency } from '@/types/models/emergency.model';
+import { enqueueSnackbar } from 'notistack';
 import { WidthObserver } from '@/utils/WidthObserver';
 
 export default function Home() {
