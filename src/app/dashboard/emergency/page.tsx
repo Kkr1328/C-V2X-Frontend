@@ -1,17 +1,23 @@
 'use client';
-
-import PageTitle from '@/components/common/PageTitle';
-import { NAVBAR_LABEL } from '@/constants/LABEL';
+// react
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+// components
+import PageTitle from '@/components/common/PageTitle';
 import EmergencyState from '@/components/module/Emergency/EmergencyState';
-import { useEffect, useRef, useState } from 'react';
+import Loading from '@/components/common/Loading';
+// consts
+import { NAVBAR_LABEL } from '@/constants/LABEL';
+// types
 import { EmergencyColumn } from '@/types/COMMON';
-
-// tanstack
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { getEmergencyListAPI, updateEmergencyAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
+// services
+import { getEmergencyListAPI, updateEmergencyAPI } from '@/services/api-call';
+// tanstack
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+// notistack
 import { enqueueSnackbar } from 'notistack';
+// utilities
 import { WidthObserver } from '@/utils/WidthObserver';
 
 export default function Home() {
@@ -19,13 +25,14 @@ export default function Home() {
 	const [emergenciesWidth, setEmergenciesWidth] = useState<number>(
 		emergenciesRef.current?.clientWidth as number
 	);
-	useEffect(
-		() => WidthObserver(emergenciesRef.current, setEmergenciesWidth),
-		[]
-	);
+	useEffect(() => {
+		WidthObserver(emergenciesRef.current, setEmergenciesWidth);
+	}, []);
 	const useCompact = emergenciesWidth <= 1136;
 
-	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } =
+	const queryClient = useQueryClient();
+
+	const { isPending: isEmergencyListPending, data: dataGetEmergencyList } =
 		useQuery({
 			queryKey: ['getEmergencyList'],
 			queryFn: async () => await getEmergencyListAPI(),
@@ -34,6 +41,7 @@ export default function Home() {
 	const updateEmergency = useMutation({
 		mutationFn: updateEmergencyAPI,
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['getEmergencyList'] });
 			enqueueSnackbar('Update Emergency successfully', { variant: 'success' });
 		},
 		onError: (error) => {
@@ -153,38 +161,40 @@ export default function Home() {
 	};
 
 	return (
-		<>
-			<div className="flex flex-col w-full h-full gap-16">
+		<Fragment>
+			{(isEmergencyListPending || updateEmergency.isPending) && (
+				<Loading size={48} isBackdrop />
+			)}
+			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.EMERGENCY} />
 				<div
 					ref={emergenciesRef}
 					className={`flex ${
 						useCompact ? 'flex-col' : 'flex-row'
-					} gap-32 w-full h-full`}
+					} gap-32 w-full h-auto`}
 				>
 					<DragDropContext onDragEnd={onDragEnd}>
-						{!isEmergencyListLoading && (
-							<>
-								<EmergencyState
-									title="PENDING"
-									droppableId="pending"
-									emergencies={columns.pending.list}
-								/>
-								<EmergencyState
-									title="IN PROGRESS"
-									droppableId="inProgress"
-									emergencies={columns.inProgress.list}
-								/>
-								<EmergencyState
-									title="COMPLETE"
-									droppableId="complete"
-									emergencies={columns.complete.list}
-								/>
-							</>
-						)}
+						<EmergencyState
+							title="PENDING"
+							droppableId="pending"
+							emergencies={columns.pending.list}
+							isLoading={isEmergencyListPending}
+						/>
+						<EmergencyState
+							title="IN PROGRESS"
+							droppableId="inProgress"
+							emergencies={columns.inProgress.list}
+							isLoading={isEmergencyListPending}
+						/>
+						<EmergencyState
+							title="COMPLETE"
+							droppableId="complete"
+							emergencies={columns.complete.list}
+							isLoading={isEmergencyListPending}
+						/>
 					</DragDropContext>
 				</div>
 			</div>
-		</>
+		</Fragment>
 	);
 }

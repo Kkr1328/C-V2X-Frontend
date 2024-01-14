@@ -46,7 +46,7 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 						ref={provided.innerRef}
 						{...provided.draggableProps}
 						{...provided.dragHandleProps}
-						className={`w-full min-w-272 min-h-84 rounded-l-none rounded-r-lg border-l-8 p-16 mt-16 bg-dark_background_grey hover:bg-light_background_grey ${
+						className={`w-full min-w-[272px] min-h-[84px] rounded-l-none rounded-r-lg border-l-8 p-16 mt-16 bg-dark_background_grey hover:bg-light_background_grey ${
 							props.state === 'PENDING'
 								? 'border-error_red'
 								: props.state === 'IN PROGRESS'
