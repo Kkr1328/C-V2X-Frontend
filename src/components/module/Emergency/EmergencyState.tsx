@@ -28,7 +28,7 @@ export default function EmergencyState(props: EmergencyStateProps) {
 					<Card
 						ref={provided.innerRef}
 						{...provided.droppableProps}
-						className={`w-full min-w-[336px] h-full ${
+						className={`w-full min-w-[336px] h-auto ${
 							snapshot.isDraggingOver ? 'bg-light_background_blue' : 'bg-white'
 						} rounded-lg p-32`}
 					>

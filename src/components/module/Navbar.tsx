@@ -1,17 +1,21 @@
 'use client';
-
+// react
 import React from 'react';
-
+// material ui
 import { Drawer, List, ListItemButton, Toolbar } from '@mui/material';
+// tanstack
 import { useQuery } from '@tanstack/react-query';
-
-import { getEmergencyListAPI } from '@/services/api-call';
-import { IEmergency } from '@/types/models/emergency.model';
+// components
 import NavbarMenu from '../common/NavbarMenu';
-import IconMapper from '@/utils/IconMapper';
-
+// services
+import { getEmergencyListAPI } from '@/services/api-call';
+// types
+import { IEmergency } from '@/types/models/emergency.model';
+// consts
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 import { ROUTE } from '@/constants/ROUTE';
+// utilities
+import IconMapper from '@/utils/IconMapper';
 
 export default function Navbar() {
 	const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
@@ -21,14 +25,15 @@ export default function Navbar() {
 
 	const { data: dataGetEmergencyList } = useQuery({
 		queryKey: ['getEmergencyList'],
-		queryFn: async () => await getEmergencyListAPI()
+		queryFn: async () => await getEmergencyListAPI(),
 	});
 
 	return (
 		<Drawer
 			variant="permanent"
-			className={`z-10 ${isExpanded ? 'w-280' : 'w-72'
-				} flex shrink-0 bg-white transition-all`}
+			className={`z-10 ${
+				isExpanded ? 'w-280' : 'w-72'
+			} flex shrink-0 bg-white transition-all`}
 			sx={{
 				[`& .MuiDrawer-paper`]: {
 					width: isExpanded ? '280px' : '72px',
@@ -66,7 +71,11 @@ export default function Navbar() {
 							route: ROUTE.HEARTBEAT,
 						},
 					]}
-					emergencyNotification={dataGetEmergencyList?.filter((e: IEmergency) => e.status === "pending").length || 0}
+					emergencyNotification={
+						dataGetEmergencyList?.filter(
+							(e: IEmergency) => e.status === 'pending'
+						).length || 0
+					}
 				/>
 				<NavbarMenu
 					isExpanded={isExpanded}

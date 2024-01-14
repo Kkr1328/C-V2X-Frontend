@@ -56,7 +56,7 @@ export default function Home() {
 	const [search, setSearch] = useState<IGetDriversRequest>(defaultFilterData);
 
 	const {
-		isLoading: driversLoading,
+		isLoading: isDriversLoading,
 		data: drivers,
 		refetch: refetchGetDrivers,
 	} = useQuery({
@@ -141,6 +141,7 @@ export default function Home() {
 				data={registerModalData}
 				onDataChange={setRegisterModalData}
 				onSubmit={() => createDriver.mutate(registerModalData)}
+				isPending={createDriver.isPending}
 			/>
 			<InfoModal
 				title={informModalData.name}
@@ -164,6 +165,7 @@ export default function Home() {
 						request: updateModalData,
 					})
 				}
+				isPending={updateDriver.isPending}
 			/>
 			<DeleteModal
 				open={openDeleteModal}
@@ -172,10 +174,11 @@ export default function Home() {
 				}
 				entity={deleteModalData.id + ' driver'}
 				onSubmit={() => deleteDriver.mutate(deleteModalData)}
+				isPending={deleteDriver.isPending}
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.DRIVERS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={DriverFilterTemplate}
 						handleSubmitSearch={refetchGetDrivers}
@@ -214,7 +217,7 @@ export default function Home() {
 								setDeleteModalData
 							)
 						}
-						isLoading={driversLoading}
+						isLoading={isDriversLoading}
 					/>
 				</Card>
 			</div>
