@@ -20,12 +20,14 @@ import { getCarsListAPI, getEmergencyListAPI, getRSUsListAPI } from '@/services/
 import { IEmergency } from '@/types/models/emergency.model';
 import { IResponseList } from '@/types/common/responseList.model';
 import { io } from 'socket.io-client';
+import DrivingTestLocationBtn from '@/components/overview/DrivingTestLocationBtn';
 
 export default function Home() {
 	const [focus, setFocus] = useState<FocusState>({
 		id: "",
 		type: 'CAR',
-		location: MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER
+		location: MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER,
+		zoom: null
 	})
 	const focusRef = useRef(focus);
 	focusRef.current = focus;
@@ -172,21 +174,24 @@ export default function Home() {
 
 	useEffect(() => {
 		map?.panTo(focus.location)
+		if (focus.zoom) {
+			map?.setZoom(focus.zoom)
+		}
 	}, [focus])
 
 	function changeFocus(node: StuffLocation) {
 		const { id, type, location, status } = node
 		if (id === focus.id && type === focus.type) {
-			setFocus({ ...focus, id: '', type: 'CAR' })
+			setFocus({ ...focus, id: '', type: 'CAR', zoom: null })
 			setPillMode(PILL_LABEL.ALL)
 		} else {
-			setFocus({ id, type, location })
+			setFocus({ id, type, location, zoom: null })
 			setPillMode(status === PILL_LABEL.ACTIVE ? PILL_LABEL.ALL : node.status ?? PILL_LABEL.ALL)
 		}
 	}
 
 	function changePillMode(value: PILL_LABEL) {
-		setFocus({ id: focus.id, type: 'CAR', location: focus.location })
+		setFocus({ id: focus.id, type: 'CAR', location: focus.location, zoom: null })
 		if (value !== null) { setPillMode(value) }
 	}
 
@@ -219,12 +224,21 @@ export default function Home() {
 			<Card className='flex w-full h-[60%] my-32 rounded-lg px-32 py-24'>
 				{isMapLoadFinish &&
 					<GoogleMap
-						options={{ disableDefaultUI: true }}
 						zoom={14}
 						center={MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER}
 						mapContainerClassName="w-[70%]"
 						onLoad={map => setMap(map)}
+						options={{
+							mapTypeControlOptions: {
+								position: google.maps.ControlPosition.TOP_RIGHT
+							},
+							keyboardShortcuts: false,
+							zoomControl: false,
+							streetViewControl: false,
+							fullscreenControl: false
+						}}
 					>
+						<DrivingTestLocationBtn setFocus={setFocus} />
 						{
 							Object.entries(carListData).map(([id, car]) =>
 								<Marker

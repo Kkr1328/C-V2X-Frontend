@@ -25,6 +25,7 @@ export interface FocusState {
 	id: string;
 	type: 'CAR' | 'RSU';
 	location: Location;
+	zoom: number | null;
 }
 
 export interface StuffLocation {
