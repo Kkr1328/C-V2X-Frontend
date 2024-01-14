@@ -1,4 +1,7 @@
-import { Card, Divider, Skeleton, Stack } from '@mui/material';
+// material ui
+import { Card, Divider, Skeleton } from '@mui/material';
+// components
+import Text from './Text';
 
 interface SummaryCardProps {
 	title: string;
@@ -11,19 +14,21 @@ export default function SummaryCard(props: SummaryCardProps) {
 		<Skeleton
 			animation="wave"
 			variant="rectangular"
-			className="rounded-lg h-[121.59px] w-full"
+			className="rounded-lg h-120 w-full"
 		/>
 	) : (
 		<Card className="rounded-lg py-8 gap-12 w-full">
-			<Stack className="gap-12">
-				<p className="inline-block align-baseline font-istok text-dark_text_grey text-h5 text-center">
-					{props.title}
-				</p>
+			<div className="flex flex-col gap-12">
+				<Text
+					style="text-dark_text_grey text-h5 text-center"
+					content={props.title}
+				/>
 				<Divider />
-				<p className="inline-block align-baseline font-istok text-primary_blue text-h1 text-center">
-					{props.value}
-				</p>
-			</Stack>
+				<Text
+					style="text-primary_blue text-h1 text-center"
+					content={props.value}
+				/>
+			</div>
 		</Card>
 	);
 }

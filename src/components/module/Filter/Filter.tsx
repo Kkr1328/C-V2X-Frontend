@@ -35,10 +35,7 @@ export default function Filter<T>(props: FilterProp<T>) {
 	const [filterWidth, setFilterWidth] = useState<number>(
 		filterRef.current?.clientWidth as number
 	);
-	useEffect(
-		() => WidthObserver(filterRef.current, setFilterWidth),
-		[filterRef.current]
-	);
+	useEffect(() => WidthObserver(filterRef.current, setFilterWidth), []);
 	const fieldPerRow = FilterFieldPerRowGenerator(filterWidth);
 
 	const template = props.template(fieldPerRow);
@@ -67,7 +64,7 @@ export default function Filter<T>(props: FilterProp<T>) {
 	};
 
 	return (
-		<Stack ref={filterRef} className="w-full min-w-[240px] gap-8">
+		<div ref={filterRef} className="flex flex-col w-full min-w-[240px] gap-8">
 			{Array.from({ length: maxRow }, (_, index) => (
 				<Stack
 					key={`row ${index}`}
@@ -127,6 +124,6 @@ export default function Filter<T>(props: FilterProp<T>) {
 					)}
 				</Stack>
 			))}
-		</Stack>
+		</div>
 	);
 }

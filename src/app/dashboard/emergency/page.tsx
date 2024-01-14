@@ -3,34 +3,70 @@
 import PageTitle from '@/components/common/PageTitle';
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { Stack } from '@mui/material';
-import { useState } from 'react';
-import EmergencyCard from '@/components/common/EmergencyCard';
-import EmergencyState from '@/components/module/EmergencyState';
-import {
-	MockedCompleteEmergency,
-	MockedInProgressEmergency,
-	MockedPendingEmergency,
-} from '@/mock/EMERGENCY';
+import EmergencyState from '@/components/module/Emergency/EmergencyState';
+import { useEffect, useRef, useState } from 'react';
 import { EmergencyColumn } from '@/types/COMMON';
 
-export default function Home() {
-	const initialColumns = {
-		pending: {
-			id: 'pending',
-			list: MockedPendingEmergency,
-		},
-		inProgress: {
-			id: 'inProgress',
-			list: MockedInProgressEmergency,
-		},
-		complete: {
-			id: 'complete',
-			list: MockedCompleteEmergency,
-		},
-	};
+// tanstack
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getEmergencyListAPI, updateEmergencyAPI } from '@/services/api-call';
+import { IEmergency } from '@/types/models/emergency.model';
+import { enqueueSnackbar } from 'notistack';
+import { WidthObserver } from '@/utils/WidthObserver';
 
-	const [columns, setColumns] = useState(initialColumns);
+export default function Home() {
+	const emergenciesRef = useRef<HTMLDivElement>(null);
+	const [emergenciesWidth, setEmergenciesWidth] = useState<number>(
+		emergenciesRef.current?.clientWidth as number
+	);
+	useEffect(
+		() => WidthObserver(emergenciesRef.current, setEmergenciesWidth),
+		[]
+	);
+	const useCompact = emergenciesWidth <= 1136;
+
+	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } =
+		useQuery({
+			queryKey: ['getEmergencyList'],
+			queryFn: async () => await getEmergencyListAPI(),
+		});
+
+	const updateEmergency = useMutation({
+		mutationFn: updateEmergencyAPI,
+		onSuccess: () => {
+			enqueueSnackbar('Update Emergency successfully', { variant: 'success' });
+		},
+		onError: (error) => {
+			enqueueSnackbar(`Fail to update Emergency : ${error.message}`, {
+				variant: 'error',
+			});
+		},
+	});
+
+	useEffect(() => {
+		setColumns(
+			['pending', 'inProgress', 'complete'].reduce((acc, key) => {
+				acc[key] = {
+					id: key,
+					list:
+						dataGetEmergencyList?.filter(
+							(emergency: IEmergency) => emergency.status === key
+						) ?? [],
+				};
+				return acc;
+			}, {} as any)
+		);
+	}, [dataGetEmergencyList]);
+
+	const [columns, setColumns] = useState<{
+		pending: { id: string; list: IEmergency[] };
+		inProgress: { id: string; list: IEmergency[] };
+		complete: { id: string; list: IEmergency[] };
+	}>({
+		pending: { id: 'pending', list: [] },
+		inProgress: { id: 'inProgress', list: [] },
+		complete: { id: 'complete', list: [] },
+	});
 
 	const onDragEnd = ({ source, destination }: DropResult) => {
 		// Make sure we have a valid destination
@@ -68,64 +104,87 @@ export default function Home() {
 			setColumns((state) => ({ ...state, [newCol.id]: newCol }));
 			return null;
 		} else {
-			// If start is different from end, we need to update multiple columns
-			// Filter the start list like before
-			const newStartList = start.list.filter(
-				(_: any, idx: number) => idx !== source.index
+			const targetEmergemcyTask = start['list'][source.index];
+			updateEmergency.mutate(
+				{
+					id: targetEmergemcyTask.id,
+					request: {
+						car_id: targetEmergemcyTask.car_id,
+						status: destination.droppableId as EmergencyColumn,
+					},
+				},
+				{
+					onSuccess: () => {
+						// If start is different from end, we need to update multiple columns
+						// Filter the start list like before
+						const newStartList = start.list.filter(
+							(_: any, idx: number) => idx !== source.index
+						);
+
+						// Create a new start column
+						const newStartCol = {
+							id: start.id,
+							list: newStartList,
+						};
+
+						// Make a new end list array
+						const newEndList = end.list;
+
+						// Insert the item into the end list
+						newEndList.splice(destination.index, 0, start.list[source.index]);
+
+						// Create a new end column
+						const newEndCol = {
+							id: end.id,
+							list: newEndList,
+						};
+
+						// Update the state
+						setColumns((state) => ({
+							...state,
+							[newStartCol.id]: newStartCol,
+							[newEndCol.id]: newEndCol,
+						}));
+					},
+				}
 			);
-
-			// Create a new start column
-			const newStartCol = {
-				id: start.id,
-				list: newStartList,
-			};
-
-			// Make a new end list array
-			const newEndList = end.list;
-
-			// Insert the item into the end list
-			newEndList.splice(destination.index, 0, start.list[source.index]);
-
-			// Create a new end column
-			const newEndCol = {
-				id: end.id,
-				list: newEndList,
-			};
-
-			// Update the state
-			setColumns((state) => ({
-				...state,
-				[newStartCol.id]: newStartCol,
-				[newEndCol.id]: newEndCol,
-			}));
 			return null;
 		}
 	};
 
 	return (
 		<>
-			<Stack className="gap-16 ">
+			<div className="flex flex-col w-full h-full gap-16">
 				<PageTitle title={NAVBAR_LABEL.EMERGENCY} />
-				<Stack direction="row" className="gap-32 justify-center">
+				<div
+					ref={emergenciesRef}
+					className={`flex ${
+						useCompact ? 'flex-col' : 'flex-row'
+					} gap-32 w-full h-full`}
+				>
 					<DragDropContext onDragEnd={onDragEnd}>
-						<EmergencyState
-							title="PENDING"
-							droppableId="pending"
-							emergencies={columns.pending.list}
-						/>
-						<EmergencyState
-							title="IN PROGRESS"
-							droppableId="inProgress"
-							emergencies={columns.inProgress.list}
-						/>
-						<EmergencyState
-							title="COMPLETE"
-							droppableId="complete"
-							emergencies={columns.complete.list}
-						/>
+						{!isEmergencyListLoading && (
+							<>
+								<EmergencyState
+									title="PENDING"
+									droppableId="pending"
+									emergencies={columns.pending.list}
+								/>
+								<EmergencyState
+									title="IN PROGRESS"
+									droppableId="inProgress"
+									emergencies={columns.inProgress.list}
+								/>
+								<EmergencyState
+									title="COMPLETE"
+									droppableId="complete"
+									emergencies={columns.complete.list}
+								/>
+							</>
+						)}
 					</DragDropContext>
-				</Stack>
-			</Stack>
+				</div>
+			</div>
 		</>
 	);
 }

@@ -1,19 +1,13 @@
-'use client';
-
+// react
 import { ChangeEvent, useState } from 'react';
-
-import {
-	IconButton,
-	InputAdornment,
-	Skeleton,
-	Stack,
-	TextField,
-} from '@mui/material';
-
+// material ui
+import { IconButton, InputAdornment, Skeleton, TextField } from '@mui/material';
+// components
 import Pill from './Pill';
-import IconMapper from '@/utils/IconMapper';
-
+//consts
 import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
+// utilities
+import IconMapper from '@/utils/IconMapper';
 
 interface TextFieldCV2XProp {
 	title?: string;
@@ -41,11 +35,11 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 	};
 
 	return (
-		<Stack className="w-full gap-4">
+		<div className="flex flex-col w-full gap-4">
 			{/* Title */}
 			{props.title && (
-				<Stack direction="row" className="gap-16 items-center">
-					<Stack direction="row" className="gap-4">
+				<div className="flex flex-row gap-16 items-center">
+					<div className="flex flex-row gap-4">
 						<p className="inline-block align-baseline font-istok text-black text-h5">
 							{props.title}
 						</p>
@@ -64,9 +58,9 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 								<IconMapper icon={BUTTON_LABEL.LOCATION} />
 							</IconButton>
 						)}
-					</Stack>
+					</div>
 					{!props.isLoading && props.pill && <Pill variant={props.pill} />}
-				</Stack>
+				</div>
 			)}
 			{/* Input field */}
 			{props.isLoading ? (
@@ -132,6 +126,6 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 					{props.helperMessage}
 				</p>
 			)}
-		</Stack>
+		</div>
 	);
 }

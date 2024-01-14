@@ -1,7 +1,5 @@
 // react
 import { useEffect, useRef, useState, Fragment } from 'react';
-// material ui
-import { Stack } from '@mui/material';
 // components
 import ButtonCV2X from '@/components/common/ButtonCV2X';
 import Text from '@/components/common/Text';
@@ -25,15 +23,12 @@ export default function Table<T extends TableRowProps>(props: TableProp<T>) {
 	const [buttonsWidth, setButtonsWidth] = useState<number>(
 		buttonsRef.current?.clientWidth as number
 	);
-	useEffect(
-		() => WidthObserver(buttonsRef.current, setButtonsWidth),
-		[buttonsRef.current]
-	);
+	useEffect(() => WidthObserver(buttonsRef.current, setButtonsWidth), []);
 	const buttonsSize = buttonsWidth < 380 ? 's' : buttonsWidth < 500 ? 'm' : 'l';
 
 	return (
 		<Fragment>
-			<Stack ref={buttonsRef} direction="row" className="gap-8">
+			<div ref={buttonsRef} className="flex flex-row gap-8">
 				<Text
 					style="text-dark_text_grey text-h5 self-center"
 					content={`Total (${props.numberOfRow})`}
@@ -57,7 +52,7 @@ export default function Table<T extends TableRowProps>(props: TableProp<T>) {
 					variant="outlined"
 					onClick={props.handleOnClickRefresh}
 				/>
-			</Stack>
+			</div>
 			<TableContent {...props} />
 		</Fragment>
 	);

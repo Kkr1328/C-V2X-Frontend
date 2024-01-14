@@ -1,5 +1,5 @@
 // metarial ui
-import { Stack, TableCell } from '@mui/material';
+import { TableCell } from '@mui/material';
 // components
 import StatusDot from '@/components/common/StatusDot';
 // types
@@ -21,7 +21,7 @@ export default function TableCameraCell<T>(props: TableCameraCellProp<T>) {
 		<TableCell align={props.column.align} className="w-full">
 			{(props.row[props.column.id as keyof T] as CameraType[]).map(
 				(camera, index) => (
-					<Stack direction="row" key={index} className="flex-wrap">
+					<div key={index} className="flex flex-row flex-wrap">
 						<p className="break-all inline-block align-baseline font-istok text-black text-p1">
 							{camera.name}
 						</p>
@@ -29,7 +29,7 @@ export default function TableCameraCell<T>(props: TableCameraCellProp<T>) {
 							&nbsp;-&nbsp;
 							{camera.position}
 						</p>
-					</Stack>
+					</div>
 				)
 			)}
 		</TableCell>

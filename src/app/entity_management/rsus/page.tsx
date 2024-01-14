@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
-import { Card, Divider, Stack } from '@mui/material';
+import { Card, Divider } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter/Filter';
@@ -67,7 +67,7 @@ export default function Home() {
 			});
 		},
 		onError: (error) => {
-			enqueueSnackbar(`Fail to create a RSU : ${error.message}`, {
+			enqueueSnackbar(`Fail to register a RSU : ${error.message}`, {
 				variant: 'error',
 			});
 		},
@@ -163,45 +163,43 @@ export default function Home() {
 				entity={deleteModalData.id + ' RSU'}
 				onSubmit={() => deleteRSU.mutate(deleteModalData)}
 			/>
-			<Stack className="gap-16">
+			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.RSUS} />
-				<Card className="max-w-full min-w-[306px] min-h-[calc(100vh-192px)] rounded-lg px-32 py-24">
-					<Stack className="h-full flex flex-col gap-16">
-						<Filter
-							template={RSUFilterTemplate}
-							handleSubmitSearch={refetchGetRSUs}
-							search={search}
-							setSearch={setSearch}
-							handleClearSearch={() => setSearch(defaultFilterData)}
-						/>
-						<Divider />
-						<Table
-							numberOfRow={(rsus ?? []).length}
-							registerLabel={BUTTON_LABEL.REGISTER_RSU}
-							handleOnClickRegister={() =>
-								handleOpenModal(
-									defaultData,
-									setOpenRegisterModal,
-									setRegisterModalData
-								)
-							}
-							handleOnClickRefresh={handleOnClickRefresh}
-							columns={RSUsTableTemplate}
-							rows={rsus ?? []}
-							handleOnClickInformation={(data) =>
-								handleOpenModal(data, setOpenInformModal, setInformModalData)
-							}
-							handleOnClickUpdate={(data) =>
-								handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
-							}
-							handleOnClickDelete={(data) =>
-								handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
-							}
-							isLoading={rsusLoading}
-						/>
-					</Stack>
+				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
+					<Filter
+						template={RSUFilterTemplate}
+						handleSubmitSearch={refetchGetRSUs}
+						search={search}
+						setSearch={setSearch}
+						handleClearSearch={() => setSearch(defaultFilterData)}
+					/>
+					<Divider />
+					<Table
+						numberOfRow={(rsus ?? []).length}
+						registerLabel={BUTTON_LABEL.REGISTER_RSU}
+						handleOnClickRegister={() =>
+							handleOpenModal(
+								defaultData,
+								setOpenRegisterModal,
+								setRegisterModalData
+							)
+						}
+						handleOnClickRefresh={handleOnClickRefresh}
+						columns={RSUsTableTemplate}
+						rows={rsus ?? []}
+						handleOnClickInformation={(data) =>
+							handleOpenModal(data, setOpenInformModal, setInformModalData)
+						}
+						handleOnClickUpdate={(data) =>
+							handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
+						}
+						handleOnClickDelete={(data) =>
+							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
+						}
+						isLoading={rsusLoading}
+					/>
 				</Card>
-			</Stack>
+			</div>
 		</Fragment>
 	);
 }

@@ -1,5 +1,5 @@
 // material ui
-import { IconButton, Stack, TableCell } from '@mui/material';
+import { IconButton, TableCell } from '@mui/material';
 // const
 import { BUTTON_LABEL } from '@/constants/LABEL';
 // utilities
@@ -17,7 +17,7 @@ export default function TableHeartbeatActionButtonsCell<T>(
 ) {
 	return (
 		<TableCell align={props.align} sx={{ width: '132px' }}>
-			<Stack direction="row" className="gap-8 justify-center">
+			<div className="flex flex-row gap-8 justify-center">
 				<IconButton
 					disableRipple
 					className="p-none text-primary_blue"
@@ -32,7 +32,7 @@ export default function TableHeartbeatActionButtonsCell<T>(
 				>
 					<IconMapper icon={BUTTON_LABEL.SEARCH} />
 				</IconButton>
-			</Stack>
+			</div>
 		</TableCell>
 	);
 }

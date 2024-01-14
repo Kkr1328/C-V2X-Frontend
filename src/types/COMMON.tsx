@@ -1,4 +1,4 @@
-export type Position = 'Front' | 'Back';
+export type Position = 'Front' | 'Back' | 'Left' | 'Right';
 
 export type Emergency = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
 export type EmergencyColumn = 'pending' | 'inProgress' | 'complete';
