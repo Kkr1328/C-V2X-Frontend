@@ -35,6 +35,7 @@ import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
 import Table from '@/components/module/Table/Table';
+import Loading from '@/components/common/Loading';
 
 export default function Home() {
 	const [windowWidth, setWindowWidth] = useState(0);
@@ -50,7 +51,7 @@ export default function Home() {
 	const [search, setSearch] = useState<IGetCamerasRequest>(defaultFilterData);
 
 	const {
-		isLoading: camerasLoading,
+		isLoading: isCamerasLoading,
 		data: cameras,
 		refetch: refetchGetCameras,
 	} = useQuery({
@@ -58,7 +59,11 @@ export default function Home() {
 		queryFn: async () => await getCamerasAPI(search),
 	});
 
-	const { data: carsList, refetch: refetchGetCarsList } = useQuery({
+	const {
+		isLoading: isCarsListLoading,
+		data: carsList,
+		refetch: refetchGetCarsList,
+	} = useQuery({
 		queryKey: ['getCarsList'],
 		queryFn: async () => await getCarsListAPI(),
 	});
@@ -168,6 +173,7 @@ export default function Home() {
 				data={registerModalData}
 				onDataChange={setRegisterModalData}
 				onSubmit={() => createCamera.mutate(registerModalData)}
+				isPending={createCamera.isPending}
 				options={options}
 			/>
 			<InfoModal
@@ -192,6 +198,7 @@ export default function Home() {
 						request: updateModalData,
 					})
 				}
+				isPending={updateCamera.isPending}
 				options={options}
 			/>
 			<DeleteModal
@@ -201,10 +208,11 @@ export default function Home() {
 				}
 				entity={deleteModalData.id + ' camera'}
 				onSubmit={() => deleteCamera.mutate(deleteModalData)}
+				isPending={deleteCamera.isPending}
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CAMERAS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={CameraFilterTemplate}
 						handleSubmitSearch={refetchGetCameras}
@@ -236,7 +244,7 @@ export default function Home() {
 						handleOnClickDelete={(data) =>
 							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
 						}
-						isLoading={camerasLoading}
+						isLoading={isCamerasLoading || isCarsListLoading}
 					/>
 				</Card>
 			</div>

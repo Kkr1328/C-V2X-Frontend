@@ -9,6 +9,7 @@ import ModalInputs, { ModalInputsProp } from './ModalInputs';
 import ModalActionButtons, {
 	ModalActionButtonsProp,
 } from './ModalActionButtons';
+import Loading from '@/components/common/Loading';
 // types
 import { InputError } from '@/types/COMMON';
 // utilities
@@ -22,6 +23,7 @@ import { InputValidator } from '@/utils/InputValidator';
 interface InputModalProp<T> extends ModalInputsProp<T>, ModalActionButtonsProp {
 	open: boolean;
 	onOpenChange: Dispatch<SetStateAction<boolean>>;
+	isPending?: boolean;
 	onSubmit: () => void;
 	title: string;
 }
@@ -66,23 +68,27 @@ export default function InputModal<T>(props: InputModalProp<T>) {
 			onClose={handleOnClose}
 			className="flex items-center justify-center"
 		>
-			<Card className="w-4/5 max-w-[600px] min-w-[400px] max-h-[90%] flex flex-col rounded-lg">
-				<ModalHeader title={props.title} />
-				<Divider />
-				<div className="p-16 flex gap-16 flex-col overflow-y-auto">
-					<ModalInputs {...props} error={error} resetError={resetError} />
-				</div>
-				<Divider />
-				<ModalActionButtons
-					{...props}
-					handleOnClose={handleOnClose}
-					onSubmit={() => {
-						validateError().then((isError) => {
-							if (!isError) props.onSubmit();
-						});
-					}}
-				/>
-			</Card>
+			{props.isPending ? (
+				<Loading size={48} />
+			) : (
+				<Card className="w-4/5 max-w-[600px] min-w-[400px] max-h-[90%] flex flex-col rounded-lg">
+					<ModalHeader title={props.title} />
+					<Divider />
+					<div className="p-16 flex gap-16 flex-col overflow-y-auto">
+						<ModalInputs {...props} error={error} resetError={resetError} />
+					</div>
+					<Divider />
+					<ModalActionButtons
+						{...props}
+						handleOnClose={handleOnClose}
+						onSubmit={() => {
+							validateError().then((isError) => {
+								if (!isError) props.onSubmit();
+							});
+						}}
+					/>
+				</Card>
+			)}
 		</Modal>
 	);
 }

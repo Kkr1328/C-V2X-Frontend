@@ -54,7 +54,7 @@ export default function Home() {
 	const [search, setSearch] = useState<IGetCarsRequest>(defaultFilterData);
 
 	const {
-		isLoading: carsLoading,
+		isLoading: isCarsLoading,
 		data: cars,
 		refetch: refetchGetCars,
 	} = useQuery({
@@ -62,12 +62,20 @@ export default function Home() {
 		queryFn: async () => await getCarsAPI(search),
 	});
 
-	const { data: camerasList, refetch: refetchGetCamerasList } = useQuery({
+	const {
+		isLoading: isCamerasListLoading,
+		data: camerasList,
+		refetch: refetchGetCamerasList,
+	} = useQuery({
 		queryKey: ['getCamerasList'],
 		queryFn: async () => await getCamerasListAPI(),
 	});
 
-	const { data: driversList, refetch: refetchGetDriversList } = useQuery({
+	const {
+		isLoading: isDriversListLoading,
+		data: driversList,
+		refetch: refetchGetDriversList,
+	} = useQuery({
 		queryKey: ['getDriversList'],
 		queryFn: async () => await getDriversListAPI(),
 	});
@@ -190,6 +198,7 @@ export default function Home() {
 				onDataChange={setRegisterModalData}
 				onSubmit={() => createCar.mutate(registerModalData)}
 				options={options}
+				isPending={createCar.isPending}
 			/>
 			<InfoModal
 				title={informModalData.name}
@@ -214,6 +223,7 @@ export default function Home() {
 					})
 				}
 				options={options}
+				isPending={updateCar.isPending}
 			/>
 			<DeleteModal
 				open={openDeleteModal}
@@ -222,10 +232,11 @@ export default function Home() {
 				}
 				entity={deleteModalData.id + ' car'}
 				onSubmit={() => deleteCar.mutate(deleteModalData)}
+				isPending={deleteCar.isPending}
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CARS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={CarFilterTemplate}
 						handleSubmitSearch={refetchGetCars}
@@ -255,7 +266,9 @@ export default function Home() {
 						handleOnClickDelete={(data) =>
 							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
 						}
-						isLoading={carsLoading}
+						isLoading={
+							isCarsLoading || isCamerasListLoading || isDriversListLoading
+						}
 					/>
 				</Card>
 			</div>
