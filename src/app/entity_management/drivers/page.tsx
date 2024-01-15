@@ -40,7 +40,7 @@ import { WindowWidthObserver } from '@/utils/WidthObserver';
 import Table from '@/components/module/Table/Table';
 
 export default function Home() {
-	const [windowWidth, setWindowWidth] = useState(0);
+	const [windowWidth, setWindowWidth] = useState(1000);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 

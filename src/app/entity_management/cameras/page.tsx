@@ -38,7 +38,7 @@ import Table from '@/components/module/Table/Table';
 import Loading from '@/components/common/Loading';
 
 export default function Home() {
-	const [windowWidth, setWindowWidth] = useState(0);
+	const [windowWidth, setWindowWidth] = useState(1000);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
