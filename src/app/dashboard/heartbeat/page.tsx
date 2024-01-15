@@ -58,19 +58,19 @@ export default function Home() {
 						/>
 					</div>
 					<Divider />
-					<Grid container columns={{ xs: 17 }} className="gap-16">
-						<Grid item xs={useCompactContent ? 17 : 10}>
+					<Grid container columns={{ xs: 65 }} rowSpacing={1} columnSpacing={1}>
+						<Grid item xs={useCompactContent ? 65 : 40}>
 							<TableCV2X<ICarHeartbeat>
 								columns={CarsHeartbeatTableTemplate}
 								rows={MockedCarsHeartbeatTableContent}
 							/>
 						</Grid>
 						{!useCompactContent && (
-							<Grid item xs className="flex items-center justify-center">
+							<Grid item xs={1} className="flex items-center justify-center">
 								<Divider orientation="vertical" />
 							</Grid>
 						)}
-						<Grid item xs={useCompactContent ? 17 : 6}>
+						<Grid item xs={useCompactContent ? 65 : 24}>
 							<TableCV2X<IRSUHeartbeat>
 								columns={RSUsHeartbeatTableTemplate}
 								rows={MockedRSUsHeartbeatTableContent}
