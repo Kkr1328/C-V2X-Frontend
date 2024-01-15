@@ -75,7 +75,10 @@ export default function Home() {
 
 	if (!isLoaded) return <div>Loading...</div>;
 	return (
-		<div ref={pageRef} className="flex flex-col w-full h-auto gap-16">
+		<div
+			ref={pageRef}
+			className="flex flex-col w-full min-w-[300px] h-auto gap-16"
+		>
 			<PageTitle title={NAVBAR_LABEL.OVERVIEW} />
 			<Grid
 				container
