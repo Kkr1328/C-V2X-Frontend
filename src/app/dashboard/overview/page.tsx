@@ -38,7 +38,8 @@ export default function Home() {
 	const [carListData, setCarListData] = useState<FLEET_CAR>({})
 	const [rsuListData, setRSUListData] = useState<FLEET_RSU>({})
 
-	const activeCar = useMemo(() => Object.entries(carListData).filter(([_id, car]) => car.status === PILL_LABEL.ACTIVE).length, [carListData])
+	const activeCar = useMemo(() => Object.entries(carListData).filter(([_id, car]) => [PILL_LABEL.ACTIVE, PILL_LABEL.EMERGENCY, PILL_LABEL.WARNING].includes(car.status)).length, [carListData])
+	const activeRSU = useMemo(() => Object.entries(rsuListData).filter(([_id, rsu]) => [PILL_LABEL.ACTIVE, PILL_LABEL.INACTIVE].includes(rsu.status)).length, [rsuListData])
 
 	const {
 		isLoading: carsListLoading,
@@ -49,6 +50,7 @@ export default function Home() {
 	});
 
 	const {
+		isLoading: rsuListLoading,
 		data: fetchRSUsList
 	} = useQuery({
 		queryKey: ['fleet:getRSUsList'],
@@ -75,6 +77,7 @@ export default function Home() {
 					...prev,
 					[heartbeat.id]: {
 						...prev[heartbeat.id],
+						status: heartbeat.data.status,
 						connected_OBU: heartbeat.data.connected_OBU,
 					}
 				}))
@@ -206,10 +209,14 @@ export default function Home() {
 			<div className='flex gap-32'>
 				<SummaryCard
 					title={SUMMARY_LABEL.ACTIVE_CAR}
-					value={`${activeCar} / ${fetchCarsList?.length ?? '-'}`}
+					value={`${activeCar ?? '-'} / ${fetchCarsList?.length ?? '-'}`}
 					isLoading={carsListLoading}
 				/>
-				<SummaryCard title={SUMMARY_LABEL.ACTIVE_DRIVER} value={'- / -'} />
+				<SummaryCard
+					title={SUMMARY_LABEL.ACTIVE_RSU}
+					value={`${activeRSU ?? '-'} / ${fetchRSUsList?.length ?? '-'}`}
+					isLoading={rsuListLoading}
+				/>
 				<SummaryCard
 					title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
 					value={(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress"))?.length ?? "-"}

@@ -86,7 +86,7 @@ export enum EMERGENCY_CARD_LABEL {
 
 export enum OVERVIEW_SUMMARY_CARD_LABEL {
 	ACTIVE_CAR = 'Active car(s)',
-	ACTIVE_DRIVER = 'Active driver(s)',
+	ACTIVE_RSU = 'Active rsu(s)',
 	PENDING_EMERGENCY = 'PENDING emergency',
 	IN_PROGRESS_EMERGENCY = 'IN PROGRESS emergency',
 }
