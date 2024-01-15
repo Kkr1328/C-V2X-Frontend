@@ -14,10 +14,10 @@ export default function SummaryCard(props: SummaryCardProps) {
 		<Skeleton
 			animation="wave"
 			variant="rectangular"
-			className="rounded-lg h-120 w-full"
+			className="rounded-lg h-120 w-full min-w-[232px]"
 		/>
 	) : (
-		<Card className="rounded-lg py-8 gap-12 w-full">
+		<Card className="rounded-lg py-8 gap-12 w-full min-w-[232px]">
 			<div className="flex flex-col gap-12">
 				<Text
 					style="text-dark_text_grey text-h5 text-center"
