@@ -69,7 +69,7 @@ export default function Home() {
 					...prev,
 					[heartbeat.id]: {
 						...prev[heartbeat.id],
-						status: heartbeat.data.status,
+						status: pendingEmergency.find((task: IEmergency) => task.car_id === heartbeat.id) ? PILL_LABEL.EMERGENCY : heartbeat.data.status,
 					}
 				}))
 			} else if (heartbeat.type === 'RSU') {
@@ -170,6 +170,8 @@ export default function Home() {
 			queryKey: ['getEmergencyList'],
 			queryFn: async () => await getEmergencyListAPI(),
 		});
+	const pendingEmergency = useMemo(() => (dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending")), [dataGetEmergencyList])
+	const inProgressEmergency = useMemo(() => (dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress")), [dataGetEmergencyList])
 
 	const { isLoaded: isMapLoadFinish } = useLoadScript({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "<GOOGLE-MAP-KEY>",
@@ -219,12 +221,12 @@ export default function Home() {
 				/>
 				<SummaryCard
 					title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
-					value={(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress"))?.length ?? "-"}
+					value={inProgressEmergency?.length ?? "-"}
 					isLoading={isEmergencyListLoading}
 				/>
 				<SummaryCard
 					title={SUMMARY_LABEL.PENDING_EMERGENCY}
-					value={(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"))?.length ?? "-"}
+					value={pendingEmergency?.length ?? "-"}
 					isLoading={isEmergencyListLoading}
 				/>
 			</div>
