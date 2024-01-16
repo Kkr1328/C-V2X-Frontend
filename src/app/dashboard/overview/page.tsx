@@ -2,7 +2,7 @@
 // react
 import { useEffect, useRef, useState } from 'react';
 // material ui
-import { Card, Divider, Grid } from '@mui/material';
+import { Card, Divider, Grid, Skeleton } from '@mui/material';
 // google map
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 // next
@@ -89,7 +89,6 @@ export default function Home() {
 		changeFocus(target);
 	}
 
-	if (!isLoaded) return <div>Loading...</div>;
 	return (
 		<div
 			ref={pageRef}
@@ -126,43 +125,51 @@ export default function Home() {
 					columnSpacing={{ xs: 1 }}
 				>
 					<Grid item xs={useCompactContent ? 81 : 56}>
-						<GoogleMap
-							options={{ disableDefaultUI: true }}
-							zoom={14}
-							center={MockedCarLocation[0].location}
-							mapContainerClassName="h-full min-h-[500px] w-full"
-							onLoad={(map) => setMap(map)}
-						>
-							{MockedCarLocation.map((CAR) => (
-								<Marker
-									icon={{
-										url: `${MAP_ASSETS.CAR_PIN}${CAR.status}.svg`,
-										scaledSize:
-											focus?.id === CAR.id
-												? new google.maps.Size(
-														MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
-														MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
-												  )
-												: new google.maps.Size(
-														MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
-														MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
-												  ),
-									}}
-									onClick={() => changeFocus(CAR)}
-									position={CAR.location}
-									key={CAR.id}
-								/>
-							))}
-							{MockedRSU.map((RSU) => (
-								<RSUMarker
-									location={RSU.location}
-									radius={RSU.radius}
-									isFocus={focus?.id === RSU.id}
-									onClick={() => changeFocus(RSU)}
-									key={RSU.id}
-								/>
-							))}
-						</GoogleMap>
+						{!isLoaded ? (
+							<Skeleton
+								animation="wave"
+								variant="rectangular"
+								className="rounded-md h-full"
+							/>
+						) : (
+							<GoogleMap
+								options={{ disableDefaultUI: true }}
+								zoom={14}
+								center={MockedCarLocation[0].location}
+								mapContainerClassName="h-full min-h-[500px] w-full rounded-md"
+								onLoad={(map) => setMap(map)}
+							>
+								{MockedCarLocation.map((CAR) => (
+									<Marker
+										icon={{
+											url: `${MAP_ASSETS.CAR_PIN}${CAR.status}.svg`,
+											scaledSize:
+												focus?.id === CAR.id
+													? new google.maps.Size(
+															MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
+															MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
+													  )
+													: new google.maps.Size(
+															MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
+															MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
+													  ),
+										}}
+										onClick={() => changeFocus(CAR)}
+										position={CAR.location}
+										key={CAR.id}
+									/>
+								))}
+								{MockedRSU.map((RSU) => (
+									<RSUMarker
+										location={RSU.location}
+										radius={RSU.radius}
+										isFocus={focus?.id === RSU.id}
+										onClick={() => changeFocus(RSU)}
+										key={RSU.id}
+									/>
+								))}
+							</GoogleMap>
+						)}
 					</Grid>
 					{!useCompactContent && (
 						<Grid item xs={1} className="flex items-center justify-center">
