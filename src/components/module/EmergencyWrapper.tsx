@@ -24,7 +24,7 @@ export default function EmergencyWrapper(props: { children: React.ReactNode }) {
 			socket.disconnect();
 			console.log('disconnected websocket');
 		};
-	}, []);
+	}, [queryClient]);
 
 	return <>{props.children}</>;
 }

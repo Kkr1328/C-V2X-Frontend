@@ -41,10 +41,8 @@ const statusDefinition = {
 
 function StatusDefinition({
 	status,
-	index,
 }: {
 	status: 'Active' | 'Warning' | 'Emergency' | 'Inactive' | 'Missing';
-	index: number;
 }) {
 	const [open, setOpen] = useState(false);
 	const anchorRef = useRef(null);
@@ -58,7 +56,7 @@ function StatusDefinition({
 	};
 
 	return (
-		<div className="flex flex-row gap-4 items-center" key={index}>
+		<div className="flex flex-row gap-4 items-center">
 			<StatusDot variant={status} />
 			<p>-</p>
 			<p>{status}</p>
@@ -135,7 +133,9 @@ export default function Home() {
 				<div className="flex flex-col h-full gap-16">
 					<div className="flex flex-wrap gap-16 items-center">
 						{StatusDotType.map((status, index) => (
-							<StatusDefinition status={status} index={index} />
+							<div key={index}>
+								<StatusDefinition status={status} />
+							</div>
 						))}
 						<div className="grow" />
 						<ButtonCV2X

@@ -35,13 +35,13 @@ import {
 
 export default function Home() {
 	const searchParams = useSearchParams();
-	const car_id = searchParams.get('car_id');
+	const carId = searchParams.get('carId');
 
 	useEffect(() => {
-		if (car_id) {
-			clickOnCarCard(car_id);
+		if (carId) {
+			clickOnCarCard(carId);
 		}
-	}, [car_id]);
+	}, [carId]);
 
 	const [focus, setFocus] = useState<FocusState | null>(null);
 	const [map, setMap] = useState<google.maps.Map>();
