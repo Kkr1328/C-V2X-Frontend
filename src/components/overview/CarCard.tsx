@@ -7,6 +7,8 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Pill from "../common/Pill";
 import CarAvatar from "./CarAvatar";
 import { PILL_LABEL } from "@/constants/LABEL";
+import { useQuery } from "@tanstack/react-query";
+import { getCarAPI } from "@/services/api-call";
 
 interface CarCardProps {
   car: CarCard,
@@ -34,6 +36,10 @@ interface CarCardDetailProps {
 
 function CarCardDetail(props: CarCardDetailProps) {
   const [expand, setExpand] = useState<boolean>(false)
+  const { isLoading, data } = useQuery({
+    queryKey: ['getCarID' + props.car.id],
+    queryFn: async () => await getCarAPI({ id: props.car.id })
+  })
 
   return (
     <div className="text-p1">
@@ -50,17 +56,16 @@ function CarCardDetail(props: CarCardDetailProps) {
       {/* properties */}
       <div>Speed : {props.car.speed ?? "loading..."}</div>
       <Collapse in={expand} timeout="auto">
-        {props.car.driver &&
+        {!isLoading &&
           <>
-            <div className='my-4'>Driver : {`${props.car.driver.first_name} ${props.car.driver.last_name}`}</div>
-            <div className='my-4'>Phone No. : {props.car.driver.phone_no ?? "null"}</div>
+            <div className='my-4'>Driver : {data?.driver}</div>
+            {data?.cameras.map((camera: { id: string, name: string, position: string }) => (
+              <div key={camera.id} className='my-4'>
+                {camera.position + " camera"} : {camera.name}
+              </div>
+            ))}
           </>
         }
-        {props.car.cameras?.map((camera) => (
-          <div key={camera.id} className='my-4'>
-            {camera.position + " camera"} : {camera.name}
-          </div>
-        ))}
       </Collapse>
       <button
         className="float-right mt-4"
