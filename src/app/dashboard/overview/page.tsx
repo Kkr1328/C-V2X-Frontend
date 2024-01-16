@@ -57,6 +57,15 @@ export default function Home() {
 		queryFn: async () => await getRSUsListAPI()
 	});
 
+	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } =
+		useQuery({
+			queryKey: ['getEmergencyList'],
+			queryFn: async () => await getEmergencyListAPI(),
+		});
+	const pendingEmergency = useRef(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"));
+	pendingEmergency.current = useMemo(() => dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"), [dataGetEmergencyList]);
+	const inProgressEmergency = useMemo(() => (dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress")), [dataGetEmergencyList])
+
 	useEffect(() => {
 		const socket = io(process.env.NEXT_PUBLIC_WEB_SOCKET_URL ?? "<SOCKET-URL>", { transports: ['websocket', 'polling'] });
 		socket.on('connect', () => {
@@ -69,7 +78,7 @@ export default function Home() {
 					...prev,
 					[heartbeat.id]: {
 						...prev[heartbeat.id],
-						status: pendingEmergency.find((task: IEmergency) => task.car_id === heartbeat.id) ? PILL_LABEL.EMERGENCY : heartbeat.data.status,
+						status: pendingEmergency.current?.find((task: IEmergency) => task.car_id === heartbeat.id) ? PILL_LABEL.EMERGENCY : heartbeat.data.status,
 					}
 				}))
 			} else if (heartbeat.type === 'RSU') {
@@ -165,14 +174,6 @@ export default function Home() {
 		})
 	}, [fetchRSUsList])
 
-	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } =
-		useQuery({
-			queryKey: ['getEmergencyList'],
-			queryFn: async () => await getEmergencyListAPI(),
-		});
-	const pendingEmergency = useMemo(() => (dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending")), [dataGetEmergencyList])
-	const inProgressEmergency = useMemo(() => (dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress")), [dataGetEmergencyList])
-
 	const { isLoaded: isMapLoadFinish } = useLoadScript({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "<GOOGLE-MAP-KEY>",
 	})
@@ -226,7 +227,7 @@ export default function Home() {
 				/>
 				<SummaryCard
 					title={SUMMARY_LABEL.PENDING_EMERGENCY}
-					value={pendingEmergency?.length ?? "-"}
+					value={pendingEmergency.current?.length ?? "-"}
 					isLoading={isEmergencyListLoading}
 				/>
 			</div>
