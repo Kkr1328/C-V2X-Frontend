@@ -9,7 +9,9 @@ export default function EmergencyWrapper(props: { children: React.ReactNode }) {
 		if (!process.env.NEXT_PUBLIC_WEB_SOCKET_URL) {
 			return;
 		}
-		const socket = io(process.env.NEXT_PUBLIC_WEB_SOCKET_URL, { transports: ['websocket'] });
+		const socket = io(process.env.NEXT_PUBLIC_WEB_SOCKET_URL, {
+			transports: ['websocket'],
+		});
 		socket.on('connect', () => {
 			console.log('connected websocket');
 		});
