@@ -56,6 +56,7 @@ export enum BUTTON_LABEL {
 	NO_DATA = 'No results found',
 	VISIBLE = 'Visible',
 	INVISIBLE = 'Invisible',
+	HELP = 'Help',
 }
 
 export enum PILL_LABEL {
