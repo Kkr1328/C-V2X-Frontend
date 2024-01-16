@@ -1,11 +1,20 @@
 'use client';
-
+// react
+import { useEffect, useRef, useState } from 'react';
+// material ui
+import { Card, Divider, Grid } from '@mui/material';
+// google map
+import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
+// next
+import { useSearchParams } from 'next/navigation';
+// components
 import PageTitle from '@/components/common/PageTitle';
 import SummaryCard from '@/components/common/SummaryCard';
 import ToggleButtonCV2X from '@/components/common/ToggleButtonCV2X';
 import CarCard from '@/components/common/CarCard';
 import RSUMarker from '@/components/common/RSUMarker';
-
+import RSUCard from '@/components/common/RSUCard';
+// const
 import {
 	NAVBAR_LABEL,
 	OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL,
@@ -13,20 +22,27 @@ import {
 } from '@/constants/LABEL';
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
+// types
+import { FocusState, StuffLocation } from '@/types/OVERVIEW';
+// utilities
+import { WidthObserver } from '@/utils/WidthObserver';
+
 import {
 	MockedCars,
 	MockedCarLocation,
 	MockedRSU,
 } from '@/mock/ENTITY_OVERVIEW';
-import { FocusState, StuffLocation } from '@/types/OVERVIEW';
-
-import { Card, Divider, Grid, List } from '@mui/material';
-import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
-import { useEffect, useRef, useState } from 'react';
-import RSUCard from '@/components/common/RSUCard';
-import { WidthObserver } from '@/utils/WidthObserver';
 
 export default function Home() {
+	const searchParams = useSearchParams();
+	const car_id = searchParams.get('car_id');
+
+	useEffect(() => {
+		if (car_id) {
+			clickOnCarCard(car_id);
+		}
+	}, [car_id]);
+
 	const [focus, setFocus] = useState<FocusState | null>(null);
 	const [map, setMap] = useState<google.maps.Map>();
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL);
