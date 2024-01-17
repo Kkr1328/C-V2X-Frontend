@@ -55,6 +55,30 @@ export function CarInfoModalTemplate(
 			type: 'TextField',
 			row: isUseCompact ? 7 : 4,
 		},
+		{
+			id: 'left_cam_name',
+			label: INPUT_LABEL.CAMERAS,
+			type: 'TextField',
+			row: isUseCompact ? 8 : 5,
+		},
+		{
+			id: 'left_cam_position',
+			label: INPUT_LABEL.POSITION,
+			type: 'TextField',
+			row: isUseCompact ? 9 : 5,
+		},
+		{
+			id: 'right_cam_name',
+			label: INPUT_LABEL.CAMERAS,
+			type: 'TextField',
+			row: isUseCompact ? 10 : 6,
+		},
+		{
+			id: 'right_cam_position',
+			label: INPUT_LABEL.POSITION,
+			type: 'TextField',
+			row: isUseCompact ? 11 : 6,
+		},
 	];
 }
 

@@ -1,6 +1,8 @@
 'use client';
 // react
 import { Fragment, useEffect, useState } from 'react';
+// next
+import { useRouter } from 'next/navigation';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
@@ -13,6 +15,7 @@ import InfoModal from '@/components/module/Modal/InfoModal';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
+import { ROUTE } from '@/constants/ROUTE';
 // types
 import { ICamera, IGetCamerasRequest } from '@/types/models/camera.model';
 // templates
@@ -35,14 +38,14 @@ import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
 import Table from '@/components/module/Table/Table';
-import Loading from '@/components/common/Loading';
 
 export default function Home() {
-	const [windowWidth, setWindowWidth] = useState(0);
+	const [windowWidth, setWindowWidth] = useState(1000);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
+	const router = useRouter();
 	const defaultFilterData = DefaultDataGenerator(CameraFilterTemplate(1));
 	const defaultData = DefaultDataGenerator(
 		CameraActionModalTemplate(isUseCompactModal)
@@ -183,6 +186,9 @@ export default function Home() {
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
+				handleBodyLocate={() =>
+					router.push(`${ROUTE.OVERVIEW}?id=${informModalData.car_id}`)
+				}
 			/>
 			<InputModal
 				title={MODAL_LABEL.UPDATE_CAMERA + updateModalData.id}
@@ -235,13 +241,13 @@ export default function Home() {
 						handleOnClickRefresh={handleOnClickRefresh}
 						columns={CamerasTableTemplate}
 						rows={(cameras as ICamera[]) ?? []}
-						handleOnClickInformation={(data) =>
+						handleOnClickInformation={(data: ICamera) =>
 							handleOpenModal(data, setOpenInformModal, setInformModalData)
 						}
-						handleOnClickUpdate={(data) =>
+						handleOnClickUpdate={(data: ICamera) =>
 							handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
 						}
-						handleOnClickDelete={(data) =>
+						handleOnClickDelete={(data: ICamera) =>
 							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
 						}
 						isLoading={isCamerasLoading || isCarsListLoading}

@@ -48,7 +48,7 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 								*
 							</p>
 						)}
-						{props.handleLocate && (
+						{props.handleLocate && props.title === 'Car' && (
 							<IconButton
 								disableRipple
 								className="p-none text-primary_blue"

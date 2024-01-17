@@ -12,19 +12,31 @@ export const CarsHeartbeatTableTemplate: TableHeaderProps<ICarHeartbeat>[] = [
 	{
 		id: 'status',
 		label: HEARTBEAT_TABLE_LABEL.STATUS,
-		align: 'left',
+		align: 'center',
 		isSorted: true,
 	},
 	{
 		id: 'front_cam',
 		label: HEARTBEAT_TABLE_LABEL.FRONT_CAM,
-		align: 'left',
+		align: 'center',
 		isSorted: true,
 	},
 	{
 		id: 'back_cam',
 		label: HEARTBEAT_TABLE_LABEL.BACK_CAM,
-		align: 'left',
+		align: 'center',
+		isSorted: true,
+	},
+	{
+		id: 'left_cam',
+		label: HEARTBEAT_TABLE_LABEL.LEFT_CAM,
+		align: 'center',
+		isSorted: true,
+	},
+	{
+		id: 'right_cam',
+		label: HEARTBEAT_TABLE_LABEL.RIGHT_CAM,
+		align: 'center',
 		isSorted: true,
 	},
 	{
@@ -45,7 +57,7 @@ export const RSUsHeartbeatTableTemplate: TableHeaderProps<IRSUHeartbeat>[] = [
 	{
 		id: 'status',
 		label: HEARTBEAT_TABLE_LABEL.STATUS,
-		align: 'left',
+		align: 'center',
 		isSorted: true,
 	},
 	{
