@@ -38,6 +38,7 @@ import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
 import Table from '@/components/module/Table/Table';
+import Loading from '@/components/common/Loading';
 
 export default function Home() {
 	const [windowWidth, setWindowWidth] = useState(1000);
