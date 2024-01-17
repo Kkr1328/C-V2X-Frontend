@@ -36,7 +36,11 @@ export default function TableContent<T extends TableRowProps>(
 	props: TableContentProps<T>
 ) {
 	return (
-		<TableContainer className="flex flex-col max-h-[60vh] h-auto min-h-[200px] overflow-x-auto overflow-y-scroll">
+		<TableContainer
+			className={`flex flex-col max-h-[60vh] ${
+				props.isLoading || props.rows.length === 0 ? 'h-full' : 'h-auto'
+			} min-h-[200px] overflow-x-auto overflow-y-auto`}
+		>
 			<Table stickyHeader sx={{ width: '100%', tableLayout: 'fixed' }}>
 				<TableHead>
 					<TableRow>

@@ -1,3 +1,5 @@
+// next
+import { useRouter } from 'next/navigation';
 // react
 import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
@@ -10,6 +12,7 @@ import EmergencyCard from './EmergencyCard';
 // types
 import { Emergency, EmergencyColumn } from '@/types/COMMON';
 import { IEmergency } from '@/types/models/emergency.model';
+import { ROUTE } from '@/constants/ROUTE';
 
 interface EmergencyStateProps {
 	droppableId: EmergencyColumn;
@@ -19,6 +22,7 @@ interface EmergencyStateProps {
 }
 
 export default function EmergencyState(props: EmergencyStateProps) {
+	const router = useRouter();
 	const emergenciesCount = props.emergencies.length;
 
 	return (
@@ -63,6 +67,11 @@ export default function EmergencyState(props: EmergencyStateProps) {
 												carName={emergency.car_name}
 												time={emergency.time}
 												driverPhoneNo={emergency.driver_phone_no}
+												handleLocate={() =>
+													router.push(
+														`${ROUTE.OVERVIEW}?id=${emergency.car_id}`
+													)
+												}
 												state={props.title}
 											/>
 										);

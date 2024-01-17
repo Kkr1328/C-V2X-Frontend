@@ -40,7 +40,7 @@ import { WindowWidthObserver } from '@/utils/WidthObserver';
 import Table from '@/components/module/Table/Table';
 
 export default function Home() {
-	const [windowWidth, setWindowWidth] = useState(0);
+	const [windowWidth, setWindowWidth] = useState(1000);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
@@ -200,17 +200,17 @@ export default function Home() {
 						handleOnClickRefresh={handleOnClickRefresh}
 						columns={DriversTableTemplate}
 						rows={drivers ?? []}
-						handleOnClickInformation={(data) =>
+						handleOnClickInformation={(data: IDriver) =>
 							handleOpenModal(data, setOpenInformModal, setInformModalData)
 						}
-						handleOnClickUpdate={(data) =>
+						handleOnClickUpdate={(data: IDriver) =>
 							handleOpenModal(
 								data as IDriverInput,
 								setOpenUpdateModal,
 								setUpdateModalData
 							)
 						}
-						handleOnClickDelete={(data) =>
+						handleOnClickDelete={(data: IDriver) =>
 							handleOpenModal(
 								data as IDriverInput,
 								setOpenDeleteModal,
