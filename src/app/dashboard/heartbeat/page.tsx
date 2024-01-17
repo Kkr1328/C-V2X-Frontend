@@ -295,12 +295,6 @@ export default function Home() {
 									}
 								/>
 							</Grid>
-						)}
-						<Grid item xs={useCompactContent ? 17 : 6}>
-							<TableCV2X<IRSUHeartbeat>
-								columns={RSUsHeartbeatTableTemplate}
-								rows={MockedRSUsHeartbeatTableContent}
-							/>
 						</Grid>
 					</div>
 				</Card>
