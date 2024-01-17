@@ -68,7 +68,9 @@ export default function EmergencyState(props: EmergencyStateProps) {
 												time={emergency.time}
 												driverPhoneNo={emergency.driver_phone_no}
 												handleLocate={() =>
-													router.push(`${ROUTE.OVERVIEW}?car_id=${'carxxx01'}`)
+													router.push(
+														`${ROUTE.OVERVIEW}?id=${emergency.car_id}`
+													)
 												}
 												state={props.title}
 											/>

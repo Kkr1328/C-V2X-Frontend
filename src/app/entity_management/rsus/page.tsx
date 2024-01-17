@@ -1,6 +1,8 @@
 'use client';
 // react
 import { Fragment, useEffect, useState } from 'react';
+// next
+import { useRouter } from 'next/navigation';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
@@ -13,6 +15,7 @@ import InputModal from '@/components/module/Modal/InputModal';
 import InfoModal from '@/components/module/Modal/InfoModal';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
+import { ROUTE } from '@/constants/ROUTE';
 // types
 import { IGetRSUsRequest, IRSU } from '@/types/models/rsu.model';
 // templates
@@ -41,6 +44,7 @@ export default function Home() {
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
+	const router = useRouter();
 	const defaultFilterData = DefaultDataGenerator(RSUFilterTemplate(1));
 	const defaultData = DefaultDataGenerator(
 		RSUActionModalTemplate(isUseCompactModal)
@@ -140,6 +144,9 @@ export default function Home() {
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
+				handleHeaderLocate={() =>
+					router.push(`${ROUTE.OVERVIEW}?id=${informModalData.id}`)
+				}
 			/>
 			<InputModal
 				title={MODAL_LABEL.UPDATE_RSU + updateModalData.id}

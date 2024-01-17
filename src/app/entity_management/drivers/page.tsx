@@ -200,17 +200,17 @@ export default function Home() {
 						handleOnClickRefresh={handleOnClickRefresh}
 						columns={DriversTableTemplate}
 						rows={drivers ?? []}
-						handleOnClickInformation={(data) =>
+						handleOnClickInformation={(data: IDriver) =>
 							handleOpenModal(data, setOpenInformModal, setInformModalData)
 						}
-						handleOnClickUpdate={(data) =>
+						handleOnClickUpdate={(data: IDriver) =>
 							handleOpenModal(
 								data as IDriverInput,
 								setOpenUpdateModal,
 								setUpdateModalData
 							)
 						}
-						handleOnClickDelete={(data) =>
+						handleOnClickDelete={(data: IDriver) =>
 							handleOpenModal(
 								data as IDriverInput,
 								setOpenDeleteModal,
