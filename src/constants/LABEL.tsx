@@ -96,6 +96,8 @@ export enum HEARTBEAT_TABLE_LABEL {
 	CAR = 'Car',
 	FRONT_CAM = 'Front camera',
 	BACK_CAM = 'Back camera',
+	LEFT_CAM = 'Left camera',
+	RIGHT_CAM = 'Right camera',
 	RSU = 'RSU',
 	STATUS = 'Status',
 	ACTION = 'Action',

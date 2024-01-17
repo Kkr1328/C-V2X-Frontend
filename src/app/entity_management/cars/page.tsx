@@ -1,6 +1,8 @@
 'use client';
 // react
 import { Fragment, useEffect, useState } from 'react';
+// next
+import { useRouter } from 'next/navigation';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
@@ -13,6 +15,7 @@ import InfoModal from '@/components/module/Modal/InfoModal';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
+import { ROUTE } from '@/constants/ROUTE';
 // types
 import { ICar, ICarInfo, IGetCarsRequest } from '@/types/models/car.model';
 // templates
@@ -43,6 +46,7 @@ export default function Home() {
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
+	const router = useRouter();
 	const defaultFilterData = DefaultDataGenerator(CarFilterTemplate(1));
 	const defaultData = DefaultDataGenerator(
 		CarActionModalTemplate(isUseCompactModal)
@@ -146,12 +150,22 @@ export default function Home() {
 		const back_cam =
 			informData.cameras.length !== 0 &&
 			informData.cameras.filter((camera) => camera.position === 'Back')[0];
+		const left_cam =
+			informData.cameras.length !== 0 &&
+			informData.cameras.filter((camera) => camera.position === 'Left')[0];
+		const right_cam =
+			informData.cameras.length !== 0 &&
+			informData.cameras.filter((camera) => camera.position === 'Right')[0];
 		setInformModalData({
 			...informData,
 			front_cam_position: front_cam ? front_cam.position : '',
 			front_cam_name: front_cam ? front_cam.name : '',
 			back_cam_position: back_cam ? back_cam.position : '',
 			back_cam_name: back_cam ? back_cam.name : '',
+			left_cam_position: left_cam ? left_cam.position : '',
+			left_cam_name: left_cam ? left_cam.name : '',
+			right_cam_position: right_cam ? right_cam.position : '',
+			right_cam_name: right_cam ? right_cam.name : '',
 		});
 		setOpenInformModal(true);
 	};
@@ -207,6 +221,9 @@ export default function Home() {
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
+				handleHeaderLocate={() =>
+					router.push(`${ROUTE.OVERVIEW}?id=${informModalData.id}`)
+				}
 			/>
 			<InputModal
 				title={MODAL_LABEL.UPDATE_CAR + updateModalData.id}
