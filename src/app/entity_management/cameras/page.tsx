@@ -1,6 +1,8 @@
 'use client';
 // react
 import { Fragment, useEffect, useState } from 'react';
+// next
+import { useRouter } from 'next/navigation';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
@@ -13,6 +15,7 @@ import InfoModal from '@/components/module/Modal/InfoModal';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
+import { ROUTE } from '@/constants/ROUTE';
 // types
 import { ICamera, IGetCamerasRequest } from '@/types/models/camera.model';
 // templates
@@ -35,13 +38,15 @@ import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
 import Table from '@/components/module/Table/Table';
+import Loading from '@/components/common/Loading';
 
 export default function Home() {
-	const [windowWidth, setWindowWidth] = useState(0);
+	const [windowWidth, setWindowWidth] = useState(1000);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
+	const router = useRouter();
 	const defaultFilterData = DefaultDataGenerator(CameraFilterTemplate(1));
 	const defaultData = DefaultDataGenerator(
 		CameraActionModalTemplate(isUseCompactModal)
@@ -50,7 +55,7 @@ export default function Home() {
 	const [search, setSearch] = useState<IGetCamerasRequest>(defaultFilterData);
 
 	const {
-		isLoading: camerasLoading,
+		isLoading: isCamerasLoading,
 		data: cameras,
 		refetch: refetchGetCameras,
 	} = useQuery({
@@ -58,7 +63,11 @@ export default function Home() {
 		queryFn: async () => await getCamerasAPI(search),
 	});
 
-	const { data: carsList, refetch: refetchGetCarsList } = useQuery({
+	const {
+		isLoading: isCarsListLoading,
+		data: carsList,
+		refetch: refetchGetCarsList,
+	} = useQuery({
 		queryKey: ['getCarsList'],
 		queryFn: async () => await getCarsListAPI(),
 	});
@@ -168,6 +177,7 @@ export default function Home() {
 				data={registerModalData}
 				onDataChange={setRegisterModalData}
 				onSubmit={() => createCamera.mutate(registerModalData)}
+				isPending={createCamera.isPending}
 				options={options}
 			/>
 			<InfoModal
@@ -177,6 +187,9 @@ export default function Home() {
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
+				handleBodyLocate={() =>
+					router.push(`${ROUTE.OVERVIEW}?id=${informModalData.car_id}`)
+				}
 			/>
 			<InputModal
 				title={MODAL_LABEL.UPDATE_CAMERA + updateModalData.id}
@@ -192,6 +205,7 @@ export default function Home() {
 						request: updateModalData,
 					})
 				}
+				isPending={updateCamera.isPending}
 				options={options}
 			/>
 			<DeleteModal
@@ -201,10 +215,11 @@ export default function Home() {
 				}
 				entity={deleteModalData.id + ' camera'}
 				onSubmit={() => deleteCamera.mutate(deleteModalData)}
+				isPending={deleteCamera.isPending}
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CAMERAS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={CameraFilterTemplate}
 						handleSubmitSearch={refetchGetCameras}
@@ -227,16 +242,16 @@ export default function Home() {
 						handleOnClickRefresh={handleOnClickRefresh}
 						columns={CamerasTableTemplate}
 						rows={(cameras as ICamera[]) ?? []}
-						handleOnClickInformation={(data) =>
+						handleOnClickInformation={(data: ICamera) =>
 							handleOpenModal(data, setOpenInformModal, setInformModalData)
 						}
-						handleOnClickUpdate={(data) =>
+						handleOnClickUpdate={(data: ICamera) =>
 							handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
 						}
-						handleOnClickDelete={(data) =>
+						handleOnClickDelete={(data: ICamera) =>
 							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
 						}
-						isLoading={camerasLoading}
+						isLoading={isCamerasLoading || isCarsListLoading}
 					/>
 				</Card>
 			</div>

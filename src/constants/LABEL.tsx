@@ -56,7 +56,8 @@ export enum BUTTON_LABEL {
 	NO_DATA = 'No results found',
 	VISIBLE = 'Visible',
 	INVISIBLE = 'Invisible',
-	CANCLE = 'Cancle'
+	CANCLE = 'Cancle',
+	HELP = 'Help',
 }
 
 export enum PILL_LABEL {
@@ -101,6 +102,8 @@ export enum HEARTBEAT_TABLE_LABEL {
 	CAR = 'Car',
 	FRONT_CAM = 'Front camera',
 	BACK_CAM = 'Back camera',
+	LEFT_CAM = 'Left camera',
+	RIGHT_CAM = 'Right camera',
 	RSU = 'RSU',
 	STATUS = 'Status',
 	ACTION = 'Action',

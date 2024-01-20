@@ -1,6 +1,8 @@
 'use client';
 // react
 import { Fragment, useEffect, useState } from 'react';
+// next
+import { useRouter } from 'next/navigation';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
@@ -13,6 +15,7 @@ import InputModal from '@/components/module/Modal/InputModal';
 import InfoModal from '@/components/module/Modal/InfoModal';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
+import { ROUTE } from '@/constants/ROUTE';
 // types
 import { IGetRSUsRequest, IRSU } from '@/types/models/rsu.model';
 // templates
@@ -36,11 +39,12 @@ import { WindowWidthObserver } from '@/utils/WidthObserver';
 import Table from '@/components/module/Table/Table';
 
 export default function Home() {
-	const [windowWidth, setWindowWidth] = useState(0);
+	const [windowWidth, setWindowWidth] = useState(1000);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
+	const router = useRouter();
 	const defaultFilterData = DefaultDataGenerator(RSUFilterTemplate(1));
 	const defaultData = DefaultDataGenerator(
 		RSUActionModalTemplate(isUseCompactModal)
@@ -49,7 +53,7 @@ export default function Home() {
 	const [search, setSearch] = useState<IGetRSUsRequest>(defaultFilterData);
 
 	const {
-		isLoading: rsusLoading,
+		isLoading: isRsusLoading,
 		data: rsus,
 		refetch: refetchGetRSUs,
 	} = useQuery({
@@ -131,6 +135,7 @@ export default function Home() {
 				data={registerModalData}
 				onDataChange={setRegisterModalData}
 				onSubmit={() => createRSU.mutate(registerModalData)}
+				isPending={createRSU.isPending}
 			/>
 			<InfoModal
 				title={informModalData.name}
@@ -139,6 +144,9 @@ export default function Home() {
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
+				handleHeaderLocate={() =>
+					router.push(`${ROUTE.OVERVIEW}?id=${informModalData.id}`)
+				}
 			/>
 			<InputModal
 				title={MODAL_LABEL.UPDATE_RSU + updateModalData.id}
@@ -154,6 +162,7 @@ export default function Home() {
 						request: updateModalData,
 					})
 				}
+				isPending={updateRSU.isPending}
 			/>
 			<DeleteModal
 				open={openDeleteModal}
@@ -162,10 +171,11 @@ export default function Home() {
 				}
 				entity={deleteModalData.id + ' RSU'}
 				onSubmit={() => deleteRSU.mutate(deleteModalData)}
+				isPending={deleteRSU.isPending}
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.RSUS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={RSUFilterTemplate}
 						handleSubmitSearch={refetchGetRSUs}
@@ -196,7 +206,7 @@ export default function Home() {
 						handleOnClickDelete={(data) =>
 							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
 						}
-						isLoading={rsusLoading}
+						isLoading={isRsusLoading}
 					/>
 				</Card>
 			</div>
