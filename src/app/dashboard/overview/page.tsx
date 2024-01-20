@@ -3,8 +3,8 @@
 import PageTitle from '@/components/common/PageTitle';
 import SummaryCard from '@/components/common/SummaryCard';
 import ToggleButtonCV2X from '@/components/common/ToggleButtonCV2X';
-import CarCard from '@/components/overview/CarCard';
-import RSUMarker from '@/components/overview/RSUMarker';
+import CarCard from '@/components/common/CarCard';
+import RSUMarker from '@/components/common/RSUMarker';
 
 import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
 import { MAP_ASSETS } from '@/constants/ASSETS';
@@ -14,13 +14,13 @@ import { FLEET_CAR_LOCATION, FLEET_CAR_SPEED, FLEET_HEARTBEAT, FLEET_CAR, FocusS
 import { Card, Divider, List } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
 import { useEffect, useMemo, useRef, useState } from 'react';
-import RSUCard from '@/components/overview/RSUCard';
+import RSUCard from '@/components/common/RSUCard';
 import { useQuery } from '@tanstack/react-query';
 import { getCarsListAPI, getEmergencyListAPI, getRSUsListAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
 import { IResponseList } from '@/types/common/responseList.model';
 import { io } from 'socket.io-client';
-import DrivingTestLocationBtn from '@/components/overview/DrivingTestLocationBtn';
+import DrivingTestLocationBtn from '@/components/common/DrivingTestLocationBtn';
 
 export default function Home() {
 	const [focus, setFocus] = useState<FocusState>({

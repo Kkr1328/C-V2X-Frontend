@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import Pill from "../common/Pill";
+import Pill from "./Pill";
 import CarAvatar from "./CarAvatar";
 import { PILL_LABEL } from "@/constants/LABEL";
 import { useQuery } from "@tanstack/react-query";
