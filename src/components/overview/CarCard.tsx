@@ -59,6 +59,7 @@ function CarCardDetail(props: CarCardDetailProps) {
         {!isLoading &&
           <>
             <div className='my-4'>Driver : {data?.driver}</div>
+            <div className='my-4'>Phone No. : {data?.driver_phone_no}</div>
             {data?.cameras.map((camera: { id: string, name: string, position: string }) => (
               <div key={camera.id} className='my-4'>
                 {camera.position + " camera"} : {camera.name}
