@@ -1,28 +1,57 @@
-'use client'
-
+'use client';
+// react
+import { useEffect, useMemo, useRef, useState } from 'react';
+// material ui
+import { Card, Divider, Grid, Skeleton } from '@mui/material';
+// google map
+import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
+// next
+import { useSearchParams } from 'next/navigation';
+// components
 import PageTitle from '@/components/common/PageTitle';
 import SummaryCard from '@/components/common/SummaryCard';
 import ToggleButtonCV2X from '@/components/common/ToggleButtonCV2X';
 import CarCard from '@/components/common/CarCard';
 import RSUMarker from '@/components/common/RSUMarker';
-
-import { NAVBAR_LABEL, OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL, PILL_LABEL } from '@/constants/LABEL';
+import RSUCard from '@/components/common/RSUCard';
+// const
+import {
+	NAVBAR_LABEL,
+	OVERVIEW_SUMMARY_CARD_LABEL as SUMMARY_LABEL,
+	PILL_LABEL,
+} from '@/constants/LABEL';
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
-import { FLEET_CAR_LOCATION, FLEET_CAR_SPEED, FLEET_HEARTBEAT, FLEET_CAR, FocusState, StuffLocation, FLEET_RSU } from '@/types/OVERVIEW';
-
-import { Card, Divider, List } from '@mui/material';
-import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
-import { useEffect, useMemo, useRef, useState } from 'react';
-import RSUCard from '@/components/common/RSUCard';
+// types
+import { FLEET_CAR, FLEET_CAR_LOCATION, FLEET_CAR_SPEED, FLEET_HEARTBEAT, FLEET_RSU, FocusState, StuffLocation } from '@/types/OVERVIEW';
+// utilities
+import { WidthObserver } from '@/utils/WidthObserver';
 import { useQuery } from '@tanstack/react-query';
 import { getCarsListAPI, getEmergencyListAPI, getRSUsListAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
-import { IResponseList } from '@/types/common/responseList.model';
 import { io } from 'socket.io-client';
+import { IResponseList } from '@/types/common/responseList.model';
 import DrivingTestLocationBtn from '@/components/common/DrivingTestLocationBtn';
 
 export default function Home() {
+	const searchParams = useSearchParams();
+	const id = searchParams.get('id');
+	useEffect(() => {
+		if (id) {
+			clickOnCarCard(id);
+		}
+	}, [id]);
+
+	const pageRef = useRef<HTMLDivElement>(null);
+	const [pageWidth, setPageWidth] = useState<number>(
+		pageRef.current?.clientWidth as number
+	);
+	useEffect(() => WidthObserver(pageRef.current, setPageWidth), []);
+	const useCompactSummaries = pageWidth < 500;
+	const useMediumSummaries = pageWidth < 1000;
+	const summariesXs = useCompactSummaries ? 4 : useMediumSummaries ? 2 : 1;
+	const useCompactContent = pageWidth < 1000;
+
 	const [focus, setFocus] = useState<FocusState>({
 		id: "",
 		type: 'CAR',
@@ -207,118 +236,155 @@ export default function Home() {
 	}
 
 	return (
-		<>
-			<div className='mb-16'><PageTitle title={NAVBAR_LABEL.OVERVIEW} /></div>
-			<div className='flex gap-32'>
-				<SummaryCard
-					title={SUMMARY_LABEL.ACTIVE_CAR}
-					value={`${activeCar ?? '-'} / ${fetchCarsList?.length ?? '-'}`}
-					isLoading={carsListLoading}
-				/>
-				<SummaryCard
-					title={SUMMARY_LABEL.ACTIVE_RSU}
-					value={`${activeRSU ?? '-'} / ${fetchRSUsList?.length ?? '-'}`}
-					isLoading={rsuListLoading}
-				/>
-				<SummaryCard
-					title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
-					value={inProgressEmergency?.length ?? "-"}
-					isLoading={isEmergencyListLoading}
-				/>
-				<SummaryCard
-					title={SUMMARY_LABEL.PENDING_EMERGENCY}
-					value={pendingEmergency.current?.length ?? "-"}
-					isLoading={isEmergencyListLoading}
-				/>
-			</div>
-			<Card className='flex w-full h-[60%] my-32 rounded-lg px-32 py-24'>
-				{isMapLoadFinish &&
-					<GoogleMap
-						zoom={14}
-						center={MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER}
-						mapContainerClassName="w-[70%]"
-						onLoad={map => setMap(map)}
-						options={{
-							mapTypeControlOptions: {
-								position: google.maps.ControlPosition.TOP_RIGHT
-							},
-							keyboardShortcuts: false,
-							zoomControl: false,
-							streetViewControl: false,
-							fullscreenControl: false
-						}}
-					>
-						<DrivingTestLocationBtn setFocus={setFocus} />
-						{
-							Object.entries(carListData).map(([id, car]) =>
-								<Marker
-									icon={{
-										url: `${MAP_ASSETS.CAR_PIN}${car.status}.svg`,
-										scaledSize: focus.id === id ?
-											new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) :
-											new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
-									}}
-									onClick={() => changeFocus({ id, type: 'CAR', location: car.location, status: car.status } as StuffLocation)}
-									position={car.location}
-									key={id}
-								/>
-							)
-						}
-						{
-							Object.entries(rsuListData).map(([id, RSU]) =>
-								<RSUMarker
-									location={RSU.location}
-									isFocus={focus.id === id}
-									onClick={() => changeFocus({ id, type: 'RSU', location: RSU.location } as StuffLocation)}
-									key={id}
-								/>
-							)
-						}
-					</GoogleMap>
-				}
-				<Divider className='border mx-24' orientation='vertical' />
-				<div className='flex flex-col w-[30%]'>
-					<ToggleButtonCV2X
-						options={[PILL_LABEL.ALL, PILL_LABEL.EMERGENCY, PILL_LABEL.WARNING]}
-						value={pillMode ?? ""}
-						onChange={(_event, value) => changePillMode(value)}
+		<div
+			ref={pageRef}
+			className="flex flex-col w-full min-w-[300px] h-auto gap-16"
+		>
+			<PageTitle title={NAVBAR_LABEL.OVERVIEW} />
+			<Grid
+				container
+				columns={{ xs: 4 }}
+				rowSpacing={2}
+				columnSpacing={{ xs: 2 }}
+			>
+				<Grid item xs={summariesXs}>
+					<SummaryCard
+						title={SUMMARY_LABEL.ACTIVE_CAR}
+						value={`${activeCar ?? '-'} / ${fetchCarsList?.length ?? '-'}`}
+						isLoading={carsListLoading}
 					/>
-					<List className='grow overflow-y-scroll'>
-						{focus.type === "CAR" ?
-							<>
-								{
-									Object.entries(carListData)
-										.filter(([_id, car]) => car.status && (car.status === pillMode || pillMode === PILL_LABEL.ALL) && car.status !== PILL_LABEL.INACTIVE)
-										.map(([id, car]) =>
-											<CarCard
-												key={id}
-												car={{
-													id,
-													name: car.name,
-													status: car.status,
-													speed: `${car.speed?.velocity.toString() ?? 'loading...'} ${car.speed?.unit.toString() ?? ''}`,
-												}}
-												isFocus={id === focus.id}
-												onClick={() => clickOnCarCard(id)}
-											/>
-										)
-								}
-							</>
-							:
-							<RSUCard
-								id={focus.id}
-								connectedCar={
-									rsuListData[focus.id].connected_OBU?.map((id) => ({
-										name: carListData[id].name,
-										status: carListData[id].status,
-										speed: `${carListData[id].speed?.velocity.toString() ?? 'loading...'} ${carListData[id].speed?.unit ?? ''}`
-									}))
-								}
+				</Grid>
+				<Grid item xs={summariesXs}>
+					<SummaryCard
+						title={SUMMARY_LABEL.ACTIVE_RSU}
+						value={`${activeRSU ?? '-'} / ${fetchRSUsList?.length ?? '-'}`}
+						isLoading={rsuListLoading}
+					/>
+				</Grid>
+				<Grid item xs={summariesXs}>
+					<SummaryCard
+						title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
+						value={inProgressEmergency?.length ?? "-"}
+						isLoading={isEmergencyListLoading}
+					/>
+				</Grid>
+				<Grid item xs={summariesXs}>
+					<SummaryCard
+						title={SUMMARY_LABEL.PENDING_EMERGENCY}
+						value={pendingEmergency.current?.length ?? "-"}
+						isLoading={isEmergencyListLoading}
+					/>
+				</Grid>
+			</Grid>
+			<Card className="flex w-full h-auto rounded-lg px-24 py-24">
+				<Grid
+					container
+					columns={{ xs: 81 }}
+					rowSpacing={1}
+					columnSpacing={{ xs: 1 }}
+				>
+					<Grid item xs={useCompactContent ? 81 : 56}>
+						{!isMapLoadFinish ? (
+							<Skeleton
+								animation="wave"
+								variant="rectangular"
+								className="rounded-md h-full"
 							/>
-						}
-					</List>
-				</div>
+						) : (
+							<GoogleMap
+								zoom={14}
+								center={MAP_OBJECT_CONFIG.INITIAL_MAP_CENTER}
+								mapContainerClassName="h-full min-h-[500px] w-full rounded-md"
+								onLoad={map => setMap(map)}
+								options={{
+									mapTypeControlOptions: {
+										position: google.maps.ControlPosition.TOP_RIGHT
+									},
+									keyboardShortcuts: false,
+									zoomControl: false,
+									streetViewControl: false,
+									fullscreenControl: false
+								}}
+							>
+								<DrivingTestLocationBtn setFocus={setFocus} />
+								{
+									Object.entries(carListData).map(([id, car]) =>
+										<Marker
+											icon={{
+												url: `${MAP_ASSETS.CAR_PIN}${car.status}.svg`,
+												scaledSize: focus.id === id ?
+													new google.maps.Size(MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE, MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE) :
+													new google.maps.Size(MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE, MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE)
+											}}
+											onClick={() => changeFocus({ id, type: 'CAR', location: car.location, status: car.status } as StuffLocation)}
+											position={car.location}
+											key={id}
+										/>
+									)
+								}
+								{
+									Object.entries(rsuListData).map(([id, RSU]) =>
+										<RSUMarker
+											location={RSU.location}
+											isFocus={focus.id === id}
+											onClick={() => changeFocus({ id, type: 'RSU', location: RSU.location } as StuffLocation)}
+											key={id}
+										/>
+									)
+								}
+							</GoogleMap>
+						)}
+					</Grid>
+					{!useCompactContent && (
+						<Grid item xs={1} className="flex items-center justify-center">
+							<Divider orientation="vertical" />
+						</Grid>
+					)}
+					<Grid item xs={useCompactContent ? 81 : 24}>
+						<div className='flex flex-col w-full gap-16'>
+							<ToggleButtonCV2X
+								options={[PILL_LABEL.ALL, PILL_LABEL.EMERGENCY, PILL_LABEL.WARNING]}
+								value={pillMode ?? ''}
+								onChange={(_event, value) => changePillMode(value)}
+							/>
+							<div className="flex flex-col w-full min-w-max h-full gap-16 pb-8 overflow-y-auto">
+								{focus.type === "CAR" ?
+									<>
+										{
+											Object.entries(carListData)
+												.filter(([_id, car]) => car.status && (car.status === pillMode || pillMode === PILL_LABEL.ALL) && car.status !== PILL_LABEL.INACTIVE)
+												.map(([id, car]) =>
+													<CarCard
+														key={id}
+														car={{
+															id,
+															name: car.name,
+															status: car.status,
+															speed: `${car.speed?.velocity.toString() ?? 'loading...'} ${car.speed?.unit.toString() ?? ''}`,
+														}}
+														isFocus={id === focus.id}
+														onClick={() => clickOnCarCard(id)}
+													/>
+												)
+										}
+									</>
+									:
+									<RSUCard
+										id={focus.id}
+										connectedCar={
+											rsuListData[focus.id].connected_OBU?.map((id) => ({
+												name: carListData[id].name,
+												status: carListData[id].status,
+												speed: `${carListData[id].speed?.velocity.toString() ?? 'loading...'} ${carListData[id].speed?.unit ?? ''}`
+											}))
+										}
+									/>
+								}
+							</div>
+						</div>
+					</Grid>
+				</Grid>
 			</Card>
-		</>
+		</div >
 	);
 }
