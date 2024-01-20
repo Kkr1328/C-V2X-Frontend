@@ -149,8 +149,8 @@ export default function Home() {
 					columnSpacing={1}
 					className="justify-center"
 				>
-					{MockedCarCamerasContent.map((data) => (
-						<Grid item xs={useCompactLayout ? 41 : 20}>
+					{MockedCarCamerasContent.map((data, index) => (
+						<Grid item key={index} xs={useCompactLayout ? 41 : 20}>
 							<CameraCard
 								carName={data.name}
 								status={PILL_LABEL.ACTIVE}

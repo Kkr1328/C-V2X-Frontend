@@ -63,8 +63,8 @@ export default function CameraCard(props: CameraCardProps) {
 				columnSpacing={1}
 				className="px-16 pb-16 justify-center"
 			>
-				{props.cameras.map((camera) => (
-					<Grid item xs={useCompactLayout ? 41 : 20}>
+				{props.cameras.map((camera, index) => (
+					<Grid item key={index} xs={useCompactLayout ? 41 : 20}>
 						<CameraSection
 							carName={props.carName}
 							position={camera.position}
