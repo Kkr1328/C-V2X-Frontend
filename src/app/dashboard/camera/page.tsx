@@ -1,73 +1,168 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Grid } from '@mui/material';
 
 import PageTitle from '@/components/common/PageTitle';
-import CarCameraCard from '@/components/module/CarCameraCard';
 
 import { NAVBAR_LABEL, PILL_LABEL } from '@/constants/LABEL';
-import Script from 'next/script'
+import Script from 'next/script';
+import { Position } from '@/types/COMMON';
+import CameraCard from '@/components/module/CameraCard';
+import { WidthObserver } from '@/utils/WidthObserver';
+import { useRouter } from 'next/navigation';
+import { ROUTE } from '@/constants/ROUTE';
 
 const MockedCarCamerasContent = [
 	{
 		name: 'Car01',
 		status: 'ACTIVE',
 		cameras: [
-			{ name: 'Cam01', position: 'Front', status: PILL_LABEL.ACTIVE },
-			{ name: 'Cam02', position: 'Back', status: PILL_LABEL.ACTIVE },
+			{
+				name: 'Cam01',
+				position: 'Front' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam02',
+				position: 'Back' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam03',
+				position: 'Left' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam04',
+				position: 'Right' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
 		],
 	},
 	{
 		name: 'Car02',
 		status: 'ACTIVE',
 		cameras: [
-			{ name: 'Cam01', position: 'Front', status: PILL_LABEL.ACTIVE },
-			{ name: 'Cam02', position: 'Back', status: PILL_LABEL.ACTIVE },
+			{
+				name: 'Cam01',
+				position: 'Front' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam02',
+				position: 'Back' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam03',
+				position: 'Left' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam04',
+				position: 'Right' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
 		],
 	},
 	{
 		name: 'Car03',
 		status: 'ACTIVE',
 		cameras: [
-			{ name: 'Cam01', position: 'Front', status: PILL_LABEL.ACTIVE },
-			{ name: 'Cam02', position: 'Back', status: PILL_LABEL.ACTIVE },
+			{
+				name: 'Cam01',
+				position: 'Front' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam02',
+				position: 'Back' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam03',
+				position: 'Left' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam04',
+				position: 'Right' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
 		],
 	},
 	{
 		name: 'Car04',
 		status: 'ACTIVE',
 		cameras: [
-			{ name: 'Cam01', position: 'Front', status: PILL_LABEL.ACTIVE },
-			{ name: 'Cam02', position: 'Back', status: PILL_LABEL.ACTIVE },
+			{
+				name: 'Cam01',
+				position: 'Front' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam02',
+				position: 'Back' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam03',
+				position: 'Left' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
+			{
+				name: 'Cam04',
+				position: 'Right' as Position,
+				status: PILL_LABEL.ACTIVE,
+			},
 		],
 	},
 ];
 
 export default function Home() {
-	// gonna fix later
-	const [locate, setLocate] = useState(true);
-	const onchange = () => {
-		setLocate(true);
-	};
+	const router = useRouter();
+	const contentRef = useRef<HTMLDivElement>(null);
+	const [contentWidth, setContentWidth] = useState<number>(
+		contentRef.current?.clientWidth as number
+	);
+	useEffect(() => WidthObserver(contentRef.current, setContentWidth), []);
+	const useCompactLayout = contentWidth < 1200;
+
 	return (
 		<>
-		<Script src="https://muazkhan.com:9001/dist/RTCMultiConnection.min.js" strategy='beforeInteractive'/>
-        <Script src="https://muazkhan.com:9001/socket.io/socket.io.js" strategy='beforeInteractive'/>
-			<PageTitle title={NAVBAR_LABEL.CAMERA} />
-			<Grid container spacing={2}>
-				{MockedCarCamerasContent.map((data) => (
-					<Grid item sm={6} xs={12}>
-						<CarCameraCard
-							carName={data.name}
-							cameraInfos={data.cameras}
-							carStatus={PILL_LABEL.ACTIVE}
-							handleLocate={onchange} // gonna fix later
-						/>
-					</Grid>
-				))}
-			</Grid>
+			<Script
+				src="https://muazkhan.com:9001/dist/RTCMultiConnection.min.js"
+				strategy="beforeInteractive"
+			/>
+			<Script
+				src="https://muazkhan.com:9001/socket.io/socket.io.js"
+				strategy="beforeInteractive"
+			/>
+			<div ref={contentRef} className="flex flex-col w-full h-auto gap-16">
+				<PageTitle title={NAVBAR_LABEL.CAMERA} />
+				<Grid
+					container
+					columns={{ xs: 41 }}
+					rowSpacing={2}
+					columnSpacing={1}
+					className="justify-center"
+				>
+					{MockedCarCamerasContent.map((data) => (
+						<Grid item xs={useCompactLayout ? 41 : 20}>
+							<CameraCard
+								carName={data.name}
+								status={PILL_LABEL.ACTIVE}
+								cameras={data.cameras}
+								handleLocate={() =>
+									router.push(`${ROUTE.OVERVIEW}?id=${data.name}`)
+								}
+							/>
+						</Grid>
+					))}
+				</Grid>
+			</div>
 		</>
 	);
 }
