@@ -56,6 +56,7 @@ export enum BUTTON_LABEL {
 	NO_DATA = 'No results found',
 	VISIBLE = 'Visible',
 	INVISIBLE = 'Invisible',
+	CANCLE = 'Cancle',
 	HELP = 'Help',
 }
 
@@ -85,6 +86,11 @@ export enum EMERGENCY_CARD_LABEL {
 	DRIVER_CONTACT = 'Driver contract: ',
 }
 
+export enum TAB_LABEL {
+	ORIGINAL = 'ORIGINAL',
+	OBJECT = 'OBJ DETECTION',
+	PANOPTIC = 'PANAOPTIC',
+}
 export enum OVERVIEW_SUMMARY_CARD_LABEL {
 	ACTIVE_CAR = 'Active car(s)',
 	ACTIVE_DRIVER = 'Active driver(s)',

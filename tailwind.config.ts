@@ -62,6 +62,7 @@ const config: Config = {
 			'8': '8px',
 			'12': '12px',
 			'16': '16px',
+			'20': '20px',
 			'24': '24px',
 			'32': '32px',
 			'40': '40px',
@@ -76,6 +77,7 @@ const config: Config = {
 			'280': '280px',
 			'300': '300px',
 			'600': '600px',
+			'1200': '1200px',
 		},
 		borderRadius: {
 			none: '0px',
