@@ -1,6 +1,6 @@
 'use client';
 // react
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 // material ui
 import { Card, Divider, Grid, Skeleton } from '@mui/material';
 // google map
@@ -26,7 +26,9 @@ import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 // utilities
 import { WidthObserver } from '@/utils/WidthObserver';
-
+// context
+import { CarSpeedFleetContext, HeartbeatFleetContext, LocationFleetContext } from '@/context/fleet';
+// mock
 import {
 	MockedCars,
 	MockedCarLocation,
@@ -42,6 +44,10 @@ export default function Home() {
 			clickOnCarCard(id);
 		}
 	}, [id]);
+
+	const [heartbeatContextData] = useContext(HeartbeatFleetContext)
+	const [locationContextData] = useContext(LocationFleetContext)
+	const [carSpeedContextData] = useContext(CarSpeedFleetContext)
 
 	const [focus, setFocus] = useState<FocusState | null>(null);
 	const [map, setMap] = useState<google.maps.Map>();
@@ -146,13 +152,13 @@ export default function Home() {
 											scaledSize:
 												focus?.id === CAR.id
 													? new google.maps.Size(
-															MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
-															MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
-													  )
+														MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
+														MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
+													)
 													: new google.maps.Size(
-															MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
-															MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
-													  ),
+														MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
+														MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
+													),
 										}}
 										onClick={() => changeFocus(CAR)}
 										position={CAR.location}
@@ -190,28 +196,28 @@ export default function Home() {
 							<div className="flex flex-col w-full min-w-max h-full gap-16 pb-8 overflow-y-auto">
 								{focus?.type === 'CAR' || focus === null
 									? MockedCars.filter(
-											(car) =>
-												car.status === pillMode || pillMode === PILL_LABEL.ALL
-									  )
-											.sort((car) => (car.id === focus?.id ? -1 : 1))
-											.map((car) => (
-												<CarCard
-													key={car.id}
-													car={car}
-													isFocus={car.id === focus?.id}
-													onClick={() => clickOnCarCard(car.id)}
-												/>
-											))
+										(car) =>
+											car.status === pillMode || pillMode === PILL_LABEL.ALL
+									)
+										.sort((car) => (car.id === focus?.id ? -1 : 1))
+										.map((car) => (
+											<CarCard
+												key={car.id}
+												car={car}
+												isFocus={car.id === focus?.id}
+												onClick={() => clickOnCarCard(car.id)}
+											/>
+										))
 									: MockedRSU.filter((all) => all.id === focus?.id).map(
-											(RSU) => (
-												<RSUCard
-													key={RSU.id}
-													name={RSU.name}
-													recommendSpeed={RSU.recommendSpeed}
-													connectedCar={RSU.connectedCar}
-												/>
-											)
-									  )}
+										(RSU) => (
+											<RSUCard
+												key={RSU.id}
+												name={RSU.name}
+												recommendSpeed={RSU.recommendSpeed}
+												connectedCar={RSU.connectedCar}
+											/>
+										)
+									)}
 							</div>
 						</div>
 					</Grid>
