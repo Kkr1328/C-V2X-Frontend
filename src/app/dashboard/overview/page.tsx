@@ -1,6 +1,6 @@
 'use client';
 // react
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 // material ui
 import { Card, Divider, Grid, Skeleton } from '@mui/material';
 // google map
@@ -25,8 +25,11 @@ import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 // types
 import { FocusState, StuffLocation } from '@/types/OVERVIEW';
+import { IEmergency } from '@/types/models/emergency.model';
 // utilities
 import { WidthObserver } from '@/utils/WidthObserver';
+import { getEmergencyListAPI } from '@/services/api-call';
+import { useQuery } from '@tanstack/react-query';
 
 import {
 	MockedCars,
@@ -58,6 +61,14 @@ export default function Home() {
 	const [map, setMap] = useState<google.maps.Map>();
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL);
 
+	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } = useQuery({
+		queryKey: ['getEmergencyList'],
+		queryFn: async () => await getEmergencyListAPI(),
+	});
+	const pendingEmergency = useRef(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"));
+	pendingEmergency.current = useMemo(() => dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"), [dataGetEmergencyList]);
+	const inProgressEmergency = useMemo(() => (dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress")), [dataGetEmergencyList])
+
 	const pageRef = useRef<HTMLDivElement>(null);
 	const [pageWidth, setPageWidth] = useState<number>(
 		pageRef.current?.clientWidth as number
@@ -84,7 +95,6 @@ export default function Home() {
 					? PILL_LABEL.ALL
 					: node.status ?? PILL_LABEL.ALL
 			);
-			map?.panTo(node.location);
 		}
 	}
 
@@ -93,7 +103,8 @@ export default function Home() {
 		if (focus?.type === 'RSU') {
 			setFocus({ id: focus?.id ?? '', type: 'CAR', location: null, zoom: null });
 		}
-		setPillMode(value);
+		// case: same pill mode
+		if (value !== null) { setPillMode(value) }
 	}
 
 	function clickOnCarCard(carID: string) {
@@ -122,11 +133,16 @@ export default function Home() {
 				<Grid item xs={summariesXs}>
 					<SummaryCard
 						title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
-						value={'7'}
+						value={inProgressEmergency?.length ?? "-"}
+						isLoading={isEmergencyListLoading}
 					/>
 				</Grid>
 				<Grid item xs={summariesXs}>
-					<SummaryCard title={SUMMARY_LABEL.PENDING_EMERGENCY} value={'3'} />
+					<SummaryCard
+						title={SUMMARY_LABEL.PENDING_EMERGENCY}
+						value={pendingEmergency.current?.length ?? "-"}
+						isLoading={isEmergencyListLoading}
+					/>
 				</Grid>
 			</Grid>
 			<Card className="flex w-full h-auto rounded-lg px-24 py-24">
