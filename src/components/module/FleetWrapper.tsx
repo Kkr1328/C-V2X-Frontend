@@ -5,7 +5,7 @@ import {
     CarSpeedFleetContext,
     LocationFleetContext
 } from '@/context/fleet';
-import { DEIVCE_TYPE, FLEET_CAR_SPEED, FLEET_HEARTBEAT, FLEET_LOCATION } from '@/types/FLEET';
+import { FLEET_CAR_SPEED, FLEET_HEARTBEAT, FLEET_LOCATION } from '@/types/FLEET';
 
 export default function FleetWrapper(props: { children: React.ReactNode }) {
     const [heartbeatData, setHeartbeatData] = useState<{
@@ -26,44 +26,61 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
             console.log('connected: fleeting websocket');
         })
 
-        socket.on('heartbeat', (heartbeat: FLEET_HEARTBEAT & DEIVCE_TYPE) => {
+        socket.on('heartbeat', (heartbeat: FLEET_HEARTBEAT) => {
             if (heartbeat.type === 'CAR') {
                 setHeartbeatData((prev) => {
                     return {
                         CAR: {
                             ...prev?.CAR,
-                            [heartbeat.id]: {
-                                ...heartbeat
-                            }
+                            [heartbeat.id]: { ...heartbeat }
                         },
-                        RSU: {
-                            ...prev?.RSU
-                        }
+                        RSU: { ...prev?.RSU }
                     }
                 })
             } else {
                 setHeartbeatData((prev) => {
                     return {
-                        CAR: {
-                            ...prev?.CAR
-                        },
+                        CAR: { ...prev?.CAR },
                         RSU: {
                             ...prev?.RSU,
-                            [heartbeat.id]: {
-                                ...heartbeat
-                            }
+                            [heartbeat.id]: { ...heartbeat }
                         }
                     }
                 })
             }
         })
 
-        socket.on('location', (location: FLEET_LOCATION & DEIVCE_TYPE) => {
-
+        socket.on('location', (location: FLEET_LOCATION) => {
+            if (location.type === 'CAR') {
+                setLocationData((prev) => {
+                    return {
+                        CAR: {
+                            ...prev?.CAR,
+                            [location.id]: { ...location }
+                        },
+                        RSU: { ...prev?.RSU }
+                    }
+                })
+            } else {
+                setLocationData((prev) => {
+                    return {
+                        CAR: { ...prev?.CAR },
+                        RSU: {
+                            ...prev?.RSU,
+                            [location.id]: { ...location }
+                        }
+                    }
+                })
+            }
         })
 
-        socket.on('car_speed', (car_speed: FLEET_CAR_SPEED & DEIVCE_TYPE) => {
-
+        socket.on('car_speed', (car_speed: FLEET_CAR_SPEED) => {
+            setCarSpeedData((prev) => {
+                return {
+                    ...prev,
+                    [car_speed.id]: { ...car_speed }
+                }
+            })
         })
 
         return () => {

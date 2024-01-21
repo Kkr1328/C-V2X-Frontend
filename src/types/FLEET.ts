@@ -4,6 +4,7 @@ type SPEED = { velocity: number; unit: string };
 
 export interface FLEET_HEARTBEAT {
 	id: string;
+	type: 'CAR' | 'RSU';
 	data: {
 		status: PILL_LABEL;
 		front_camera: PILL_LABEL;
@@ -15,6 +16,7 @@ export interface FLEET_HEARTBEAT {
 
 export interface FLEET_LOCATION {
 	id: string;
+	type: 'CAR' | 'RSU';
 	latitude: number;
 	longitude: number;
 	timestamp: string;
@@ -23,8 +25,4 @@ export interface FLEET_LOCATION {
 export interface FLEET_CAR_SPEED extends SPEED {
 	id: string;
 	timestamp: string;
-}
-
-export interface DEIVCE_TYPE {
-	type: 'CAR' | 'RSU';
 }
