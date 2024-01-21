@@ -14,6 +14,7 @@ import ToggleButtonCV2X from '@/components/common/ToggleButtonCV2X';
 import CarCard from '@/components/common/CarCard';
 import RSUMarker from '@/components/common/RSUMarker';
 import RSUCard from '@/components/common/RSUCard';
+import DrivingTestLocationBtn from '@/components/common/DrivingTestLocationBtn';
 // const
 import {
 	NAVBAR_LABEL,
@@ -44,6 +45,16 @@ export default function Home() {
 	}, [id]);
 
 	const [focus, setFocus] = useState<FocusState | null>(null);
+	useEffect(() => {
+		if (!focus) return
+		if (focus.location) {
+			map?.panTo(focus.location)
+		}
+		if (focus.zoom) {
+			map?.setZoom(focus.zoom)
+		}
+	}, [focus])
+
 	const [map, setMap] = useState<google.maps.Map>();
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL);
 
@@ -67,7 +78,7 @@ export default function Home() {
 			setFocus(null);
 			setPillMode(PILL_LABEL.ALL);
 		} else {
-			setFocus({ id: node.id, type: node.type });
+			setFocus({ id: node.id, type: node.type, location: node.location, zoom: null });
 			setPillMode(
 				node.status === PILL_LABEL.ACTIVE
 					? PILL_LABEL.ALL
@@ -78,10 +89,11 @@ export default function Home() {
 	}
 
 	function changePillMode(value: PILL_LABEL) {
-		setFocus({ id: focus?.id ?? '', type: 'CAR' });
-		if (value !== null) {
-			setPillMode(value);
+		// case: focus is on RSU
+		if (focus?.type === 'RSU') {
+			setFocus({ id: focus?.id ?? '', type: 'CAR', location: null, zoom: null });
 		}
+		setPillMode(value);
 	}
 
 	function clickOnCarCard(carID: string) {
@@ -133,12 +145,21 @@ export default function Home() {
 							/>
 						) : (
 							<GoogleMap
-								options={{ disableDefaultUI: true }}
+								options={{
+									mapTypeControlOptions: {
+										position: google.maps.ControlPosition.TOP_RIGHT
+									},
+									keyboardShortcuts: false,
+									zoomControl: false,
+									streetViewControl: false,
+									fullscreenControl: false
+								}}
 								zoom={14}
 								center={MockedCarLocation[0].location}
 								mapContainerClassName="h-full min-h-[500px] w-full rounded-md"
 								onLoad={(map) => setMap(map)}
 							>
+								<DrivingTestLocationBtn setFocus={setFocus} />
 								{MockedCarLocation.map((CAR) => (
 									<Marker
 										icon={{
@@ -146,13 +167,13 @@ export default function Home() {
 											scaledSize:
 												focus?.id === CAR.id
 													? new google.maps.Size(
-															MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
-															MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
-													  )
+														MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
+														MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
+													)
 													: new google.maps.Size(
-															MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
-															MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
-													  ),
+														MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
+														MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
+													),
 										}}
 										onClick={() => changeFocus(CAR)}
 										position={CAR.location}
@@ -190,28 +211,28 @@ export default function Home() {
 							<div className="flex flex-col w-full min-w-max h-full gap-16 pb-8 overflow-y-auto">
 								{focus?.type === 'CAR' || focus === null
 									? MockedCars.filter(
-											(car) =>
-												car.status === pillMode || pillMode === PILL_LABEL.ALL
-									  )
-											.sort((car) => (car.id === focus?.id ? -1 : 1))
-											.map((car) => (
-												<CarCard
-													key={car.id}
-													car={car}
-													isFocus={car.id === focus?.id}
-													onClick={() => clickOnCarCard(car.id)}
-												/>
-											))
+										(car) =>
+											car.status === pillMode || pillMode === PILL_LABEL.ALL
+									)
+										.sort((car) => (car.id === focus?.id ? -1 : 1))
+										.map((car) => (
+											<CarCard
+												key={car.id}
+												car={car}
+												isFocus={car.id === focus?.id}
+												onClick={() => clickOnCarCard(car.id)}
+											/>
+										))
 									: MockedRSU.filter((all) => all.id === focus?.id).map(
-											(RSU) => (
-												<RSUCard
-													key={RSU.id}
-													name={RSU.name}
-													recommendSpeed={RSU.recommendSpeed}
-													connectedCar={RSU.connectedCar}
-												/>
-											)
-									  )}
+										(RSU) => (
+											<RSUCard
+												key={RSU.id}
+												name={RSU.name}
+												recommendSpeed={RSU.recommendSpeed}
+												connectedCar={RSU.connectedCar}
+											/>
+										)
+									)}
 							</div>
 						</div>
 					</Grid>
