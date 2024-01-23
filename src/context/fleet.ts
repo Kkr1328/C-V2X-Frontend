@@ -10,36 +10,36 @@ const HeartbeatFleetContext = createContext<
 		{
 			CAR: { [id: string]: FLEET_HEARTBEAT };
 			RSU: { [id: string]: FLEET_HEARTBEAT };
-		} | null,
+		},
 		Dispatch<
 			SetStateAction<{
 				CAR: { [id: string]: FLEET_HEARTBEAT };
 				RSU: { [id: string]: FLEET_HEARTBEAT };
-			} | null>
+			}>
 		>
 	]
->([null, () => {}]);
+>([{ CAR: {}, RSU: {} }, () => {}]);
 
 const LocationFleetContext = createContext<
 	[
 		{
 			CAR: { [id: string]: FLEET_LOCATION };
 			RSU: { [id: string]: FLEET_LOCATION };
-		} | null,
+		},
 		Dispatch<
 			SetStateAction<{
 				CAR: { [id: string]: FLEET_LOCATION };
 				RSU: { [id: string]: FLEET_LOCATION };
-			} | null>
+			}>
 		>
 	]
->([null, () => {}]);
+>([{ CAR: {}, RSU: {} }, () => {}]);
 
 const CarSpeedFleetContext = createContext<
 	[
-		{ [id: string]: FLEET_CAR_SPEED } | null,
-		Dispatch<SetStateAction<{ [id: string]: FLEET_CAR_SPEED } | null>>
+		{ [id: string]: FLEET_CAR_SPEED },
+		Dispatch<SetStateAction<{ [id: string]: FLEET_CAR_SPEED }>>
 	]
->([null, () => {}]);
+>([{}, () => {}]);
 
 export { HeartbeatFleetContext, LocationFleetContext, CarSpeedFleetContext };

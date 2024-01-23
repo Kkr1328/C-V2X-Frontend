@@ -11,14 +11,14 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
     const [heartbeatData, setHeartbeatData] = useState<{
         CAR: { [id: string]: FLEET_HEARTBEAT };
         RSU: { [id: string]: FLEET_HEARTBEAT };
-    } | null>(null);
+    }>({ CAR: {}, RSU: {} });
     const [carSpeedData, setCarSpeedData] = useState<{
         [id: string]: FLEET_CAR_SPEED;
-    } | null>(null);
+    }>({});
     const [locationData, setLocationData] = useState<{
         CAR: { [id: string]: FLEET_LOCATION };
         RSU: { [id: string]: FLEET_LOCATION };
-    } | null>(null);
+    }>({ CAR: {}, RSU: {} });
 
     useEffect(() => {
         const socket = io(process.env.NEXT_PUBLIC_WEB_SOCKET_URL ?? "<SOCKET-URL>", { transports: ['websocket', 'polling'] });
