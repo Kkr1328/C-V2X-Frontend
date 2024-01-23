@@ -34,6 +34,8 @@ import {
 	MockedCarLocation,
 	MockedRSU,
 } from '@/mock/ENTITY_OVERVIEW';
+import { useQuery } from '@tanstack/react-query';
+import { getCarsListAPI, getRSUsListAPI } from '@/services/api-call';
 
 export default function Home() {
 	const searchParams = useSearchParams();
@@ -48,6 +50,16 @@ export default function Home() {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext)
 	const [locationContextData] = useContext(LocationFleetContext)
 	const [carSpeedContextData] = useContext(CarSpeedFleetContext)
+
+	const { data: carsList } = useQuery<{ id: string, name: string }[]>({
+		queryKey: ['getCarsList'],
+		queryFn: async () => await getCarsListAPI()
+	});
+
+	const { data: rsusList } = useQuery<{ id: string, name: string }[]>({
+		queryKey: ['getRSUsList'],
+		queryFn: async () => await getRSUsListAPI()
+	});
 
 	const [focus, setFocus] = useState<FocusState | null>(null);
 	const [map, setMap] = useState<google.maps.Map>();
@@ -145,26 +157,38 @@ export default function Home() {
 								mapContainerClassName="h-full min-h-[500px] w-full rounded-md"
 								onLoad={(map) => setMap(map)}
 							>
-								{MockedCarLocation.map((CAR) => (
-									<Marker
-										icon={{
-											url: `${MAP_ASSETS.CAR_PIN}${CAR.status}.svg`,
-											scaledSize:
-												focus?.id === CAR.id
-													? new google.maps.Size(
-														MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
-														MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
-													)
-													: new google.maps.Size(
-														MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
-														MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
-													),
-										}}
-										onClick={() => changeFocus(CAR)}
-										position={CAR.location}
-										key={CAR.id}
-									/>
-								))}
+								{carsList?.map(({ id }) => {
+									const status = heartbeatContextData.CAR[id]?.data.status ?? PILL_LABEL.INACTIVE;
+									const location = {
+										lat: locationContextData.CAR[id]?.latitude ?? 0,
+										lng: locationContextData.CAR[id]?.longitude ?? 0
+									}
+									return (
+										<Marker
+											icon={{
+												url: `${MAP_ASSETS.CAR_PIN}${status}.svg`,
+												scaledSize:
+													focus?.id === id
+														? new google.maps.Size(
+															MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
+															MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
+														)
+														: new google.maps.Size(
+															MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
+															MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
+														),
+											}}
+											onClick={() => changeFocus({
+												id,
+												type: 'CAR',
+												location,
+												status
+											})}
+											position={location}
+											key={id}
+										/>
+									)
+								})}
 								{MockedRSU.map((RSU) => (
 									<RSUMarker
 										location={RSU.location}

@@ -8,8 +8,8 @@ import { Dispatch, SetStateAction, createContext } from 'react';
 const HeartbeatFleetContext = createContext<
 	[
 		{
-			CAR: { [id: string]: FLEET_HEARTBEAT };
-			RSU: { [id: string]: FLEET_HEARTBEAT };
+			CAR: { [id: string]: FLEET_HEARTBEAT | undefined };
+			RSU: { [id: string]: FLEET_HEARTBEAT | undefined };
 		},
 		Dispatch<
 			SetStateAction<{
@@ -23,8 +23,8 @@ const HeartbeatFleetContext = createContext<
 const LocationFleetContext = createContext<
 	[
 		{
-			CAR: { [id: string]: FLEET_LOCATION };
-			RSU: { [id: string]: FLEET_LOCATION };
+			CAR: { [id: string]: FLEET_LOCATION | undefined };
+			RSU: { [id: string]: FLEET_LOCATION | undefined };
 		},
 		Dispatch<
 			SetStateAction<{
@@ -37,7 +37,7 @@ const LocationFleetContext = createContext<
 
 const CarSpeedFleetContext = createContext<
 	[
-		{ [id: string]: FLEET_CAR_SPEED },
+		{ [id: string]: FLEET_CAR_SPEED | undefined },
 		Dispatch<SetStateAction<{ [id: string]: FLEET_CAR_SPEED }>>
 	]
 >([{}, () => {}]);
