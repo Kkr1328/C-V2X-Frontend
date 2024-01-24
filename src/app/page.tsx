@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 // const
 import { ROUTE } from '@/constants/ROUTE';
+import Loading from '@/components/common/Loading';
 
 export default function Home() {
 	const router = useRouter();
@@ -13,5 +14,5 @@ export default function Home() {
 		router.push(ROUTE.OVERVIEW);
 	}, [router]);
 
-	return;
+	return <Loading size={48} isBackdrop />;
 }

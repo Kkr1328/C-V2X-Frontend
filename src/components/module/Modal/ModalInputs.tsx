@@ -23,6 +23,7 @@ export interface ModalInputsProp<T> {
 	isLoading?: boolean;
 	error?: InputError<T>;
 	resetError?: (_: keyof T) => void;
+	handleLocate?: () => void;
 }
 
 export default function ModalInputs<T>(props: ModalInputsProp<T>) {
@@ -52,54 +53,76 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 	return (
 		<Stack className="w-full gap-16 flex">
 			{Array.from({ length: maxRow }, (_, index) => (
-				<Stack key={index} direction="row" className="gap-16">
-					{props.template
-						.filter((inputField) => inputField.row === index + 1)
-						.map((inputField) =>
-							(props.isReadOnly || inputField.type === 'TextField') &&
-							((inputField.id !== 'front_cam_name' &&
-								inputField.id !== 'front_cam_position' &&
-								inputField.id !== 'back_cam_name' &&
-								inputField.id !== 'back_cam_position') ||
-								getData(inputField.id) !== '') ? (
-								<TextFieldCV2X
-									{...props}
-									{...inputField}
-									key={inputField.label}
-									title={inputField.label}
-									value={getData(inputField.id)}
-									onChange={(event) => {
-										props.resetError?.(inputField.id);
-										handleDataChange(inputField.id, event.target.value);
-									}}
-									isError={props.error && props.error?.[inputField.id] !== ''}
-									helperMessage={props.error && props.error?.[inputField.id]}
-								/>
-							) : (
-								inputField.type === 'Select' && (
-									<SelectCV2X
-										{...props}
-										{...inputField}
-										key={inputField.label}
-										title={inputField.label}
-										value={
-											getOption(inputField).find(
-												(option: Option) =>
-													option.value === getData(inputField.id)
-											) || null
-										}
-										onChange={(_, value) => {
-											props.resetError?.(inputField.id);
-											handleDataChange(inputField.id, value ? value.value : '');
-										}}
-										options={getOption(inputField)}
-										isError={props.error && props.error?.[inputField.id] !== ''}
-										helperMessage={props.error && props.error?.[inputField.id]}
-									/>
-								)
-							)
-						)}
-				</Stack>
+				<>
+					{props.template.some(
+						(inputField) =>
+							inputField.row === index + 1 && getData(inputField.id)
+					) && (
+						<Stack key={index} direction="row" className="gap-16">
+							{props.template
+								.filter((inputField) => inputField.row === index + 1)
+								.map((inputField) =>
+									(props.isReadOnly || inputField.type === 'TextField') &&
+									((inputField.id !== 'front_cam_name' &&
+										inputField.id !== 'front_cam_position' &&
+										inputField.id !== 'back_cam_name' &&
+										inputField.id !== 'back_cam_position' &&
+										inputField.id !== 'left_cam_name' &&
+										inputField.id !== 'left_cam_position' &&
+										inputField.id !== 'right_cam_name' &&
+										inputField.id !== 'right_cam_position') ||
+										getData(inputField.id) !== '') ? (
+										<TextFieldCV2X
+											{...props}
+											{...inputField}
+											key={inputField.label}
+											title={inputField.label}
+											value={getData(inputField.id)}
+											onChange={(event) => {
+												props.resetError?.(inputField.id);
+												handleDataChange(inputField.id, event.target.value);
+											}}
+											isError={
+												props.error && props.error?.[inputField.id] !== ''
+											}
+											helperMessage={
+												props.error && props.error?.[inputField.id]
+											}
+										/>
+									) : (
+										inputField.type === 'Select' && (
+											<SelectCV2X
+												{...props}
+												{...inputField}
+												key={inputField.label}
+												title={inputField.label}
+												value={
+													getOption(inputField).find(
+														(option: Option) =>
+															option.value === getData(inputField.id)
+													) || null
+												}
+												onChange={(_, value) => {
+													props.resetError?.(inputField.id);
+													handleDataChange(
+														inputField.id,
+														value ? value.value : ''
+													);
+												}}
+												options={getOption(inputField)}
+												isError={
+													props.error && props.error?.[inputField.id] !== ''
+												}
+												helperMessage={
+													props.error && props.error?.[inputField.id]
+												}
+											/>
+										)
+									)
+								)}
+						</Stack>
+					)}
+				</>
 			))}
 		</Stack>
 	);

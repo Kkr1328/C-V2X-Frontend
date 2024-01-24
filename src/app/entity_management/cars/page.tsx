@@ -1,6 +1,8 @@
 'use client';
 // react
 import { Fragment, useEffect, useState } from 'react';
+// next
+import { useRouter } from 'next/navigation';
 // notisnack
 import { useSnackbar } from 'notistack';
 // material ui
@@ -13,6 +15,7 @@ import InfoModal from '@/components/module/Modal/InfoModal';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
+import { ROUTE } from '@/constants/ROUTE';
 // types
 import { ICar, ICarInfo, IGetCarsRequest } from '@/types/models/car.model';
 // templates
@@ -38,11 +41,12 @@ import { WindowWidthObserver } from '@/utils/WidthObserver';
 import Table from '@/components/module/Table/Table';
 
 export default function Home() {
-	const [windowWidth, setWindowWidth] = useState(0);
+	const [windowWidth, setWindowWidth] = useState(1000);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
 	const { enqueueSnackbar } = useSnackbar();
+	const router = useRouter();
 	const defaultFilterData = DefaultDataGenerator(CarFilterTemplate(1));
 	const defaultData = DefaultDataGenerator(
 		CarActionModalTemplate(isUseCompactModal)
@@ -54,7 +58,7 @@ export default function Home() {
 	const [search, setSearch] = useState<IGetCarsRequest>(defaultFilterData);
 
 	const {
-		isLoading: carsLoading,
+		isLoading: isCarsLoading,
 		data: cars,
 		refetch: refetchGetCars,
 	} = useQuery({
@@ -62,12 +66,20 @@ export default function Home() {
 		queryFn: async () => await getCarsAPI(search),
 	});
 
-	const { data: camerasList, refetch: refetchGetCamerasList } = useQuery({
+	const {
+		isLoading: isCamerasListLoading,
+		data: camerasList,
+		refetch: refetchGetCamerasList,
+	} = useQuery({
 		queryKey: ['getCamerasList'],
 		queryFn: async () => await getCamerasListAPI(),
 	});
 
-	const { data: driversList, refetch: refetchGetDriversList } = useQuery({
+	const {
+		isLoading: isDriversListLoading,
+		data: driversList,
+		refetch: refetchGetDriversList,
+	} = useQuery({
 		queryKey: ['getDriversList'],
 		queryFn: async () => await getDriversListAPI(),
 	});
@@ -138,12 +150,22 @@ export default function Home() {
 		const back_cam =
 			informData.cameras.length !== 0 &&
 			informData.cameras.filter((camera) => camera.position === 'Back')[0];
+		const left_cam =
+			informData.cameras.length !== 0 &&
+			informData.cameras.filter((camera) => camera.position === 'Left')[0];
+		const right_cam =
+			informData.cameras.length !== 0 &&
+			informData.cameras.filter((camera) => camera.position === 'Right')[0];
 		setInformModalData({
 			...informData,
 			front_cam_position: front_cam ? front_cam.position : '',
 			front_cam_name: front_cam ? front_cam.name : '',
 			back_cam_position: back_cam ? back_cam.position : '',
 			back_cam_name: back_cam ? back_cam.name : '',
+			left_cam_position: left_cam ? left_cam.position : '',
+			left_cam_name: left_cam ? left_cam.name : '',
+			right_cam_position: right_cam ? right_cam.position : '',
+			right_cam_name: right_cam ? right_cam.name : '',
 		});
 		setOpenInformModal(true);
 	};
@@ -190,6 +212,7 @@ export default function Home() {
 				onDataChange={setRegisterModalData}
 				onSubmit={() => createCar.mutate(registerModalData)}
 				options={options}
+				isPending={createCar.isPending}
 			/>
 			<InfoModal
 				title={informModalData.name}
@@ -198,6 +221,9 @@ export default function Home() {
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
+				handleHeaderLocate={() =>
+					router.push(`${ROUTE.OVERVIEW}?id=${informModalData.id}`)
+				}
 			/>
 			<InputModal
 				title={MODAL_LABEL.UPDATE_CAR + updateModalData.id}
@@ -214,6 +240,7 @@ export default function Home() {
 					})
 				}
 				options={options}
+				isPending={updateCar.isPending}
 			/>
 			<DeleteModal
 				open={openDeleteModal}
@@ -222,10 +249,11 @@ export default function Home() {
 				}
 				entity={deleteModalData.id + ' car'}
 				onSubmit={() => deleteCar.mutate(deleteModalData)}
+				isPending={deleteCar.isPending}
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CARS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[306px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={CarFilterTemplate}
 						handleSubmitSearch={refetchGetCars}
@@ -255,7 +283,9 @@ export default function Home() {
 						handleOnClickDelete={(data) =>
 							handleOpenModal(data, setOpenDeleteModal, setDeleteModalData)
 						}
-						isLoading={carsLoading}
+						isLoading={
+							isCarsLoading || isCamerasListLoading || isDriversListLoading
+						}
 					/>
 				</Card>
 			</div>

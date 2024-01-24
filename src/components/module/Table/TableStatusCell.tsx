@@ -12,7 +12,9 @@ interface TableStatusCellProp<T> {
 export default function TableStatusCell<T>(props: TableStatusCellProp<T>) {
 	return (
 		<TableCell align={'center'} className="w-full">
-			<StatusDot variant={props.variant as (typeof StatusDotType)[number]} />
+			<StatusDot
+				variant={(props.variant as (typeof StatusDotType)[number]) || 'Missing'}
+			/>
 		</TableCell>
 	);
 }

@@ -1,66 +1,81 @@
-'use client';
-
-import { useState } from 'react';
-
-import { Stack, Box } from '@mui/material';
-
-import TabCameraPanel from '@/components/module/TabCameraPanel';
-import ModalCamera from '@/components/common/ModalCamera';
-
-import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
-
+// react
+import { useEffect, useRef, useState } from 'react';
+// material ui
+import { Card, Divider, Grid, IconButton } from '@mui/material';
+// components
 import Pill from '../common/Pill';
-import ButtonCV2X from '../common/ButtonCV2X';
+import CameraSection from './CameraSection';
+// const
+import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
+// types
+import { Position } from '@/types/COMMON';
+// utilities
+import IconMapper from '@/utils/IconMapper';
+import { WidthObserver } from '@/utils/WidthObserver';
+
+interface Camera {
+	position: Position;
+	name: string;
+	status: PILL_LABEL;
+}
 
 interface CameraCardProps {
-	carName: String;
-	position: String;
-	cameraName: String;
+	carName: string;
+	status: PILL_LABEL;
+	handleLocate?: () => void;
+	cameras: Camera[];
 	isLoading?: boolean;
-	pill: keyof typeof PILL_LABEL;
 }
 
 export default function CameraCard(props: CameraCardProps) {
-	const [openModal, setOpenModal] = useState(false);
+	const cardRef = useRef<HTMLDivElement>(null);
+	const [cardWidth, setCardWidth] = useState<number>(
+		cardRef.current?.clientWidth as number
+	);
+	useEffect(() => WidthObserver(cardRef.current, setCardWidth), []);
+	const useCompactLayout = cardWidth < 560;
 
 	return (
-		<>
-			{/* Video Modal */}
-			{openModal && (
-				<ModalCamera
-					title={`${props.carName} - ${props.position} : ${props.cameraName}`}
-					open={openModal}
-					handleOnClose={() => setOpenModal(false)}
-				>
-					<TabCameraPanel size="large" carName={props.carName} cameraName={props.cameraName} />
-				</ModalCamera>
-			)}
-			<Box className="w-300">
-				{/* Header */}
-				<Stack direction="row" className="px-16 py-12 gap-16 items-center">
-					<Stack direction="row" className="gap-4">
-						<p className="inline-block align-baseline font-istok text-black text-h5">
-							{`${props.position} : ${props.cameraName}`}
-						</p>
-					</Stack>
-					{!props.isLoading && <Pill variant={props.pill} />}
-				</Stack>
-				{/* Content */}
-				<Box sx={{ position: 'relative' }} className="pb-16 px-16">
-					<TabCameraPanel size="small" carName={props.carName} cameraName={props.cameraName}/>
-					{/* Zoom Button */}
-					{!openModal && (
-						<Box sx={{ position: 'absolute', bottom: 20, right: 20 }}>
-							<ButtonCV2X
-								icon={BUTTON_LABEL.ZOOM}
-								onClick={() => setOpenModal(true)}
-								variant="outlined"
-								color="primary"
-							/>
-						</Box>
+		<Card ref={cardRef} className="flex flex-col gap-8 rounded-lg bg-white">
+			<div className="flex flex-row pt-16 px-16 gap-16 items-center">
+				<div className="flex flex-row gap-4 items-center">
+					<p className="inline-block align-baseline font-istok text-black text-h4">
+						{props.carName}
+					</p>
+					{props.handleLocate && (
+						<IconButton
+							disableRipple
+							className="p-none text-primary_blue"
+							disabled={props.isLoading}
+							onClick={props.handleLocate}
+						>
+							<IconMapper icon={BUTTON_LABEL.LOCATION} />
+						</IconButton>
 					)}
-				</Box>
-			</Box>
-		</>
+				</div>
+				{!props.isLoading && props.status && <Pill variant={props.status} />}
+			</div>
+			<Divider />
+			<Grid
+				container
+				columns={{ xs: 41 }}
+				rowSpacing={2}
+				columnSpacing={1}
+				className="px-16 pb-16 justify-center"
+			>
+				{props.cameras.map((camera, index) => (
+					<Grid item key={index} xs={useCompactLayout ? 41 : 20}>
+						<CameraSection
+							carName={props.carName}
+							position={camera.position}
+							cameraName={camera.name}
+							status={camera.status}
+							handleLocate={props.handleLocate}
+							isLoading={props.isLoading}
+						/>
+					</Grid>
+				))}
+			</Grid>
+		</Card>
 	);
 }
