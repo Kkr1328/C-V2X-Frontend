@@ -38,6 +38,7 @@ export default function TabCameraPanel(props: PanelProps) {
 				/>
 				{/* Sample Object */}
 				<Box
+					
 					sx={{
 						height: props.size == "small" ? '28vh':"75vh",
 						width: props.size == "small" ? '100%':"100vh",
@@ -66,7 +67,7 @@ export default function TabCameraPanel(props: PanelProps) {
 						</div>
 					)}
 					<div>
-						<VideoReceiver camNumber={props.cameraName} carID={props.carName} />
+						<VideoReceiver camNumber={props.cameraName} carID={props.carName} isShowObjectDetection={currentChild=="object detection"}/>
 					</div>
 				</Box>
 			</Stack>

@@ -1,9 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import RTCMultiConnection from 'rtcmulticonnection';
-import { Socket } from 'socket.io-client';
+// import { Socket } from 'socket.io-client';
 import { TailSpin } from "react-loader-spinner";
 import { Box } from "@mui/material";
+import { io, Socket } from 'socket.io-client';
+import RenderBoxes from "@/utils/renderBox";
 // import Script from 'next/script'
+
+interface Box {
+  label: number;
+  probability: number;
+  bounding: [number, number, number, number];
+}
 
 function generateRandomUID() {
     const timestamp = new Date().getTime().toString(36);
@@ -23,6 +31,7 @@ const LoadingSpinner = () => (
 interface VideoReceiverProps {
 	carID: String;
 	camNumber: String;
+  isShowObjectDetection: boolean;
 }
 
 export default function VideoReceiver(props: VideoReceiverProps) {
@@ -30,11 +39,30 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 
     const socket = useRef<Socket | null>(null);
 
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [stream, setStream] = useState<MediaStream | null>(null);
+    
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const uid = generateRandomUID();
+    const uid = generateRandomUID();
+
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    useEffect(() => {
+      if (!socket.current && canvasRef.current) {
+        socket.current = io(process.env.NEXT_PUBLIC_API_CAM_URI + "/" || "") as Socket;
+        socket.current?.emit("control center connecting", {
+          uid:uid
+        });
+      
+        socket.current?.on("send object detection", (boxes:Array<Box>) => {
+          if (canvasRef.current) {
+            // console.log(boxes)
+            RenderBoxes({ canvas: canvasRef.current, boxes: boxes });
+          }
+        });
+      
+      }
+    }, [canvasRef.current]);
 
     useEffect(() => {
         if (!connection.current) {
@@ -177,22 +205,18 @@ export default function VideoReceiver(props: VideoReceiverProps) {
         }
       }, [stream, props.camNumber]);
 
+      useEffect(() => {
+        if (stream && canvasRef.current) {
+          const parentBox = canvasRef.current.parentElement;
+        if (parentBox) {
+          canvasRef.current.width = parentBox.clientWidth;
+          canvasRef.current.height = parentBox.clientHeight;
+          }
+        }
+      }, [stream, uid]);
+
       return (
         <Box style={{maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto" }}  id="videos-container">
-          {/* <video
-            className={`video-machine ${isLoading1 ? "hidden" : ""}`}
-            id="video1"
-            playsInline
-            autoPlay
-            muted
-          />
-          <video
-            className={`video-machine ${isLoading1 ? "hidden" : ""}`}
-            id="video2"
-            playsInline
-            autoPlay
-            muted
-          /> */}
           {stream ? (
             <div>
               {isLoading ? (
@@ -200,6 +224,18 @@ export default function VideoReceiver(props: VideoReceiverProps) {
                   <LoadingSpinner />
                 </div>
               ) : null}
+            
+              <canvas
+                id="canvas"
+                ref={canvasRef}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  zIndex: 0,  // Set a higher z-index to ensure it stays on top
+                  display: props.isShowObjectDetection ? "flex" : "none",
+                }}
+              />
               <video
                 className={`video-machine ${isLoading ? "hidden" : ""}`}
                 id={`video ${uid}`}

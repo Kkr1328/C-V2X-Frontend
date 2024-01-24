@@ -17,6 +17,8 @@ const MockedCarCamerasContent = [
 		cameras: [
 			{ name: 'Cam01', position: 'Front', status: PILL_LABEL.ACTIVE },
 			{ name: 'Cam02', position: 'Back', status: PILL_LABEL.ACTIVE },
+			{ name: 'Cam03', position: 'Left', status: PILL_LABEL.ACTIVE },
+			{ name: 'Cam04', position: 'Right', status: PILL_LABEL.ACTIVE },
 		],
 	},
 	{
@@ -25,6 +27,8 @@ const MockedCarCamerasContent = [
 		cameras: [
 			{ name: 'Cam01', position: 'Front', status: PILL_LABEL.ACTIVE },
 			{ name: 'Cam02', position: 'Back', status: PILL_LABEL.ACTIVE },
+			{ name: 'Cam03', position: 'Left', status: PILL_LABEL.ACTIVE },
+			{ name: 'Cam04', position: 'Right', status: PILL_LABEL.ACTIVE },
 		],
 	},
 	{
@@ -33,6 +37,8 @@ const MockedCarCamerasContent = [
 		cameras: [
 			{ name: 'Cam01', position: 'Front', status: PILL_LABEL.ACTIVE },
 			{ name: 'Cam02', position: 'Back', status: PILL_LABEL.ACTIVE },
+			{ name: 'Cam03', position: 'Left', status: PILL_LABEL.ACTIVE },
+			{ name: 'Cam04', position: 'Right', status: PILL_LABEL.ACTIVE },
 		],
 	},
 	{
@@ -41,6 +47,8 @@ const MockedCarCamerasContent = [
 		cameras: [
 			{ name: 'Cam01', position: 'Front', status: PILL_LABEL.ACTIVE },
 			{ name: 'Cam02', position: 'Back', status: PILL_LABEL.ACTIVE },
+			{ name: 'Cam03', position: 'Left', status: PILL_LABEL.ACTIVE },
+			{ name: 'Cam04', position: 'Right', status: PILL_LABEL.ACTIVE },
 		],
 	},
 ];
