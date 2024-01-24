@@ -178,25 +178,14 @@ export default function VideoReceiver(props: VideoReceiverProps) {
               videoRef.srcObject = stream;
               // Check if the video is ready to show
               videoRef.onloadedmetadata = () => {
-                const container = document.getElementById("videos-container");
+                const container = document.getElementById("videos-container")?.parentElement;
                 if (container) {
                   const containerWidth = container.clientWidth;
                   const containerHeight = container.clientHeight;
+
+                  videoRef.width = containerWidth;
+                  videoRef.height = containerHeight;
       
-                  const videoWidth = videoRef.videoWidth;
-                  const videoHeight = videoRef.videoHeight;
-      
-                  const aspectRatio = videoWidth / videoHeight;
-      
-                  if (containerWidth / aspectRatio < containerHeight) {
-                    // If the container is taller than the video, adjust the width
-                    videoRef.style.width = containerWidth + "vh";
-                    videoRef.style.height = containerWidth / aspectRatio + "vh";
-                  } else {
-                    // If the container is wider than the video, adjust the height
-                    videoRef.style.height = containerHeight + "vh";
-                    videoRef.style.width = containerHeight * aspectRatio + "vh";
-                  }
       
                   setIsLoading(false);
                 }
@@ -214,6 +203,24 @@ export default function VideoReceiver(props: VideoReceiverProps) {
           }
         }
       }, [stream, uid]);
+      useEffect(() => {
+        if (stream) {
+          const videoRef = document.getElementById(`video ${uid}`) as HTMLVideoElement; // Explicitly cast to HTMLVideoElement
+          if (videoRef) {
+            videoRef.srcObject = stream;
+            // Check if the video is ready to show
+              const container = document.getElementById("videos-container")?.parentElement;
+              if (container) {
+                const containerWidth = container.clientWidth;
+                const containerHeight = container.clientHeight;
+
+                videoRef.width = containerWidth;
+                videoRef.height = containerHeight;
+              }
+           
+          }
+      }
+      }, [stream, uid]);
 
       return (
         <Box style={{maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto" }}  id="videos-container">
@@ -225,6 +232,14 @@ export default function VideoReceiver(props: VideoReceiverProps) {
                 </div>
               ) : null}
             
+      
+              <video
+                className={`video-machine ${isLoading ? "hidden" : ""}`}
+                id={`video ${uid}`}
+                playsInline
+                autoPlay
+                muted
+              />
               <canvas
                 id="canvas"
                 ref={canvasRef}
@@ -235,13 +250,6 @@ export default function VideoReceiver(props: VideoReceiverProps) {
                   zIndex: 0,  // Set a higher z-index to ensure it stays on top
                   display: props.isShowObjectDetection ? "flex" : "none",
                 }}
-              />
-              <video
-                className={`video-machine ${isLoading ? "hidden" : ""}`}
-                id={`video ${uid}`}
-                playsInline
-                autoPlay
-                muted
               />
             </div>
           ) : (

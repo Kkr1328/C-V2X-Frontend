@@ -54,18 +54,18 @@ export default function CameraSection(props: CameraSectionProps) {
 					/>
 					<Box
 						sx={{
-							height: '28vh',
-							width: '100%',
+							// height: '100%',
+							// width: '100%',
 							// minHeight: '28vh',
 							backgroundColor: 'text.disabled',
 							position: 'relative',
-							display: 'flex',
+							display: "flex",
 							justifyContent: 'center',
 							alignItems: 'center',
-							overflow: 'hidden',
+							// overflow: "hidden"
 						}}
 					>
-						<VideoReceiver camNumber={props.cameraName} carID={props.carName} />
+						<VideoReceiver camNumber={props.cameraName} carID={props.carName} isShowObjectDetection={modeOptions[videoModeNumber]=="OBJ DETECTION"} />
 					</Box>
 					<div className="absolute bottom-20 right-20">
 						<ButtonCV2X
