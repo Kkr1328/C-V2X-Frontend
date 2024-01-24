@@ -189,15 +189,24 @@ export default function Home() {
 										/>
 									)
 								})}
-								{MockedRSU.map((RSU) => (
-									<RSUMarker
-										location={RSU.location}
-										radius={RSU.radius}
-										isFocus={focus?.id === RSU.id}
-										onClick={() => changeFocus(RSU)}
-										key={RSU.id}
-									/>
-								))}
+								{rsusList?.map(({ id }) => {
+									const location = {
+										lat: locationContextData.RSU[id]?.latitude ?? 0,
+										lng: locationContextData.RSU[id]?.longitude ?? 0
+									}
+									return (
+										<RSUMarker
+											location={location}
+											isFocus={focus?.id === id}
+											onClick={() => changeFocus({
+												id,
+												type: 'RSU',
+												location
+											})}
+											key={id}
+										/>
+									)
+								})}
 							</GoogleMap>
 						)}
 					</Grid>
@@ -219,26 +228,38 @@ export default function Home() {
 							/>
 							<div className="flex flex-col w-full min-w-max h-full gap-16 pb-8 overflow-y-auto">
 								{focus?.type === 'CAR' || focus === null
-									? MockedCars.filter(
-										(car) =>
-											car.status === pillMode || pillMode === PILL_LABEL.ALL
+									? carsList?.filter(
+										({ id }) => {
+											const status = heartbeatContextData.CAR[id]?.data.status;
+											return status && (status === pillMode || pillMode === PILL_LABEL.ALL) && status !== PILL_LABEL.INACTIVE
+										}
 									)
 										.sort((car) => (car.id === focus?.id ? -1 : 1))
 										.map((car) => (
 											<CarCard
 												key={car.id}
-												car={car}
+												car={{
+													id: car.id,
+													name: car.name,
+													speed: carSpeedContextData[car.id]?.velocity.toString() + ' km/h' ?? 'null',
+													status: heartbeatContextData.CAR[car.id]?.data.status ?? PILL_LABEL.INACTIVE,
+												}}
 												isFocus={car.id === focus?.id}
 												onClick={() => clickOnCarCard(car.id)}
 											/>
 										))
-									: MockedRSU.filter((all) => all.id === focus?.id).map(
+									: rsusList?.filter((rsu) => rsu.id === focus?.id).map(
 										(RSU) => (
 											<RSUCard
 												key={RSU.id}
-												name={RSU.name}
-												recommendSpeed={RSU.recommendSpeed}
-												connectedCar={RSU.connectedCar}
+												id={RSU.id}
+												connectedCar={
+													heartbeatContextData.RSU[RSU.id]?.data.connected_OBU.map((obu_id) => ({
+														name: carsList?.find(({ id }) => id === obu_id)?.name ?? 'null',
+														speed: carSpeedContextData[obu_id]?.velocity.toString() + ' km/h',
+														status: heartbeatContextData.CAR[obu_id]?.data.status ?? PILL_LABEL.INACTIVE
+													})) ?? []
+												}
 											/>
 										)
 									)}

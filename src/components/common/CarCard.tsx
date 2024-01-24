@@ -7,6 +7,8 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Pill from './Pill';
 import CarAvatar from './CarAvatar';
 import { PILL_LABEL } from '@/constants/LABEL';
+import { useQuery } from '@tanstack/react-query';
+import { getCarAPI } from '@/services/api-call';
 
 interface CarCardProps {
 	car: CarCard;
@@ -18,11 +20,10 @@ export default function CarCard(props: CarCardProps) {
 	return (
 		<Card
 			onClick={props.onClick}
-			className={`${
-				props.isFocus
-					? 'border-primary_blue border-2 cursor-zoom-out'
-					: 'cursor-zoom-in'
-			} bg-light_background_grey rounded-lg p-8`}
+			className={`${props.isFocus
+				? 'border-primary_blue border-2 cursor-zoom-out'
+				: 'cursor-zoom-in'
+				} bg-light_background_grey rounded-lg p-8`}
 		>
 			<CarCardDetail car={props.car} isFocus={props.isFocus} />
 		</Card>
@@ -35,7 +36,21 @@ interface CarCardDetailProps {
 }
 
 function CarCardDetail(props: CarCardDetailProps) {
+	const { car } = props;
 	const [expand, setExpand] = useState<boolean>(false);
+
+	const { data: carInfo } = useQuery<{
+		driver: string,
+		phone_no: string,
+		cameras: {
+			id: string,
+			name: string,
+			position: string
+		}[]
+	}>({
+		queryKey: ['getCarInfo', car.id],
+		queryFn: async () => await getCarAPI({ id: car.id })
+	});
 
 	return (
 		<div className="text-p1">
@@ -54,13 +69,12 @@ function CarCardDetail(props: CarCardDetailProps) {
 			<div>Speed : {props.car.speed ?? 'null'}</div>
 			<Collapse in={expand} timeout="auto">
 				<div className="my-4">
-					Driver :{' '}
-					{`${props.car.driver.first_name} ${props.car.driver.last_name}`}
+					Driver : {carInfo?.driver ?? 'null'}
 				</div>
 				<div className="my-4">
-					Phone No. : {props.car.driver.phone_no ?? 'null'}
+					Phone No. : {carInfo?.phone_no ?? 'null'}
 				</div>
-				{props.car.cameras.map((camera) => (
+				{carInfo?.cameras.map((camera) => (
 					<div key={camera.id} className="my-4">
 						{camera.position + ' camera'} : {camera.name}
 					</div>
