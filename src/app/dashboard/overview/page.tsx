@@ -52,11 +52,21 @@ export default function Home() {
 		queryKey: ['getCarsList'],
 		queryFn: async () => await getCarsListAPI()
 	});
+	const activeCar = useMemo(() =>
+		Object.entries(heartbeatContextData.CAR).filter(([_key, value]) => {
+			return value && (value.data.status !== PILL_LABEL.INACTIVE)
+		}).length
+		, [heartbeatContextData.CAR]);
 
 	const { data: rsusList } = useQuery<{ id: string, name: string }[]>({
 		queryKey: ['getRSUsList'],
 		queryFn: async () => await getRSUsListAPI()
 	});
+	const activeRSU = useMemo(() =>
+		Object.entries(heartbeatContextData.RSU).filter(([_key, value]) => {
+			return value && (value.data.status === PILL_LABEL.ACTIVE)
+		}).length
+		, [heartbeatContextData.RSU]);
 
 	const [focus, setFocus] = useState<FocusState | null>(null);
 	useEffect(() => {
@@ -168,10 +178,10 @@ export default function Home() {
 				columnSpacing={{ xs: 2 }}
 			>
 				<Grid item xs={summariesXs}>
-					<SummaryCard title={SUMMARY_LABEL.ACTIVE_CAR} value={'4 / 5'} />
+					<SummaryCard title={SUMMARY_LABEL.ACTIVE_CAR} value={`${activeCar} / ${carsList?.length ?? '-'}`} />
 				</Grid>
 				<Grid item xs={summariesXs}>
-					<SummaryCard title={SUMMARY_LABEL.ACTIVE_DRIVER} value={'4 / 10'} />
+					<SummaryCard title={SUMMARY_LABEL.ACTIVE_RSU} value={`${activeRSU} / ${rsusList?.length ?? '-'}`} />
 				</Grid>
 				<Grid item xs={summariesXs}>
 					<SummaryCard
@@ -219,56 +229,58 @@ export default function Home() {
 								onLoad={(map) => setMap(map)}
 							>
 								<DrivingTestLocationBtn map={map} setFocus={setFocus} />
-								{carsList?.map(({ id }) => {
-									const status = heartbeatContextData.CAR[id]?.data.status ?? PILL_LABEL.INACTIVE;
-									const location = {
-										lat: locationContextData.CAR[id]?.latitude ?? 0,
-										lng: locationContextData.CAR[id]?.longitude ?? 0
-									}
-									return (
-										<Marker
-											icon={{
-												url: `${MAP_ASSETS.CAR_PIN}${status}.svg`,
-												scaledSize:
-													focus?.id === id
-														? new google.maps.Size(
-															MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
-															MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
-														)
-														: new google.maps.Size(
-															MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
-															MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
-														),
-											}}
-											onClick={() => changeFocus({
-												id,
-												type: 'CAR',
-												location,
-												status
-											})}
-											position={location}
-											key={id}
-										/>
-									)
-								})}
-								{rsusList?.map(({ id }) => {
-									const location = {
-										lat: locationContextData.RSU[id]?.latitude ?? 0,
-										lng: locationContextData.RSU[id]?.longitude ?? 0
-									}
-									return (
-										<RSUMarker
-											location={location}
-											isFocus={focus?.id === id}
-											onClick={() => changeFocus({
-												id,
-												type: 'RSU',
-												location
-											})}
-											key={id}
-										/>
-									)
-								})}
+								{carsList?.filter(({ id }) => heartbeatContextData.CAR[id]?.data.status !== PILL_LABEL.INACTIVE)
+									.map(({ id }) => {
+										const status = heartbeatContextData.CAR[id]?.data.status ?? PILL_LABEL.INACTIVE;
+										const location = {
+											lat: locationContextData.CAR[id]?.latitude ?? 0,
+											lng: locationContextData.CAR[id]?.longitude ?? 0
+										}
+										return (
+											<Marker
+												icon={{
+													url: `${MAP_ASSETS.CAR_PIN}${status}.svg`,
+													scaledSize:
+														focus?.id === id
+															? new google.maps.Size(
+																MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
+																MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
+															)
+															: new google.maps.Size(
+																MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
+																MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
+															),
+												}}
+												onClick={() => changeFocus({
+													id,
+													type: 'CAR',
+													location,
+													status
+												})}
+												position={location}
+												key={id}
+											/>
+										)
+									})}
+								{rsusList?.filter(({ id }) => heartbeatContextData.RSU[id]?.data.status === PILL_LABEL.ACTIVE)
+									.map(({ id }) => {
+										const location = {
+											lat: locationContextData.RSU[id]?.latitude ?? 0,
+											lng: locationContextData.RSU[id]?.longitude ?? 0
+										}
+										return (
+											<RSUMarker
+												location={location}
+												isFocus={focus?.id === id}
+												onClick={() => changeFocus({
+													id,
+													type: 'RSU',
+													location
+												})}
+												key={id}
+											/>
+										)
+									})}
 							</GoogleMap>
 						)}
 					</Grid>
