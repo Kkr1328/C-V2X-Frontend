@@ -1,6 +1,6 @@
 'use client';
 // react
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 // material ui
 import { Card, Divider, Grid, Skeleton } from '@mui/material';
 // google map
@@ -14,6 +14,7 @@ import ToggleButtonCV2X from '@/components/common/ToggleButtonCV2X';
 import CarCard from '@/components/common/CarCard';
 import RSUMarker from '@/components/common/RSUMarker';
 import RSUCard from '@/components/common/RSUCard';
+import DrivingTestLocationBtn from '@/components/common/DrivingTestLocationBtn';
 // const
 import {
 	NAVBAR_LABEL,
@@ -24,8 +25,10 @@ import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 // types
 import { FocusState, StuffLocation } from '@/types/OVERVIEW';
+import { IEmergency } from '@/types/models/emergency.model';
 // utilities
 import { WidthObserver } from '@/utils/WidthObserver';
+import { getEmergencyListAPI } from '@/services/api-call';
 // context
 import { CarSpeedFleetContext, HeartbeatFleetContext, LocationFleetContext } from '@/context/fleet';
 // mock
@@ -62,8 +65,26 @@ export default function Home() {
 	});
 
 	const [focus, setFocus] = useState<FocusState | null>(null);
+	useEffect(() => {
+		if (!focus) return
+		if (focus.location) {
+			map?.panTo(focus.location)
+		}
+		if (focus.zoom) {
+			map?.setZoom(focus.zoom)
+		}
+	}, [focus])
+
 	const [map, setMap] = useState<google.maps.Map>();
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL);
+
+	const { isLoading: isEmergencyListLoading, data: dataGetEmergencyList } = useQuery({
+		queryKey: ['getEmergencyList'],
+		queryFn: async () => await getEmergencyListAPI(),
+	});
+	const pendingEmergency = useRef(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"));
+	pendingEmergency.current = useMemo(() => dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"), [dataGetEmergencyList]);
+	const inProgressEmergency = useMemo(() => (dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress")), [dataGetEmergencyList])
 
 	const pageRef = useRef<HTMLDivElement>(null);
 	const [pageWidth, setPageWidth] = useState<number>(
@@ -85,21 +106,22 @@ export default function Home() {
 			setFocus(null);
 			setPillMode(PILL_LABEL.ALL);
 		} else {
-			setFocus({ id: node.id, type: node.type });
+			setFocus({ id: node.id, type: node.type, location: node.location, zoom: null });
 			setPillMode(
 				node.status === PILL_LABEL.ACTIVE
 					? PILL_LABEL.ALL
 					: node.status ?? PILL_LABEL.ALL
 			);
-			map?.panTo(node.location);
 		}
 	}
 
 	function changePillMode(value: PILL_LABEL) {
-		setFocus({ id: focus?.id ?? '', type: 'CAR' });
-		if (value !== null) {
-			setPillMode(value);
+		// case: focus is on RSU
+		if (focus?.type === 'RSU') {
+			setFocus({ id: focus?.id ?? '', type: 'CAR', location: null, zoom: null });
 		}
+		// case: same pill mode
+		if (value !== null) { setPillMode(value) }
 	}
 
 	function clickOnCarCard(carID: string) {
@@ -128,11 +150,16 @@ export default function Home() {
 				<Grid item xs={summariesXs}>
 					<SummaryCard
 						title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
-						value={'7'}
+						value={inProgressEmergency?.length ?? "-"}
+						isLoading={isEmergencyListLoading}
 					/>
 				</Grid>
 				<Grid item xs={summariesXs}>
-					<SummaryCard title={SUMMARY_LABEL.PENDING_EMERGENCY} value={'3'} />
+					<SummaryCard
+						title={SUMMARY_LABEL.PENDING_EMERGENCY}
+						value={pendingEmergency.current?.length ?? "-"}
+						isLoading={isEmergencyListLoading}
+					/>
 				</Grid>
 			</Grid>
 			<Card className="flex w-full h-auto rounded-lg px-24 py-24">
@@ -151,12 +178,21 @@ export default function Home() {
 							/>
 						) : (
 							<GoogleMap
-								options={{ disableDefaultUI: true }}
+								options={{
+									mapTypeControlOptions: {
+										position: google.maps.ControlPosition.TOP_RIGHT
+									},
+									keyboardShortcuts: false,
+									zoomControl: false,
+									streetViewControl: false,
+									fullscreenControl: false
+								}}
 								zoom={14}
 								center={MockedCarLocation[0].location}
 								mapContainerClassName="h-full min-h-[500px] w-full rounded-md"
 								onLoad={(map) => setMap(map)}
 							>
+								<DrivingTestLocationBtn setFocus={setFocus} />
 								{carsList?.map(({ id }) => {
 									const status = heartbeatContextData.CAR[id]?.data.status ?? PILL_LABEL.INACTIVE;
 									const location = {

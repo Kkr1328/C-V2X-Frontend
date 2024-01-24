@@ -1,5 +1,5 @@
 import { PILL_LABEL } from '@/constants/LABEL';
-import { CameraType } from './ENTITY';
+
 export interface Location {
 	lat: number;
 	lng: number;
@@ -22,6 +22,8 @@ export interface CarCard {
 export interface FocusState {
 	id: string;
 	type: 'CAR' | 'RSU';
+	location: Location | null;
+	zoom: number | null;
 }
 
 export interface StuffLocation {
