@@ -28,17 +28,11 @@ import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 import { IEmergency } from '@/types/models/emergency.model';
 // utilities
 import { WidthObserver } from '@/utils/WidthObserver';
+import { useQuery } from '@tanstack/react-query';
+import { getCarsListAPI, getRSUsListAPI } from '@/services/api-call';
 import { getEmergencyListAPI } from '@/services/api-call';
 // context
 import { CarSpeedFleetContext, HeartbeatFleetContext, LocationFleetContext } from '@/context/fleet';
-// mock
-import {
-	MockedCars,
-	MockedCarLocation,
-	MockedRSU,
-} from '@/mock/ENTITY_OVERVIEW';
-import { useQuery } from '@tanstack/react-query';
-import { getCarsListAPI, getRSUsListAPI } from '@/services/api-call';
 
 export default function Home() {
 	const searchParams = useSearchParams();
@@ -74,6 +68,27 @@ export default function Home() {
 			map?.setZoom(focus.zoom)
 		}
 	}, [focus])
+
+	useEffect(() => {
+		if (!focus) return
+		let location = null
+		if (focus.type === 'CAR') {
+			const car_location = locationContextData.CAR[focus.id]
+			if (car_location === undefined) return
+			location = {
+				lat: car_location.latitude,
+				lng: car_location.longitude
+			}
+		} else if (focus.type === 'RSU') {
+			const rsu_location = locationContextData.RSU[focus.id]
+			if (rsu_location === undefined) return
+			location = {
+				lat: rsu_location.latitude,
+				lng: rsu_location.longitude
+			}
+		}
+		setFocus({ ...focus, location, zoom: focus.zoom })
+	}, [locationContextData])
 
 	const [map, setMap] = useState<google.maps.Map>();
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL);
@@ -125,8 +140,19 @@ export default function Home() {
 	}
 
 	function clickOnCarCard(carID: string) {
-		let target = MockedCarLocation.find((value) => value.id === carID) ?? null;
-		changeFocus(target);
+		const car_location = locationContextData.CAR[carID]
+		if (car_location === undefined) return
+		const location = {
+			lat: car_location.latitude,
+			lng: car_location.longitude
+		}
+		const status = heartbeatContextData.CAR[carID]?.data.status ?? PILL_LABEL.INACTIVE;
+		changeFocus({
+			id: carID,
+			type: 'CAR',
+			location: location,
+			status: status
+		});
 	}
 
 	return (
@@ -188,11 +214,11 @@ export default function Home() {
 									fullscreenControl: false
 								}}
 								zoom={14}
-								center={MockedCarLocation[0].location}
+								center={MAP_OBJECT_CONFIG.DRIVING_TESTED_LOCATION.EXAT.location}
 								mapContainerClassName="h-full min-h-[500px] w-full rounded-md"
 								onLoad={(map) => setMap(map)}
 							>
-								<DrivingTestLocationBtn setFocus={setFocus} />
+								<DrivingTestLocationBtn map={map} setFocus={setFocus} />
 								{carsList?.map(({ id }) => {
 									const status = heartbeatContextData.CAR[id]?.data.status ?? PILL_LABEL.INACTIVE;
 									const location = {
@@ -263,7 +289,7 @@ export default function Home() {
 								onChange={(_event, value) => changePillMode(value)}
 							/>
 							<div className="flex flex-col w-full min-w-max h-full gap-16 pb-8 overflow-y-auto">
-								{focus?.type === 'CAR' || focus === null
+								{focus === null || focus.type === 'CAR'
 									? carsList?.filter(
 										({ id }) => {
 											const status = heartbeatContextData.CAR[id]?.data.status;

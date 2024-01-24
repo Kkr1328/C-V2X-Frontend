@@ -6,11 +6,12 @@ import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 interface DrivingTestLocationBtnProps {
-    setFocus: (focus: FocusState) => void
+    map: google.maps.Map | undefined,
+    setFocus: (focus: FocusState | null) => void
 }
 
 export default function DrivingTestLocationBtn(props: DrivingTestLocationBtnProps) {
-    const { setFocus } = props
+    const { map, setFocus } = props
     const [open, setOpen] = useState(false)
 
     if (open) {
@@ -25,12 +26,9 @@ export default function DrivingTestLocationBtn(props: DrivingTestLocationBtnProp
                 <button
                     onClick={() => {
                         const { location, zoom } = MAP_OBJECT_CONFIG.DRIVING_TESTED_LOCATION.EXAT
-                        setFocus({
-                            id: '',
-                            type: 'CAR',
-                            location: location,
-                            zoom: zoom
-                        })
+                        setFocus(null)
+                        map?.setCenter(location)
+                        map?.setZoom(zoom)
                         setOpen(false)
                     }}
                     className='border border-inactive_grey hover:bg-light_background_grey'
@@ -40,12 +38,9 @@ export default function DrivingTestLocationBtn(props: DrivingTestLocationBtnProp
                 <button
                     onClick={() => {
                         const { location, zoom } = MAP_OBJECT_CONFIG.DRIVING_TESTED_LOCATION.CHALONG_RAT_EXPRESS_WAY
-                        setFocus({
-                            id: '',
-                            type: 'CAR',
-                            location: location,
-                            zoom: zoom
-                        })
+                        setFocus(null)
+                        map?.setCenter(location)
+                        map?.setZoom(zoom)
                         setOpen(false)
                     }}
                     className='border border-inactive_grey hover:bg-light_background_grey'
@@ -55,12 +50,9 @@ export default function DrivingTestLocationBtn(props: DrivingTestLocationBtnProp
                 <button
                     onClick={() => {
                         const { location, zoom } = MAP_OBJECT_CONFIG.DRIVING_TESTED_LOCATION.PTT
-                        setFocus({
-                            id: '',
-                            type: 'CAR',
-                            location: location,
-                            zoom: zoom
-                        })
+                        setFocus(null)
+                        map?.setCenter(location)
+                        map?.setZoom(zoom)
                         setOpen(false)
                     }}
                     className='border border-inactive_grey hover:bg-light_background_grey'
