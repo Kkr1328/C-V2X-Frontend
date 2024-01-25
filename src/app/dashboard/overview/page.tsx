@@ -26,7 +26,6 @@ import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 // utilities
 import { WidthObserver } from '@/utils/WidthObserver';
-import Script from 'next/script';
 
 import {
 	MockedCars,
@@ -95,14 +94,6 @@ export default function Home() {
 			ref={pageRef}
 			className="flex flex-col w-full min-w-[300px] h-auto gap-16"
 		>
-			<Script
-					src="https://muazkhan.com:9001/dist/RTCMultiConnection.min.js"
-					strategy="beforeInteractive"
-				/>
-				<Script
-					src="https://muazkhan.com:9001/socket.io/socket.io.js"
-					strategy="beforeInteractive"
-				/>
 			<PageTitle title={NAVBAR_LABEL.OVERVIEW} />
 			<Grid
 				container

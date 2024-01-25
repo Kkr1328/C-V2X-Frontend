@@ -232,7 +232,6 @@ export default function VideoReceiver(props: VideoReceiverProps) {
                 </div>
               ) : null}
             
-      
               <video
                 className={`video-machine ${isLoading ? "hidden" : ""}`}
                 id={`video ${uid}`}
