@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import TabCV2X from '../common/TabCV2X';
 import { BUTTON_LABEL, PILL_LABEL, TAB_LABEL } from '@/constants/LABEL';
-import VideoReceiver from '../videoReceiver/videoReceiver';
+import VideoReceiver from './videoReceiver';
 import { Position } from '@/types/COMMON';
 import Pill from '../common/Pill';
 import CameraModal from './Modal/CameraModal';
 import ButtonCV2X from '../common/ButtonCV2X';
-import { Box } from '@mui/material';
 
 interface CameraSectionProps {
 	carName: string;
@@ -52,21 +51,9 @@ export default function CameraSection(props: CameraSectionProps) {
 						onChange={(mode: number) => setVideoModeNumber(mode)}
 						size="small"
 					/>
-					<Box
-						sx={{
-							height: '28vh',
-							width: '100%',
-							// minHeight: '28vh',
-							backgroundColor: 'text.disabled',
-							position: 'relative',
-							display: 'flex',
-							justifyContent: 'center',
-							alignItems: 'center',
-							overflow: 'hidden',
-						}}
-					>
+					<div className="relative h-[28vh] w-full bg-light_text_grey flex justify-center items-center">
 						<VideoReceiver camNumber={props.cameraName} carID={props.carName} />
-					</Box>
+					</div>
 					<div className="absolute bottom-20 right-20">
 						<ButtonCV2X
 							icon={BUTTON_LABEL.ZOOM}

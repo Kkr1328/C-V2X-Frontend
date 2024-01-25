@@ -8,8 +8,6 @@ import {
 	useRef,
 	useState,
 } from 'react';
-// material ui
-import { Stack } from '@mui/material';
 // components
 import TextFieldCV2X from '@/components/common/TextFieldCV2X';
 import SelectCV2X from '@/components/common/SelectCV2X';
@@ -66,11 +64,7 @@ export default function Filter<T>(props: FilterProp<T>) {
 	return (
 		<div ref={filterRef} className="flex flex-col w-full min-w-[240px] gap-8">
 			{Array.from({ length: maxRow }, (_, index) => (
-				<Stack
-					key={`row ${index}`}
-					direction="row"
-					className="gap-16 items-end"
-				>
+				<div key={`row ${index}`} className="flex flex-row gap-16 items-end">
 					{template
 						.filter((inputField) => inputField.row === index + 1)
 						.map((inputField) =>
@@ -122,7 +116,7 @@ export default function Filter<T>(props: FilterProp<T>) {
 							<FilterActionButtons {...props} fieldPerRow={fieldPerRow} />
 						</Fragment>
 					)}
-				</Stack>
+				</div>
 			))}
 		</div>
 	);
