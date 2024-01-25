@@ -1,8 +1,6 @@
 'use client';
 // react
 import { Dispatch, SetStateAction } from 'react';
-// material ui
-import { Stack } from '@mui/material';
 // components
 import SelectCV2X from '@/components/common/SelectCV2X';
 import TextFieldCV2X from '@/components/common/TextFieldCV2X';
@@ -51,7 +49,7 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 	};
 
 	return (
-		<Stack className="w-full gap-16 flex">
+		<div className="flex flex-col w-full gap-16 flex">
 			{Array.from({ length: maxRow }, (_, index) => (
 				<>
 					{props.template.some(
@@ -59,7 +57,7 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 							inputField.row === index + 1 &&
 							(!props.isReadOnly || getData(inputField.id))
 					) && (
-						<Stack key={index} direction="row" className="gap-16">
+						<div key={index} className="flex flex-row gap-16">
 							{props.template
 								.filter((inputField) => inputField.row === index + 1)
 								.map((inputField) =>
@@ -121,10 +119,10 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 										)
 									)
 								)}
-						</Stack>
+						</div>
 					)}
 				</>
 			))}
-		</Stack>
+		</div>
 	);
 }

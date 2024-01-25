@@ -1,10 +1,10 @@
 // reatc
 import { useState } from 'react';
 // material ui
-import { Box, Card, Divider, Modal } from '@mui/material';
+import { Card, Divider, Modal } from '@mui/material';
 // components
 import ModalHeader, { ModalHeaderProp } from './ModalHeader';
-import VideoReceiver from '@/components/videoReceiver/videoReceiver';
+import VideoReceiver from '@/components/module/videoReceiver';
 import TabCV2X from '@/components/common/TabCV2X';
 // const
 import { TAB_LABEL } from '@/constants/LABEL';
@@ -43,26 +43,14 @@ export default function CameraModal(props: CameraModalProp) {
 							value={videoModeNumber}
 							options={modeOptions}
 							onChange={(mode: number) => setVideoModeNumber(mode)}
-							size="small"
+							size="large"
 						/>
-						<Box
-							sx={{
-								height: '75vh',
-								width: '100vh',
-								// minHeight: "65vh",
-								backgroundColor: 'text.disabled',
-								position: 'relative',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-								overflow: 'hidden',
-							}}
-						>
+						<div className="relative h-[75vh] w-[100vh] bg-light_text_grey flex justify-center items-center">
 							<VideoReceiver
 								camNumber={props.cameraName}
 								carID={props.carName}
 							/>
-						</Box>
+						</div>
 					</div>
 				</div>
 			</Card>
