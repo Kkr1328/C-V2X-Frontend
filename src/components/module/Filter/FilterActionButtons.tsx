@@ -2,7 +2,6 @@
 import ButtonCV2X from '@/components/common/ButtonCV2X';
 import { BUTTON_LABEL } from '@/constants/LABEL';
 import { WidthObserver } from '@/utils/WidthObserver';
-import { Stack } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 
 export interface FilterActionButtonsProp {
@@ -20,7 +19,7 @@ export default function FilterActionButtons(props: FilterActionButtonsProp) {
 	const buttonsSize = buttonsWidth < 380 ? 's' : buttonsWidth < 500 ? 'm' : 'l';
 
 	return (
-		<Stack ref={buttonsRef} direction="row" className="w-full gap-8">
+		<div ref={buttonsRef} className="flex flex-row w-full gap-8">
 			<div className="grow" />
 			<ButtonCV2X
 				icon={BUTTON_LABEL.CLEAR}
@@ -42,6 +41,6 @@ export default function FilterActionButtons(props: FilterActionButtonsProp) {
 				variant="contained"
 				onClick={props.handleSubmitSearch}
 			/>
-		</Stack>
+		</div>
 	);
 }

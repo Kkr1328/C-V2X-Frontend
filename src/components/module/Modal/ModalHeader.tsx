@@ -1,5 +1,5 @@
 // material ui
-import { IconButton, Stack } from '@mui/material';
+import { IconButton } from '@mui/material';
 // components
 import Text from '@/components/common/Text';
 // const
@@ -18,8 +18,8 @@ export interface ModalHeaderProp {
 
 export default function ModalHeader(props: ModalHeaderProp) {
 	return (
-		<Stack direction="row" className="p-16 gap-16 items-center">
-			<Stack direction="row" className="gap-4">
+		<div className="flex flex-row p-16 gap-16 items-center">
+			<div className="flex flex-row gap-4">
 				<Text style="text-black text-h3" content={props.title} />
 				{props.handleLocate && (
 					<IconButton
@@ -31,7 +31,7 @@ export default function ModalHeader(props: ModalHeaderProp) {
 						<IconMapper icon={BUTTON_LABEL.LOCATION} />
 					</IconButton>
 				)}
-			</Stack>
+			</div>
 			{!props.isLoading && props.pill && <Pill variant={props.pill} />}
 			<div className="grow" />
 			{props.handleOnClose && (
@@ -43,6 +43,6 @@ export default function ModalHeader(props: ModalHeaderProp) {
 					<IconMapper icon={BUTTON_LABEL.CANCEL} />
 				</IconButton>
 			)}
-		</Stack>
+		</div>
 	);
 }

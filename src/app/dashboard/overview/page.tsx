@@ -36,6 +36,9 @@ import {
 	MockedCarLocation,
 	MockedRSU,
 } from '@/mock/ENTITY_OVERVIEW';
+import { useQuery } from '@tanstack/react-query';
+import { getEmergencyListAPI } from '@/services/api-call';
+import { IEmergency } from '@/types/models/emergency.model';
 
 export default function Home() {
 	const searchParams = useSearchParams();
@@ -112,6 +115,12 @@ export default function Home() {
 		changeFocus(target);
 	}
 
+	const { isPending: isEmergencyListPending, data: dataGetEmergencyList } =
+		useQuery({
+			queryKey: ['getEmergencyList'],
+			queryFn: async () => await getEmergencyListAPI(),
+		});
+
 	return (
 		<div
 			ref={pageRef}
@@ -132,16 +141,24 @@ export default function Home() {
 				</Grid>
 				<Grid item xs={summariesXs}>
 					<SummaryCard
-						title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
-						value={inProgressEmergency?.length ?? "-"}
-						isLoading={isEmergencyListLoading}
+						title={SUMMARY_LABEL.PENDING_EMERGENCY}
+						value={
+							dataGetEmergencyList?.filter(
+								(emergency: IEmergency) => emergency.status === 'pending'
+							).length
+						}
+						isLoading={isEmergencyListPending}
 					/>
 				</Grid>
 				<Grid item xs={summariesXs}>
 					<SummaryCard
-						title={SUMMARY_LABEL.PENDING_EMERGENCY}
-						value={pendingEmergency.current?.length ?? "-"}
-						isLoading={isEmergencyListLoading}
+						title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
+						value={
+							dataGetEmergencyList?.filter(
+								(emergency: IEmergency) => emergency.status === 'inProgress'
+							).length
+						}
+						isLoading={isEmergencyListPending}
 					/>
 				</Grid>
 			</Grid>

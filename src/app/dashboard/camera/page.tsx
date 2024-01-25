@@ -1,18 +1,21 @@
 'use client';
-
+// react
 import { useEffect, useRef, useState } from 'react';
-
-import { Grid } from '@mui/material';
-
-import PageTitle from '@/components/common/PageTitle';
-
-import { NAVBAR_LABEL, PILL_LABEL } from '@/constants/LABEL';
+// next
 import Script from 'next/script';
-import { Position } from '@/types/COMMON';
-import CameraCard from '@/components/module/CameraCard';
-import { WidthObserver } from '@/utils/WidthObserver';
 import { useRouter } from 'next/navigation';
+// material ui
+import Grid from '@mui/material/Grid';
+// components
+import PageTitle from '@/components/common/PageTitle';
+import CameraCard from '@/components/module/CameraCard';
+// const
+import { NAVBAR_LABEL, PILL_LABEL } from '@/constants/LABEL';
 import { ROUTE } from '@/constants/ROUTE';
+// types
+import { Position } from '@/types/COMMON';
+// utilities
+import { WidthObserver } from '@/utils/WidthObserver';
 
 const MockedCarCamerasContent = [
 	{
