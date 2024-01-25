@@ -12,9 +12,17 @@ interface Driver {
 	phone_no: string;
 }
 
+interface Camera {
+	id: string;
+	name: string;
+	position: string;
+}
+[];
 export interface CarCard {
 	id: string;
 	name: string;
+	cameras?: Camera[];
+	driver?: Driver;
 	speed: string;
 	status: PILL_LABEL;
 }
