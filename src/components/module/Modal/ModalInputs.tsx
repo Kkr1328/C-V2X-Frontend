@@ -56,7 +56,8 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 				<>
 					{props.template.some(
 						(inputField) =>
-							inputField.row === index + 1 && getData(inputField.id)
+							inputField.row === index + 1 &&
+							(!props.isReadOnly || getData(inputField.id))
 					) && (
 						<Stack key={index} direction="row" className="gap-16">
 							{props.template
