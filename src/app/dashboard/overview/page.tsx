@@ -7,9 +7,10 @@ import { Card, Divider, Grid, Skeleton } from '@mui/material';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 // next
 import { useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 // components
 import PageTitle from '@/components/common/PageTitle';
-import SummaryCard from '@/components/common/SummaryCard';
+const SummaryCard = dynamic(() => import('@/components/common/SummaryCard'), { ssr: false })
 import ToggleButtonCV2X from '@/components/common/ToggleButtonCV2X';
 import CarCard from '@/components/common/CarCard';
 import RSUMarker from '@/components/common/RSUMarker';
@@ -48,25 +49,22 @@ export default function Home() {
 	const [locationContextData] = useContext(LocationFleetContext)
 	const [carSpeedContextData] = useContext(CarSpeedFleetContext)
 
-	const { data: carsList } = useQuery<{ id: string, name: string }[]>({
+	const { data: carsList, isLoading: isCarListLoading } = useQuery<{ id: string, name: string }[]>({
 		queryKey: ['getCarsList'],
 		queryFn: async () => await getCarsListAPI()
 	});
-	const activeCar = useMemo(() =>
-		Object.entries(heartbeatContextData.CAR).filter(([_key, value]) => {
-			return value && (value.data.status !== PILL_LABEL.INACTIVE)
-		}).length
-		, [heartbeatContextData.CAR]);
 
-	const { data: rsusList } = useQuery<{ id: string, name: string }[]>({
+	const activeCar = useMemo(() => Object.entries(heartbeatContextData.CAR).filter(([_key, value]) => {
+		return value && (value.data.status !== PILL_LABEL.INACTIVE)
+	}).length, [heartbeatContextData.CAR]);
+
+	const { data: rsusList, isLoading: isRSUListLoading } = useQuery<{ id: string, name: string }[]>({
 		queryKey: ['getRSUsList'],
 		queryFn: async () => await getRSUsListAPI()
 	});
-	const activeRSU = useMemo(() =>
-		Object.entries(heartbeatContextData.RSU).filter(([_key, value]) => {
-			return value && (value.data.status === PILL_LABEL.ACTIVE)
-		}).length
-		, [heartbeatContextData.RSU]);
+	const activeRSU = useMemo(() => Object.entries(heartbeatContextData.RSU).filter(([_key, value]) => {
+		return value && (value.data.status === PILL_LABEL.ACTIVE)
+	}).length, [heartbeatContextData.RSU]);
 
 	const [focus, setFocus] = useState<FocusState | null>(null);
 	useEffect(() => {
@@ -107,7 +105,7 @@ export default function Home() {
 		queryKey: ['getEmergencyList'],
 		queryFn: async () => await getEmergencyListAPI(),
 	});
-	const pendingEmergency = useRef(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"));
+	const pendingEmergency = useRef<IEmergency[]>(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"));
 	pendingEmergency.current = useMemo(() => dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"), [dataGetEmergencyList]);
 	const inProgressEmergency = useMemo(() => (dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress")), [dataGetEmergencyList])
 
@@ -156,7 +154,11 @@ export default function Home() {
 			lat: car_location.latitude,
 			lng: car_location.longitude
 		}
-		const status = heartbeatContextData.CAR[carID]?.data.status ?? PILL_LABEL.INACTIVE;
+		let status = heartbeatContextData.CAR[carID]?.data.status;
+		if (!status || status === PILL_LABEL.INACTIVE) return
+		if (pendingEmergency.current.find((task) => task.car_id === carID)) {
+			status = PILL_LABEL.EMERGENCY
+		}
 		changeFocus({
 			id: carID,
 			type: 'CAR',
@@ -178,10 +180,18 @@ export default function Home() {
 				columnSpacing={{ xs: 2 }}
 			>
 				<Grid item xs={summariesXs}>
-					<SummaryCard title={SUMMARY_LABEL.ACTIVE_CAR} value={`${activeCar} / ${carsList?.length ?? '-'}`} />
+					<SummaryCard
+						title={SUMMARY_LABEL.ACTIVE_CAR}
+						value={`${activeCar ?? '-'} / ${carsList?.length ?? '-'}`}
+						isLoading={isCarListLoading}
+					/>
 				</Grid>
 				<Grid item xs={summariesXs}>
-					<SummaryCard title={SUMMARY_LABEL.ACTIVE_RSU} value={`${activeRSU} / ${rsusList?.length ?? '-'}`} />
+					<SummaryCard
+						title={SUMMARY_LABEL.ACTIVE_RSU}
+						value={`${activeRSU ?? '-'} / ${rsusList?.length ?? '-'}`}
+						isLoading={isRSUListLoading}
+					/>
 				</Grid>
 				<Grid item xs={summariesXs}>
 					<SummaryCard
@@ -193,7 +203,7 @@ export default function Home() {
 				<Grid item xs={summariesXs}>
 					<SummaryCard
 						title={SUMMARY_LABEL.PENDING_EMERGENCY}
-						value={pendingEmergency.current?.length ?? "-"}
+						value={pendingEmergency.current?.length.toString() ?? "-"}
 						isLoading={isEmergencyListLoading}
 					/>
 				</Grid>
@@ -231,10 +241,16 @@ export default function Home() {
 								<DrivingTestLocationBtn map={map} setFocus={setFocus} />
 								{carsList?.filter(({ id }) => heartbeatContextData.CAR[id]?.data.status !== PILL_LABEL.INACTIVE)
 									.map(({ id }) => {
-										const status = heartbeatContextData.CAR[id]?.data.status ?? PILL_LABEL.INACTIVE;
+										const car_location = locationContextData.CAR[id]
+										if (car_location === undefined) return
 										const location = {
-											lat: locationContextData.CAR[id]?.latitude ?? 0,
-											lng: locationContextData.CAR[id]?.longitude ?? 0
+											lat: car_location.latitude,
+											lng: car_location.longitude
+										}
+										let status = heartbeatContextData.CAR[id]?.data.status;
+										if (!status || status === PILL_LABEL.INACTIVE) return
+										if (pendingEmergency.current.find((task) => task.car_id === id)) {
+											status = PILL_LABEL.EMERGENCY
 										}
 										return (
 											<Marker
@@ -264,9 +280,11 @@ export default function Home() {
 									})}
 								{rsusList?.filter(({ id }) => heartbeatContextData.RSU[id]?.data.status === PILL_LABEL.ACTIVE)
 									.map(({ id }) => {
+										const rsu_location = locationContextData.RSU[id]
+										if (rsu_location === undefined) return
 										const location = {
-											lat: locationContextData.RSU[id]?.latitude ?? 0,
-											lng: locationContextData.RSU[id]?.longitude ?? 0
+											lat: rsu_location.latitude,
+											lng: rsu_location.longitude
 										}
 										return (
 											<RSUMarker
@@ -304,24 +322,35 @@ export default function Home() {
 								{focus === null || focus.type === 'CAR'
 									? carsList?.filter(
 										({ id }) => {
-											const status = heartbeatContextData.CAR[id]?.data.status;
-											return status && (status === pillMode || pillMode === PILL_LABEL.ALL) && status !== PILL_LABEL.INACTIVE
+											let status = heartbeatContextData.CAR[id]?.data.status;
+											if (!status || status === PILL_LABEL.INACTIVE) return
+											if (pendingEmergency.current.find((task) => task.car_id === id)) {
+												status = PILL_LABEL.EMERGENCY
+											}
+											return status && (status === pillMode || pillMode === PILL_LABEL.ALL)
 										}
 									)
 										.sort((car) => (car.id === focus?.id ? -1 : 1))
-										.map((car) => (
-											<CarCard
-												key={car.id}
-												car={{
-													id: car.id,
-													name: car.name,
-													speed: carSpeedContextData[car.id]?.velocity.toString() + ' km/h' ?? 'null',
-													status: heartbeatContextData.CAR[car.id]?.data.status ?? PILL_LABEL.INACTIVE,
-												}}
-												isFocus={car.id === focus?.id}
-												onClick={() => clickOnCarCard(car.id)}
-											/>
-										))
+										.map((car) => {
+											let status = heartbeatContextData.CAR[car.id]?.data.status;
+											if (!status || status === PILL_LABEL.INACTIVE) return
+											if (pendingEmergency.current.find((task) => task.car_id === car.id)) {
+												status = PILL_LABEL.EMERGENCY
+											}
+											return (
+												<CarCard
+													key={car.id}
+													car={{
+														id: car.id,
+														name: car.name,
+														speed: carSpeedContextData[car.id]?.velocity.toString() + (' ' + carSpeedContextData[car.id]?.unit ?? '') ?? 'null',
+														status
+													}}
+													isFocus={car.id === focus?.id}
+													onClick={() => clickOnCarCard(car.id)}
+												/>
+											)
+										})
 									: rsusList?.filter((rsu) => rsu.id === focus?.id).map(
 										(RSU) => (
 											<RSUCard
