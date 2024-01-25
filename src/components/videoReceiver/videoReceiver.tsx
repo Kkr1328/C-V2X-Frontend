@@ -225,7 +225,7 @@ export default function VideoReceiver(props: VideoReceiverProps) {
       return (
         <Box style={{maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto" }}  id="videos-container">
           {stream ? (
-            <div>
+            <>
               {isLoading ? (
                 <div className="BlankContainer">
                   <LoadingSpinner />
@@ -251,7 +251,7 @@ export default function VideoReceiver(props: VideoReceiverProps) {
                   display: props.isShowObjectDetection ? "flex" : "none",
                 }}
               />
-            </div>
+            </>
           ) : (
             <div className="BlankContainer">
               <LoadingSpinner />

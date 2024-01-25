@@ -7,7 +7,6 @@ import { Grid } from '@mui/material';
 import PageTitle from '@/components/common/PageTitle';
 
 import { NAVBAR_LABEL, PILL_LABEL } from '@/constants/LABEL';
-import Script from 'next/script';
 import { Position } from '@/types/COMMON';
 import CameraCard from '@/components/module/CameraCard';
 import { WidthObserver } from '@/utils/WidthObserver';
@@ -132,14 +131,6 @@ export default function Home() {
 
 	return (
 		<>
-			<Script
-				src="https://muazkhan.com:9001/dist/RTCMultiConnection.min.js"
-				strategy="beforeInteractive"
-			/>
-			<Script
-				src="https://muazkhan.com:9001/socket.io/socket.io.js"
-				strategy="beforeInteractive"
-			/>
 			<div ref={contentRef} className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CAMERA} />
 				<Grid
