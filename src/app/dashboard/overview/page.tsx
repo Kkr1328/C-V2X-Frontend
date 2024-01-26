@@ -1,15 +1,16 @@
 'use client';
 // react
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 // material ui
 import { Card, Divider, Grid, Skeleton } from '@mui/material';
 // google map
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 // next
 import { useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 // components
 import PageTitle from '@/components/common/PageTitle';
-import SummaryCard from '@/components/common/SummaryCard';
+const SummaryCard = dynamic(() => import('@/components/common/SummaryCard'), { ssr: false })
 import ToggleButtonCV2X from '@/components/common/ToggleButtonCV2X';
 import CarCard from '@/components/common/CarCard';
 import RSUMarker from '@/components/common/RSUMarker';
@@ -28,17 +29,11 @@ import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 import { IEmergency } from '@/types/models/emergency.model';
 // utilities
 import { WidthObserver } from '@/utils/WidthObserver';
-import { getEmergencyListAPI } from '@/services/api-call';
 import { useQuery } from '@tanstack/react-query';
-
-import {
-	MockedCars,
-	MockedCarLocation,
-	MockedRSU,
-} from '@/mock/ENTITY_OVERVIEW';
-import { useQuery } from '@tanstack/react-query';
+import { getCarsListAPI, getRSUsListAPI } from '@/services/api-call';
 import { getEmergencyListAPI } from '@/services/api-call';
-import { IEmergency } from '@/types/models/emergency.model';
+// context
+import { CarSpeedFleetContext, HeartbeatFleetContext, LocationFleetContext } from '@/context/fleet';
 
 export default function Home() {
 	const searchParams = useSearchParams();
@@ -49,6 +44,27 @@ export default function Home() {
 			clickOnCarCard(id);
 		}
 	}, [id]);
+
+	const [heartbeatContextData] = useContext(HeartbeatFleetContext)
+	const [locationContextData] = useContext(LocationFleetContext)
+	const [carSpeedContextData] = useContext(CarSpeedFleetContext)
+
+	const { data: carsList, isLoading: isCarListLoading } = useQuery<{ id: string, name: string }[]>({
+		queryKey: ['getCarsList'],
+		queryFn: async () => await getCarsListAPI()
+	});
+
+	const activeCar = useMemo(() => Object.entries(heartbeatContextData.CAR).filter(([_key, value]) => {
+		return value && (value.data.status !== PILL_LABEL.INACTIVE)
+	}).length, [heartbeatContextData.CAR]);
+
+	const { data: rsusList, isLoading: isRSUListLoading } = useQuery<{ id: string, name: string }[]>({
+		queryKey: ['getRSUsList'],
+		queryFn: async () => await getRSUsListAPI()
+	});
+	const activeRSU = useMemo(() => Object.entries(heartbeatContextData.RSU).filter(([_key, value]) => {
+		return value && (value.data.status === PILL_LABEL.ACTIVE)
+	}).length, [heartbeatContextData.RSU]);
 
 	const [focus, setFocus] = useState<FocusState | null>(null);
 	useEffect(() => {
@@ -61,6 +77,27 @@ export default function Home() {
 		}
 	}, [focus])
 
+	useEffect(() => {
+		if (!focus) return
+		let location = null
+		if (focus.type === 'CAR') {
+			const car_location = locationContextData.CAR[focus.id]
+			if (car_location === undefined) return
+			location = {
+				lat: car_location.latitude,
+				lng: car_location.longitude
+			}
+		} else if (focus.type === 'RSU') {
+			const rsu_location = locationContextData.RSU[focus.id]
+			if (rsu_location === undefined) return
+			location = {
+				lat: rsu_location.latitude,
+				lng: rsu_location.longitude
+			}
+		}
+		setFocus({ ...focus, location, zoom: focus.zoom })
+	}, [locationContextData])
+
 	const [map, setMap] = useState<google.maps.Map>();
 	const [pillMode, setPillMode] = useState<PILL_LABEL | null>(PILL_LABEL.ALL);
 
@@ -68,7 +105,7 @@ export default function Home() {
 		queryKey: ['getEmergencyList'],
 		queryFn: async () => await getEmergencyListAPI(),
 	});
-	const pendingEmergency = useRef(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"));
+	const pendingEmergency = useRef<IEmergency[]>(dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"));
 	pendingEmergency.current = useMemo(() => dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "pending"), [dataGetEmergencyList]);
 	const inProgressEmergency = useMemo(() => (dataGetEmergencyList?.filter((emergency: IEmergency) => emergency.status === "inProgress")), [dataGetEmergencyList])
 
@@ -111,15 +148,24 @@ export default function Home() {
 	}
 
 	function clickOnCarCard(carID: string) {
-		let target = MockedCarLocation.find((value) => value.id === carID) ?? null;
-		changeFocus(target);
-	}
-
-	const { isPending: isEmergencyListPending, data: dataGetEmergencyList } =
-		useQuery({
-			queryKey: ['getEmergencyList'],
-			queryFn: async () => await getEmergencyListAPI(),
+		const car_location = locationContextData.CAR[carID]
+		if (car_location === undefined) return
+		const location = {
+			lat: car_location.latitude,
+			lng: car_location.longitude
+		}
+		let status = heartbeatContextData.CAR[carID]?.data.status;
+		if (!status || status === PILL_LABEL.INACTIVE) return
+		if (pendingEmergency.current.find((task) => task.car_id === carID)) {
+			status = PILL_LABEL.EMERGENCY
+		}
+		changeFocus({
+			id: carID,
+			type: 'CAR',
+			location: location,
+			status: status
 		});
+	}
 
 	return (
 		<div
@@ -134,31 +180,31 @@ export default function Home() {
 				columnSpacing={{ xs: 2 }}
 			>
 				<Grid item xs={summariesXs}>
-					<SummaryCard title={SUMMARY_LABEL.ACTIVE_CAR} value={'4 / 5'} />
-				</Grid>
-				<Grid item xs={summariesXs}>
-					<SummaryCard title={SUMMARY_LABEL.ACTIVE_DRIVER} value={'4 / 10'} />
+					<SummaryCard
+						title={SUMMARY_LABEL.ACTIVE_CAR}
+						value={`${activeCar ?? '-'} / ${carsList?.length ?? '-'}`}
+						isLoading={isCarListLoading}
+					/>
 				</Grid>
 				<Grid item xs={summariesXs}>
 					<SummaryCard
-						title={SUMMARY_LABEL.PENDING_EMERGENCY}
-						value={
-							dataGetEmergencyList?.filter(
-								(emergency: IEmergency) => emergency.status === 'pending'
-							).length
-						}
-						isLoading={isEmergencyListPending}
+						title={SUMMARY_LABEL.ACTIVE_RSU}
+						value={`${activeRSU ?? '-'} / ${rsusList?.length ?? '-'}`}
+						isLoading={isRSUListLoading}
 					/>
 				</Grid>
 				<Grid item xs={summariesXs}>
 					<SummaryCard
 						title={SUMMARY_LABEL.IN_PROGRESS_EMERGENCY}
-						value={
-							dataGetEmergencyList?.filter(
-								(emergency: IEmergency) => emergency.status === 'inProgress'
-							).length
-						}
-						isLoading={isEmergencyListPending}
+						value={inProgressEmergency?.length ?? "-"}
+						isLoading={isEmergencyListLoading}
+					/>
+				</Grid>
+				<Grid item xs={summariesXs}>
+					<SummaryCard
+						title={SUMMARY_LABEL.PENDING_EMERGENCY}
+						value={pendingEmergency.current?.length.toString() ?? "-"}
+						isLoading={isEmergencyListLoading}
 					/>
 				</Grid>
 			</Grid>
@@ -188,40 +234,71 @@ export default function Home() {
 									fullscreenControl: false
 								}}
 								zoom={14}
-								center={MockedCarLocation[0].location}
+								center={MAP_OBJECT_CONFIG.DRIVING_TESTED_LOCATION.EXAT.location}
 								mapContainerClassName="h-full min-h-[500px] w-full rounded-md"
 								onLoad={(map) => setMap(map)}
 							>
-								<DrivingTestLocationBtn setFocus={setFocus} />
-								{MockedCarLocation.map((CAR) => (
-									<Marker
-										icon={{
-											url: `${MAP_ASSETS.CAR_PIN}${CAR.status}.svg`,
-											scaledSize:
-												focus?.id === CAR.id
-													? new google.maps.Size(
-														MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
-														MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
-													)
-													: new google.maps.Size(
-														MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
-														MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
-													),
-										}}
-										onClick={() => changeFocus(CAR)}
-										position={CAR.location}
-										key={CAR.id}
-									/>
-								))}
-								{MockedRSU.map((RSU) => (
-									<RSUMarker
-										location={RSU.location}
-										radius={RSU.radius}
-										isFocus={focus?.id === RSU.id}
-										onClick={() => changeFocus(RSU)}
-										key={RSU.id}
-									/>
-								))}
+								<DrivingTestLocationBtn map={map} setFocus={setFocus} />
+								{carsList?.filter(({ id }) => heartbeatContextData.CAR[id]?.data.status !== PILL_LABEL.INACTIVE)
+									.map(({ id }) => {
+										const car_location = locationContextData.CAR[id]
+										if (car_location === undefined) return
+										const location = {
+											lat: car_location.latitude,
+											lng: car_location.longitude
+										}
+										let status = heartbeatContextData.CAR[id]?.data.status;
+										if (!status || status === PILL_LABEL.INACTIVE) return
+										if (pendingEmergency.current.find((task) => task.car_id === id)) {
+											status = PILL_LABEL.EMERGENCY
+										}
+										return (
+											<Marker
+												icon={{
+													url: `${MAP_ASSETS.CAR_PIN}${status}.svg`,
+													scaledSize:
+														focus?.id === id
+															? new google.maps.Size(
+																MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
+																MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE
+															)
+															: new google.maps.Size(
+																MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE,
+																MAP_OBJECT_CONFIG.NORMAL_PIN_SIZE
+															),
+												}}
+												onClick={() => changeFocus({
+													id,
+													type: 'CAR',
+													location,
+													status
+												})}
+												position={location}
+												key={id}
+											/>
+										)
+									})}
+								{rsusList?.filter(({ id }) => heartbeatContextData.RSU[id]?.data.status === PILL_LABEL.ACTIVE)
+									.map(({ id }) => {
+										const rsu_location = locationContextData.RSU[id]
+										if (rsu_location === undefined) return
+										const location = {
+											lat: rsu_location.latitude,
+											lng: rsu_location.longitude
+										}
+										return (
+											<RSUMarker
+												location={location}
+												isFocus={focus?.id === id}
+												onClick={() => changeFocus({
+													id,
+													type: 'RSU',
+													location
+												})}
+												key={id}
+											/>
+										)
+									})}
 							</GoogleMap>
 						)}
 					</Grid>
@@ -242,27 +319,50 @@ export default function Home() {
 								onChange={(_event, value) => changePillMode(value)}
 							/>
 							<div className="flex flex-col w-full min-w-max h-full gap-16 pb-8 overflow-y-auto">
-								{focus?.type === 'CAR' || focus === null
-									? MockedCars.filter(
-										(car) =>
-											car.status === pillMode || pillMode === PILL_LABEL.ALL
+								{focus === null || focus.type === 'CAR'
+									? carsList?.filter(
+										({ id }) => {
+											let status = heartbeatContextData.CAR[id]?.data.status;
+											if (!status || status === PILL_LABEL.INACTIVE) return
+											if (pendingEmergency.current.find((task) => task.car_id === id)) {
+												status = PILL_LABEL.EMERGENCY
+											}
+											return status && (status === pillMode || pillMode === PILL_LABEL.ALL)
+										}
 									)
 										.sort((car) => (car.id === focus?.id ? -1 : 1))
-										.map((car) => (
-											<CarCard
-												key={car.id}
-												car={car}
-												isFocus={car.id === focus?.id}
-												onClick={() => clickOnCarCard(car.id)}
-											/>
-										))
-									: MockedRSU.filter((all) => all.id === focus?.id).map(
+										.map((car) => {
+											let status = heartbeatContextData.CAR[car.id]?.data.status;
+											if (!status || status === PILL_LABEL.INACTIVE) return
+											if (pendingEmergency.current.find((task) => task.car_id === car.id)) {
+												status = PILL_LABEL.EMERGENCY
+											}
+											return (
+												<CarCard
+													key={car.id}
+													car={{
+														id: car.id,
+														name: car.name,
+														speed: carSpeedContextData[car.id]?.velocity.toString() + (' ' + carSpeedContextData[car.id]?.unit ?? '') ?? 'null',
+														status
+													}}
+													isFocus={car.id === focus?.id}
+													onClick={() => clickOnCarCard(car.id)}
+												/>
+											)
+										})
+									: rsusList?.filter((rsu) => rsu.id === focus?.id).map(
 										(RSU) => (
 											<RSUCard
 												key={RSU.id}
-												name={RSU.name}
-												recommendSpeed={RSU.recommendSpeed}
-												connectedCar={RSU.connectedCar}
+												id={RSU.id}
+												connectedCar={
+													heartbeatContextData.RSU[RSU.id]?.data.connected_OBU.map((obu_id) => ({
+														name: carsList?.find(({ id }) => id === obu_id)?.name ?? 'null',
+														speed: carSpeedContextData[obu_id]?.velocity.toString() + ' km/h',
+														status: heartbeatContextData.CAR[obu_id]?.data.status ?? PILL_LABEL.INACTIVE
+													})) ?? []
+												}
 											/>
 										)
 									)}
