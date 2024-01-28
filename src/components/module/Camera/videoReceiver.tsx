@@ -121,14 +121,14 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 				OfferToReceiveAudio: false,
 				OfferToReceiveVideo: false,
 			};
-		}
 
-		connection.current?.join(
-			`Room${props.carID}${props.camNumber}`,
-			function () {
-				console.log(connection.current?.sessionid);
-			}
-		);
+			connection.current.join(
+				`Room${props.carID}${props.camNumber}`,
+				function () {
+					console.log(connection.current?.sessionid);
+				}
+			);
+		}
 	};
 
 	useEffect(() => {

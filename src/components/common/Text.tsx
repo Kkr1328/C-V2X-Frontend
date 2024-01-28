@@ -5,7 +5,9 @@ interface TextProp {
 
 export default function Text(props: TextProp) {
 	return (
-		<p className={`inline-block align-baseline font-istok ${props.style}`}>
+		<p
+			className={`break-all inline-block align-baseline font-istok ${props.style}`}
+		>
 			{props.content}
 		</p>
 	);

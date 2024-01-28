@@ -8,7 +8,7 @@ import IconMapper from '@/utils/IconMapper';
 export interface TableHeartbeatActionButtonsCellProp<T extends TableRowProps> {
 	row?: T;
 	align?: 'right' | 'left' | 'center';
-	handleOnClickLocation?: (id: string) => void;
+	handleOnClickLocation?: () => void;
 	handleOnClickInformation?: (informData: T) => void;
 }
 
@@ -20,16 +20,15 @@ export default function TableHeartbeatActionButtonsCell<
 			<div className="flex flex-row gap-8 justify-center">
 				<IconButton
 					disableRipple
-					className="p-none text-primary_blue"
-					onClick={() =>
-						props.handleOnClickLocation?.((props.row as T).id as string)
-					}
+					className="p-none text-primary_blue disabled:text-light_text_grey"
+					disabled={!props.handleOnClickLocation}
+					onClick={props.handleOnClickLocation}
 				>
 					<IconMapper icon={BUTTON_LABEL.LOCATION} />
 				</IconButton>
 				<IconButton
 					disableRipple
-					className="p-none text-primary_blue"
+					className="p-none text-primary_blue disabled:text-light_text_grey"
 					onClick={() => props.handleOnClickInformation?.(props.row as T)}
 				>
 					<IconMapper icon={BUTTON_LABEL.SEARCH} />

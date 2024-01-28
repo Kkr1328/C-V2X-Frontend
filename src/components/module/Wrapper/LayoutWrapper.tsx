@@ -2,12 +2,12 @@
 
 import { SnackbarProvider } from 'notistack';
 
-import Header from '../common/Header';
-import Navbar from './Navbar';
+import Header from '../../common/Header';
+import Navbar from '../Navbar';
 import { Suspense, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import EmergencyWrapper from './EmergencyWrapper';
-import Loading from '../common/Loading';
+import Loading from '../../common/Loading';
 import FleetWrapper from './FleetWrapper';
 
 export default function LayoutWrapper({

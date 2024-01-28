@@ -1,6 +1,6 @@
 'use client';
 // react
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 // components
 import PageTitle from '@/components/common/PageTitle';
@@ -21,6 +21,9 @@ import { enqueueSnackbar } from 'notistack';
 import { WidthObserver } from '@/utils/WidthObserver';
 
 export default function Home() {
+	const queryClient = useQueryClient();
+
+	// handle responsive layout
 	const emergenciesRef = useRef<HTMLDivElement>(null);
 	const [emergenciesWidth, setEmergenciesWidth] = useState<number>(
 		emergenciesRef.current?.clientWidth as number
@@ -30,14 +33,12 @@ export default function Home() {
 	}, []);
 	const useCompact = emergenciesWidth <= 1136;
 
-	const queryClient = useQueryClient();
-
+	// query
 	const { isPending: isEmergencyListPending, data: dataGetEmergencyList } =
 		useQuery({
 			queryKey: ['getEmergencyList'],
 			queryFn: async () => await getEmergencyListAPI(),
 		});
-
 	const updateEmergency = useMutation({
 		mutationFn: updateEmergencyAPI,
 		onSuccess: () => {
@@ -161,7 +162,7 @@ export default function Home() {
 	};
 
 	return (
-		<Fragment>
+		<>
 			{(isEmergencyListPending || updateEmergency.isPending) && (
 				<Loading size={48} isBackdrop />
 			)}
@@ -195,6 +196,6 @@ export default function Home() {
 					</DragDropContext>
 				</div>
 			</div>
-		</Fragment>
+		</>
 	);
 }

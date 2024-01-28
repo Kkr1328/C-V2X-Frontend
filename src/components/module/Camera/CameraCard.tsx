@@ -1,39 +1,50 @@
 // react
 import { useEffect, useRef, useState } from 'react';
 // material ui
-import { Card, Divider, Grid, IconButton } from '@mui/material';
+import { Card, Divider, Grid, IconButton, Skeleton } from '@mui/material';
 // components
-import Pill from '../common/Pill';
+import Pill from '../../common/Pill';
 import CameraSection from './CameraSection';
 // const
-import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
+import { BUTTON_LABEL, STATUS } from '@/constants/LABEL';
 // types
-import { Position } from '@/types/COMMON';
+import { CameraType } from '@/types/ENTITY';
 // utilities
 import IconMapper from '@/utils/IconMapper';
 import { WidthObserver } from '@/utils/WidthObserver';
-
-interface Camera {
-	position: Position;
-	name: string;
-	status: PILL_LABEL;
-}
+import { carStatus, handleCarLocate } from '@/utils/FleetRetriever';
+import { useRouter } from 'next/navigation';
 
 interface CameraCardProps {
+	carId: string;
 	carName: string;
-	status: PILL_LABEL;
-	handleLocate?: () => void;
-	cameras: Camera[];
+	cameras: CameraType[];
 	isLoading?: boolean;
 }
 
 export default function CameraCard(props: CameraCardProps) {
+	const router = useRouter();
+
 	const cardRef = useRef<HTMLDivElement>(null);
 	const [cardWidth, setCardWidth] = useState<number>(
 		cardRef.current?.clientWidth as number
 	);
 	useEffect(() => WidthObserver(cardRef.current, setCardWidth), []);
 	const useCompactLayout = cardWidth < 560;
+
+	const handleLocate = handleCarLocate(router, props.carId);
+	const status = carStatus(props.carId);
+
+	if (props.isLoading)
+		return (
+			<Skeleton
+				animation="wave"
+				variant="rectangular"
+				className="rounded-lg h-[300px]"
+			/>
+		);
+
+	if (status === STATUS.INACTIVE || props.cameras.length == 0) return;
 
 	return (
 		<Card ref={cardRef} className="flex flex-col gap-8 rounded-lg bg-white">
@@ -42,18 +53,16 @@ export default function CameraCard(props: CameraCardProps) {
 					<p className="inline-block align-baseline font-istok text-black text-h4">
 						{props.carName}
 					</p>
-					{props.handleLocate && (
-						<IconButton
-							disableRipple
-							className="p-none text-primary_blue"
-							disabled={props.isLoading}
-							onClick={props.handleLocate}
-						>
-							<IconMapper icon={BUTTON_LABEL.LOCATION} />
-						</IconButton>
-					)}
+					<IconButton
+						disableRipple
+						className="p-none text-primary_blue disabled:text-light_text_grey"
+						disabled={props.isLoading || !handleLocate}
+						onClick={handleLocate}
+					>
+						<IconMapper icon={BUTTON_LABEL.LOCATION} />
+					</IconButton>
 				</div>
-				{!props.isLoading && props.status && <Pill variant={props.status} />}
+				{!props.isLoading && <Pill variant={status} />}
 			</div>
 			<Divider />
 			<Grid
@@ -66,11 +75,12 @@ export default function CameraCard(props: CameraCardProps) {
 				{props.cameras.map((camera, index) => (
 					<Grid item key={index} xs={useCompactLayout ? 41 : 20}>
 						<CameraSection
+							carId={props.carId}
 							carName={props.carName}
+							carStatus={status}
 							position={camera.position}
 							cameraName={camera.name}
-							status={camera.status}
-							handleLocate={props.handleLocate}
+							handleLocate={handleLocate}
 							isLoading={props.isLoading}
 						/>
 					</Grid>

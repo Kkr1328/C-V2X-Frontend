@@ -1,17 +1,19 @@
 import { useState } from 'react';
-import TabCV2X from '../common/TabCV2X';
-import { BUTTON_LABEL, PILL_LABEL, TAB_LABEL } from '@/constants/LABEL';
+import Tab from '../../common/Tab';
+import { BUTTON_LABEL, STATUS, TAB_LABEL } from '@/constants/LABEL';
 import VideoReceiver from './videoReceiver';
 import { Position } from '@/types/COMMON';
-import Pill from '../common/Pill';
-import CameraModal from './Modal/CameraModal';
-import ButtonCV2X from '../common/ButtonCV2X';
+import Pill from '../../common/Pill';
+import CameraModal from '../Modal/CameraModal';
+import Button from '../../common/Button';
+import { cameraStatus } from '@/utils/FleetRetriever';
 
 interface CameraSectionProps {
+	carId: string;
 	carName: string;
+	carStatus: STATUS;
 	cameraName: string;
 	position: Position;
-	status: PILL_LABEL;
 	handleLocate?: () => void;
 	isLoading?: boolean;
 }
@@ -25,6 +27,8 @@ export default function CameraSection(props: CameraSectionProps) {
 	const [videoModeNumber, setVideoModeNumber] = useState(0);
 	const [openModal, setOpenModal] = useState(false);
 
+	const status = cameraStatus(props.position, props.carId);
+
 	return (
 		<>
 			<CameraModal
@@ -35,17 +39,17 @@ export default function CameraSection(props: CameraSectionProps) {
 				cameraName={props.cameraName}
 				initialVideoMode={videoModeNumber}
 				handleLocate={props.handleLocate}
-				pill={props.status}
+				pill={props.carStatus}
 			/>
 			<div className="w-full flex flex-col gap-8">
 				<div className="flex flex-row gap-16">
 					<p className="inline-block align-baseline font-istok text-black text-h5">
 						{props.position} : {props.cameraName}
 					</p>
-					{!props.isLoading && props.status && <Pill variant={props.status} />}
+					{!props.isLoading && <Pill variant={status} />}
 				</div>
 				<div className="flex flex-col relative">
-					<TabCV2X
+					<Tab
 						value={videoModeNumber}
 						options={modeOptions}
 						onChange={(mode: number) => setVideoModeNumber(mode)}
@@ -55,7 +59,7 @@ export default function CameraSection(props: CameraSectionProps) {
 						<VideoReceiver camNumber={props.cameraName} carID={props.carName} />
 					</div>
 					<div className="absolute bottom-20 right-20">
-						<ButtonCV2X
+						<Button
 							icon={BUTTON_LABEL.ZOOM}
 							onClick={() => setOpenModal(true)}
 							variant="outlined"

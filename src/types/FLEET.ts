@@ -1,4 +1,4 @@
-import { PILL_LABEL } from '@/constants/LABEL';
+import { STATUS } from '@/constants/LABEL';
 
 type SPEED = { velocity: number; unit: string };
 
@@ -6,9 +6,11 @@ export interface FLEET_HEARTBEAT {
 	id: string;
 	type: 'CAR' | 'RSU';
 	data: {
-		status: PILL_LABEL;
-		front_camera: PILL_LABEL;
-		back_camera: PILL_LABEL;
+		status: STATUS;
+		front_camera: STATUS;
+		back_camera: STATUS;
+		left_camera: STATUS;
+		right_camera: STATUS;
 		connected_OBU: string[];
 	};
 	timestamp: string;

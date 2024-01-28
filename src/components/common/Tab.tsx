@@ -1,7 +1,8 @@
 // material ui
-import { Tab, Tabs } from '@mui/material';
+import MuiTab from '@mui/material/Tab';
+import MuiTabs from '@mui/material/Tabs';
 
-interface TabCV2XProps {
+interface TabProps {
 	children?: React.ReactElement;
 	value: number;
 	options: string[];
@@ -9,11 +10,13 @@ interface TabCV2XProps {
 	size?: 'small' | 'large';
 }
 
-export default function TabCV2X(props: TabCV2XProps) {
+export default function Tab(props: TabProps) {
 	return (
-		<Tabs
+		<MuiTabs
 			value={props.value}
-			onChange={(_: React.SyntheticEvent, newValue: number) => props.onChange(newValue)}
+			onChange={(_: React.SyntheticEvent, newValue: number) =>
+				props.onChange(newValue)
+			}
 			variant="fullWidth"
 			className="rounded-t-sm px-8 bg-light_background_grey"
 			sx={{
@@ -27,7 +30,7 @@ export default function TabCV2X(props: TabCV2XProps) {
 			}}
 		>
 			{props.options.map((option) => (
-				<Tab
+				<MuiTab
 					key={option}
 					className="p-none m-none"
 					sx={{
@@ -46,6 +49,6 @@ export default function TabCV2X(props: TabCV2XProps) {
 					label={option}
 				/>
 			))}
-		</Tabs>
+		</MuiTabs>
 	);
 }

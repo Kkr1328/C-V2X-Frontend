@@ -1,6 +1,6 @@
 'use client';
 // react
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 // next
 import { useRouter } from 'next/navigation';
 // notisnack
@@ -13,9 +13,9 @@ import Filter from '@/components/module/Filter/Filter';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
 import InputModal from '@/components/module/Modal/InputModal';
 import InfoModal from '@/components/module/Modal/InfoModal';
+import Table from '@/components/module/Table/Table';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
-import { ROUTE } from '@/constants/ROUTE';
 // types
 import { IGetRSUsRequest, IRSU } from '@/types/models/rsu.model';
 // templates
@@ -36,22 +36,35 @@ import {
 import { DefaultDataGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
-import Table from '@/components/module/Table/Table';
+import { handleRSULocate, rsuStatus } from '@/utils/FleetRetriever';
 
 export default function Home() {
+	const { enqueueSnackbar } = useSnackbar();
+	const router = useRouter();
+
+	// handle responsive modal
 	const [windowWidth, setWindowWidth] = useState(1000);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
-	const { enqueueSnackbar } = useSnackbar();
-	const router = useRouter();
-	const defaultFilterData = DefaultDataGenerator(RSUFilterTemplate(1));
-	const defaultData = DefaultDataGenerator(
-		RSUActionModalTemplate(isUseCompactModal)
-	);
+	// generate default data
+	const defaultFilterData = DefaultDataGenerator(RSUFilterTemplate);
+	const defaultData = DefaultDataGenerator(RSUActionModalTemplate);
 
+	// states
 	const [search, setSearch] = useState<IGetRSUsRequest>(defaultFilterData);
+	// Open-Close modal state
+	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
+	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
+	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
+	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+	// Modal data state
+	const [informModalData, setInformModalData] = useState<IRSU>(defaultData);
+	const [registerModalData, setRegisterModalData] = useState<IRSU>(defaultData);
+	const [updateModalData, setUpdateModalData] = useState<IRSU>(defaultData);
+	const [deleteModalData, setDeleteModalData] = useState<IRSU>(defaultData);
 
+	// query
 	const {
 		isLoading: isRsusLoading,
 		data: rsus,
@@ -60,7 +73,6 @@ export default function Home() {
 		queryKey: ['getRSUs'],
 		queryFn: async () => await getRSUsAPI(search),
 	});
-
 	const createRSU = useMutation({
 		mutationFn: createRSUAPI,
 		onSuccess: () => {
@@ -76,7 +88,6 @@ export default function Home() {
 			});
 		},
 	});
-
 	const updateRSU = useMutation({
 		mutationFn: updateRSUAPI,
 		onSuccess: () => {
@@ -91,7 +102,6 @@ export default function Home() {
 				variant: 'error',
 			}),
 	});
-
 	const deleteRSU = useMutation({
 		mutationFn: deleteRSUAPI,
 		onSuccess: () => {
@@ -107,51 +117,41 @@ export default function Home() {
 			}),
 	});
 
-	// Open-Close modal state
-	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
-	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
-	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
-	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-
-	// Modal data state
-	const [informModalData, setInformModalData] = useState<IRSU>(defaultData);
-	const [registerModalData, setRegisterModalData] = useState<IRSU>(defaultData);
-	const [updateModalData, setUpdateModalData] = useState<IRSU>(defaultData);
-	const [deleteModalData, setDeleteModalData] = useState<IRSU>(defaultData);
-
 	const handleOnClickRefresh = async () => {
 		await setSearch(defaultFilterData);
 		refetchGetRSUs();
 	};
 
 	return (
-		<Fragment>
+		<>
 			<InputModal
 				title={MODAL_LABEL.REGISTER_RSU}
 				variant={BUTTON_LABEL.REGISTER}
-				template={RSUActionModalTemplate(isUseCompactModal)}
+				template={RSUActionModalTemplate}
 				open={openRegisterModal}
 				onOpenChange={setOpenRegisterModal}
 				data={registerModalData}
 				onDataChange={setRegisterModalData}
 				onSubmit={() => createRSU.mutate(registerModalData)}
 				isPending={createRSU.isPending}
+				isCompact={isUseCompactModal}
 			/>
 			<InfoModal
 				title={informModalData.name}
-				template={RSUInfoModalTemplate(isUseCompactModal)}
+				template={RSUInfoModalTemplate}
 				open={openInformModal}
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
-				handleHeaderLocate={() =>
-					router.push(`${ROUTE.OVERVIEW}?id=${informModalData.id}`)
-				}
+				isHeaderLocate
+				handleHeaderLocate={handleRSULocate(router, informModalData.id)}
+				headerPill={rsuStatus(informModalData.id)}
+				isCompact={isUseCompactModal}
 			/>
 			<InputModal
 				title={MODAL_LABEL.UPDATE_RSU + updateModalData.id}
 				variant={BUTTON_LABEL.UPDATE}
-				template={RSUActionModalTemplate(isUseCompactModal)}
+				template={RSUActionModalTemplate}
 				open={openUpdateModal}
 				onOpenChange={setOpenUpdateModal}
 				data={updateModalData}
@@ -163,6 +163,7 @@ export default function Home() {
 					})
 				}
 				isPending={updateRSU.isPending}
+				isCompact={isUseCompactModal}
 			/>
 			<DeleteModal
 				open={openDeleteModal}
@@ -210,6 +211,6 @@ export default function Home() {
 					/>
 				</Card>
 			</div>
-		</Fragment>
+		</>
 	);
 }

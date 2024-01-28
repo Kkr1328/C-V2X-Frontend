@@ -2,8 +2,11 @@
 import { TableCell } from '@mui/material';
 // components
 import StatusDot from '@/components/common/StatusDot';
+import Text from '@/components/common/Text';
 // types
 import { CameraType, TableHeaderProps } from '@/types/ENTITY';
+// const
+import { STATUS } from '@/constants/LABEL';
 
 interface TableCameraCellProp<T> {
 	column: TableHeaderProps<T>;
@@ -11,27 +14,26 @@ interface TableCameraCellProp<T> {
 }
 
 export default function TableCameraCell<T>(props: TableCameraCellProp<T>) {
-	if ((props.row[props.column.id as keyof T] as CameraType[]).length === 0)
+	const cameras = props.row[props.column.id as keyof T] as CameraType[];
+
+	if (cameras.length === 0)
 		return (
 			<TableCell align={'center'} className="w-full">
-				<StatusDot variant={'Missing'} />
+				<StatusDot variant={STATUS.MISSING} />
 			</TableCell>
 		);
+
 	return (
 		<TableCell align={props.column.align} className="w-full">
-			{(props.row[props.column.id as keyof T] as CameraType[]).map(
-				(camera, index) => (
-					<div key={index} className="flex flex-row flex-wrap">
-						<p className="break-all inline-block align-baseline font-istok text-black text-p1">
-							{camera.name}
-						</p>
-						<p className="inline-block align-baseline font-istok text-light_text_grey text-p1">
-							&nbsp;-&nbsp;
-							{camera.position}
-						</p>
-					</div>
-				)
-			)}
+			{cameras.map((camera, index) => (
+				<div key={index} className="flex flex-row flex-wrap gap-8">
+					<Text style="text-black text-p1" content={camera.name} />
+					<Text
+						style="text-light_text_grey text-p1"
+						content={`- ${camera.position}`}
+					/>
+				</div>
+			))}
 		</TableCell>
 	);
 }

@@ -1,4 +1,5 @@
 export const STATUS_DEFINITION = {
+	All: '',
 	Active: 'The device is online.',
 	Warning:
 		'The device may have an issue. For example, loss some connections or violate speed restriction.',

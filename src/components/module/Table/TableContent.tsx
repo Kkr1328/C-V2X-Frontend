@@ -30,6 +30,7 @@ export interface TableContentProps<T extends TableRowProps>
 	columns: TableHeaderProps<T>[];
 	rows: T[];
 	isLoading?: boolean;
+	handleLocate?: (id: string) => (() => void) | undefined;
 }
 
 export default function TableContent<T extends TableRowProps>(
@@ -45,9 +46,7 @@ export default function TableContent<T extends TableRowProps>(
 				<TableHead>
 					<TableRow>
 						{props.columns.map((column, index) => (
-							<Fragment key={index}>
-								<TableHeaderCell column={column} />
-							</Fragment>
+							<TableHeaderCell key={index} column={column} />
 						))}
 					</TableRow>
 				</TableHead>
@@ -68,6 +67,9 @@ export default function TableContent<T extends TableRowProps>(
 												{...props}
 												row={row}
 												align={column.align}
+												handleOnClickLocation={props.handleLocate?.(
+													(row as T).id as string
+												)}
 											/>
 										) : column.id === 'status' ||
 										  column.id === 'front_cam' ||

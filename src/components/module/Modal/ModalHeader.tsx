@@ -2,18 +2,18 @@
 import { IconButton } from '@mui/material';
 // components
 import Text from '@/components/common/Text';
+import Pill from '@/components/common/Pill';
 // const
-import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
+import { BUTTON_LABEL, STATUS } from '@/constants/LABEL';
 // utilities
 import IconMapper from '@/utils/IconMapper';
-import Pill from '@/components/common/Pill';
 
 export interface ModalHeaderProp {
 	title: string;
+	isLocate?: boolean;
 	handleLocate?: () => void;
-	pill?: PILL_LABEL;
+	pill?: STATUS;
 	handleOnClose?: () => void;
-	isLoading?: boolean;
 }
 
 export default function ModalHeader(props: ModalHeaderProp) {
@@ -21,18 +21,18 @@ export default function ModalHeader(props: ModalHeaderProp) {
 		<div className="flex flex-row p-16 gap-16 items-center">
 			<div className="flex flex-row gap-4">
 				<Text style="text-black text-h3" content={props.title} />
-				{props.handleLocate && (
+				{props.isLocate && (
 					<IconButton
 						disableRipple
-						className="p-none text-primary_blue"
-						disabled={props.isLoading}
+						className="p-none text-primary_blue disabled:text-light_text_grey"
+						disabled={!props.handleLocate}
 						onClick={props.handleLocate}
 					>
 						<IconMapper icon={BUTTON_LABEL.LOCATION} />
 					</IconButton>
 				)}
 			</div>
-			{!props.isLoading && props.pill && <Pill variant={props.pill} />}
+			{props.pill && <Pill variant={props.pill} />}
 			<div className="grow" />
 			{props.handleOnClose && (
 				<IconButton

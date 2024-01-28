@@ -15,7 +15,7 @@ export enum NAVBAR_LABEL {
 
 export enum INPUT_LABEL {
 	ID = 'ID',
-	CAMERAS = 'Cameras',
+	CAMERA = 'Camera',
 	FRONT_CAMERA = 'Front Camera',
 	BACK_CAMERA = 'Back Camera',
 	LEFT_CAMERA = 'Left Camera',
@@ -60,12 +60,13 @@ export enum BUTTON_LABEL {
 	HELP = 'Help',
 }
 
-export enum PILL_LABEL {
-	ALL = 'ALL',
-	ACTIVE = 'ACTIVE',
-	INACTIVE = 'INACTIVE',
-	EMERGENCY = 'EMERGENCY',
-	WARNING = 'WARNING',
+export enum STATUS {
+	ALL = 'All',
+	ACTIVE = 'Active',
+	INACTIVE = 'Inactive',
+	EMERGENCY = 'Emergency',
+	WARNING = 'Warning',
+	MISSING = 'Missing',
 }
 
 export enum MODAL_LABEL {

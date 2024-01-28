@@ -1,18 +1,23 @@
 // react
 import { ChangeEvent, useState } from 'react';
 // material ui
-import { IconButton, InputAdornment, Skeleton, TextField } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Skeleton from '@mui/material/Skeleton';
+import MuiTextField from '@mui/material/TextField';
 // components
 import Pill from './Pill';
-//consts
-import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
+import Text from './Text';
+// consts
+import { BUTTON_LABEL, STATUS } from '@/constants/LABEL';
 // utilities
 import IconMapper from '@/utils/IconMapper';
 
-interface TextFieldCV2XProp {
+interface TextFieldProp {
 	title?: string;
+	isLocate?: boolean;
 	handleLocate?: () => void;
-	pill?: keyof typeof PILL_LABEL;
+	pill?: STATUS;
 	placeholder?: string;
 	value: string;
 	onChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -24,7 +29,7 @@ interface TextFieldCV2XProp {
 	helperMessage?: string;
 }
 
-export default function TextFieldCV2X(props: TextFieldCV2XProp) {
+export default function TextField(props: TextFieldProp) {
 	const [showPassword, setShowPassword] = useState(false);
 
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -40,26 +45,26 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 			{props.title && (
 				<div className="flex flex-row gap-16 items-center">
 					<div className="flex flex-row gap-4">
-						<p className="inline-block align-baseline font-istok text-black text-h5">
-							{props.title}
-						</p>
+						<Text style="text-black text-h5" content={props.title} />
 						{props.isRequired && (
-							<p className="inline-block align-baseline font-istok text-error_red text-h5">
-								*
-							</p>
+							<Text style="text-error_red text-h5" content="*" />
 						)}
-						{props.handleLocate && props.title === 'Car' && (
+						{props.isLocate && props.title === 'Car' && (
 							<IconButton
 								disableRipple
-								className="p-none text-primary_blue"
-								disabled={props.isLoading}
+								className="p-none text-primary_blue disabled:text-light_text_grey"
+								disabled={props.isLoading || !props.handleLocate}
 								onClick={props.handleLocate}
 							>
 								<IconMapper icon={BUTTON_LABEL.LOCATION} />
 							</IconButton>
 						)}
 					</div>
-					{!props.isLoading && props.pill && <Pill variant={props.pill} />}
+					{!props.isLoading &&
+						props.pill &&
+						(props.title === 'Car' || props.title === 'Camera') && (
+							<Pill variant={props.pill} />
+						)}
 				</div>
 			)}
 			{/* Input field */}
@@ -70,7 +75,7 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 					className="rounded-lg h-44"
 				/>
 			) : (
-				<TextField
+				<MuiTextField
 					fullWidth
 					placeholder={props.placeholder}
 					variant="outlined"
@@ -106,11 +111,13 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 									edge="end"
 									className="text-light_text_grey"
 								>
-									{showPassword ? (
-										<IconMapper icon={BUTTON_LABEL.INVISIBLE} />
-									) : (
-										<IconMapper icon={BUTTON_LABEL.VISIBLE} />
-									)}
+									<IconMapper
+										icon={
+											showPassword
+												? BUTTON_LABEL.INVISIBLE
+												: BUTTON_LABEL.VISIBLE
+										}
+									/>
 								</IconButton>
 							</InputAdornment>
 						),
@@ -121,10 +128,8 @@ export default function TextFieldCV2X(props: TextFieldCV2XProp) {
 				/>
 			)}
 			{/* Helper text */}
-			{!props.isLoading && props.isError && (
-				<p className="inline-block align-baseline font-istok text-error_red text-p2">
-					{props.helperMessage}
-				</p>
+			{!props.isLoading && props.isError && props.helperMessage && (
+				<Text style="text-error_red text-p2" content={props.helperMessage} />
 			)}
 		</div>
 	);
