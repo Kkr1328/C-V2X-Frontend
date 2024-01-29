@@ -50,10 +50,10 @@ export default function VideoReceiver(props: VideoReceiverProps) {
     const blackContainerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-      if (!socket.current && canvasRef.current) {
+      if (!socket.current && canvasRef.current && connection.current) {
         socket.current = io(process.env.NEXT_PUBLIC_API_CAM_URI + "/" || "") as Socket;
         socket.current?.emit("control center connecting", {
-          uid:uid
+          roomID:connection.current.sessionid
         });
       
         socket.current?.on("send object detection", (boxes:Array<Box>) => {
