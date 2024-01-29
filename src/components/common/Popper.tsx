@@ -75,6 +75,7 @@ export default function Popper(props: PopperProps) {
 					<Divider />
 					<Text
 						style="text-p2 text-dark_text_grey bg-white w-full px-8 rounded-b-sm"
+						isSentence
 						content={props.content}
 					/>
 				</div>
