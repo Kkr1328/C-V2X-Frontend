@@ -12,7 +12,7 @@ import { ICarHeartbeat, IRSUHeartbeat } from '@/types/models/heartbeat.model';
 import { IRSU } from '@/types/models/rsu.model';
 // contexts
 import {
-	CarSpeedFleetContext,
+	useCarSpeedFleetContext,
 	HeartbeatFleetContext,
 	LocationFleetContext,
 } from '@/context/fleet';
@@ -21,7 +21,7 @@ import { getEmergencyListAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
 
 // --------------------------------------------- HEARTBEATS ---------------------------------------------
-export function rsuStatus(id: string) {
+export function useRSUStatus(id: string) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
 	const [locationContextData] = useContext(LocationFleetContext);
 
@@ -30,10 +30,10 @@ export function rsuStatus(id: string) {
 	return heartbeatContextData.RSU[id]?.data.status || STATUS.INACTIVE;
 }
 
-export function carStatus(id: string) {
+export function useCarStatus(id: string) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
 	const [locationContextData] = useContext(LocationFleetContext);
-	const [speedContextData] = useContext(CarSpeedFleetContext);
+	const [speedContextData] = useContext(useCarSpeedFleetContext);
 
 	const { data: dataGetEmergencyList } = useQuery({
 		queryKey: ['getEmergencyList'],
@@ -53,11 +53,11 @@ export function carStatus(id: string) {
 	return heartbeatContextData.CAR[id]?.data.status || STATUS.INACTIVE;
 }
 
-export function cameraStatus(position?: Position, car_id?: string) {
+export function useCameraStatus(position?: Position, car_id?: string) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
 	const carId = car_id || '';
 	const car = heartbeatContextData.CAR[carId]?.data;
-	const statusCar = carStatus(carId);
+	const statusCar = useCarStatus(carId);
 
 	if (!car || statusCar === STATUS.INACTIVE) {
 		return STATUS.INACTIVE;
@@ -77,7 +77,7 @@ export function cameraStatus(position?: Position, car_id?: string) {
 	}
 }
 
-export function rsusHeartbeat(rsus: IRSU[]) {
+export function useRSUsHeartbeat(rsus: IRSU[]) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
 	const [locationContextData] = useContext(LocationFleetContext);
 
@@ -93,10 +93,10 @@ export function rsusHeartbeat(rsus: IRSU[]) {
 	});
 }
 
-export function carsHeartbeat(cars: ICar[]) {
+export function useCarsHeartbeat(cars: ICar[]) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
 	const [locationContextData] = useContext(LocationFleetContext);
-	const [speedContextData] = useContext(CarSpeedFleetContext);
+	const [speedContextData] = useContext(useCarSpeedFleetContext);
 
 	const { data: dataGetEmergencyList } = useQuery({
 		queryKey: ['getEmergencyList'],
@@ -151,16 +151,16 @@ export function carsHeartbeat(cars: ICar[]) {
 	});
 }
 
-export function resetHeartbeat() {
+export function useResetHeartbeat() {
 	const [_, setHeartbeatContextData] = useContext(HeartbeatFleetContext);
 	setHeartbeatContextData({ CAR: {}, RSU: {} });
 }
 
 // --------------------------------------------- LOCATIONS ---------------------------------------------
-export function rsuLocation(id: string) {
+export function useRSULocation(id: string) {
 	const [locationContextData] = useContext(LocationFleetContext);
 	const location = locationContextData.RSU[id];
-	const statusRSU = rsuStatus(id);
+	const statusRSU = useRSUStatus(id);
 
 	if (statusRSU === STATUS.INACTIVE || !location) return;
 
@@ -170,10 +170,10 @@ export function rsuLocation(id: string) {
 	};
 }
 
-export function carLocation(id: string) {
+export function useCarLocation(id: string) {
 	const [locationContextData] = useContext(LocationFleetContext);
 	const location = locationContextData.CAR[id];
-	const statusCar = carStatus(id);
+	const statusCar = useCarStatus(id);
 
 	if (statusCar === STATUS.INACTIVE || location === undefined) return;
 
@@ -183,34 +183,34 @@ export function carLocation(id: string) {
 	};
 }
 
-export function handleRSULocate(router: AppRouterInstance, id: string) {
-	const statusRSU = rsuStatus(id);
-	const locationRSU = rsuLocation(id);
+export function useHandleRSULocate(router: AppRouterInstance, id: string) {
+	const statusRSU = useRSUStatus(id);
+	const locationRSU = useRSULocation(id);
 
 	if (statusRSU === STATUS.INACTIVE || !locationRSU) return;
 	return () => router.push(`${ROUTE.OVERVIEW}?id=${id}`);
 }
 
-export function handleCarLocate(router: AppRouterInstance, id: string) {
-	const statusCar = carStatus(id);
-	const locationCar = carLocation(id);
+export function useHandleCarLocate(router: AppRouterInstance, id: string) {
+	const statusCar = useCarStatus(id);
+	const locationCar = useCarLocation(id);
 
 	if (statusCar === STATUS.INACTIVE || !locationCar) return;
 	return () => router.push(`${ROUTE.OVERVIEW}?id=${id}`);
 }
 
 // --------------------------------------------- SPEEDS ---------------------------------------------
-export function carSpeed(id: string) {
-	const [speedContextData] = useContext(CarSpeedFleetContext);
+export function useCarSpeed(id: string) {
+	const [speedContextData] = useContext(useCarSpeedFleetContext);
 	const speed = speedContextData[id];
-	const statusCar = carStatus(id);
+	const statusCar = useCarStatus(id);
 
 	if (statusCar === STATUS.INACTIVE || !speed) return;
 	return `${speed.velocity} ${speed.unit}`;
 }
 
 // --------------------------------------------- CONNECTIONS ---------------------------------------------
-export function connectedCars(id: string) {
+export function useConnectedCars(id: string) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
 
 	if (!heartbeatContextData.RSU[id]) return [];

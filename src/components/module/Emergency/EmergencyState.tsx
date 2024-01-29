@@ -13,7 +13,7 @@ import EmergencyCard from './EmergencyCard';
 import { Emergency, EmergencyColumn } from '@/types/COMMON';
 import { IEmergency } from '@/types/models/emergency.model';
 // utilities
-import { carStatus, handleCarLocate } from '@/utils/FleetRetriever';
+import { useCarStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
 
 interface EmergencyStateProps {
 	droppableId: EmergencyColumn;

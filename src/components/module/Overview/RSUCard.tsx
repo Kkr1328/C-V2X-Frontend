@@ -14,7 +14,11 @@ import { IResponseList } from '@/types/common/responseList.model';
 // services
 import { getCarsListAPI, getRSUAPI } from '@/services/api-call';
 // utilities
-import { carSpeed, carStatus, connectedCars } from '@/utils/FleetRetriever';
+import {
+	useCarSpeed,
+	useCarStatus,
+	useConnectedCars,
+} from '@/utils/FleetRetriever';
 
 interface RSUCardProps {
 	id: string;
@@ -32,7 +36,7 @@ export default function RSUCard(props: RSUCardProps) {
 	});
 
 	const connectedCar =
-		connectedCars(props.id)?.map((carId) => ({
+		useConnectedCars(props.id)?.map((carId) => ({
 			id: carId,
 			name: carsList?.find(({ id }) => id === carId)?.name ?? '-',
 		})) ?? [];
@@ -70,14 +74,14 @@ function CarDetail({ id, name }: { id: string; name: string }) {
 		<div key={name} className="flex flex-row items-center px-16">
 			<div className="flex flex-row gap-8 w-3/5 items-center">
 				<Image
-					src={`${MAP_ASSETS.CAR_PROFILE}${carStatus(id)}.svg`}
+					src={`${MAP_ASSETS.CAR_PROFILE}${useCarStatus(id)}.svg`}
 					alt={'Car Profile'}
 					width={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
 					height={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
 				/>
 				<Text style="text-black text-h5" content={name} />
 			</div>
-			<Text style="text-black text-p1" content={`Speed : ${carSpeed(id)}`} />
+			<Text style="text-black text-p1" content={`Speed : ${useCarSpeed(id)}`} />
 		</div>
 	);
 }

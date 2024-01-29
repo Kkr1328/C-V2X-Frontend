@@ -12,10 +12,9 @@ import {
 	OptionTemplate,
 	Option,
 	InputError,
-	Position,
 } from '@/types/COMMON';
-// const
-import { STATUS } from '@/constants/LABEL';
+// utilities
+import { useCameraStatus, useCarStatus } from '@/utils/FleetRetriever';
 
 export interface ModalInputsProp<T> {
 	template: InputFieldProp<T>[];
@@ -28,7 +27,6 @@ export interface ModalInputsProp<T> {
 	isLocate?: boolean;
 	handleLocate?: () => void;
 	isCompact?: boolean;
-	setPill?: (position?: Position, id?: string) => STATUS;
 }
 
 export default function ModalInputs<T>(props: ModalInputsProp<T>) {
@@ -42,18 +40,43 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 			: '';
 	};
 
+	const frontCameraStatus = useCameraStatus(
+		'Front',
+		typeof props.data === 'object' && props.data && 'id' in props.data
+			? (props.data.id as string)
+			: ''
+	);
+	const backCameraStatus = useCameraStatus(
+		'Back',
+		typeof props.data === 'object' && props.data && 'id' in props.data
+			? (props.data.id as string)
+			: ''
+	);
+	const leftCameraStatus = useCameraStatus(
+		'Left',
+		typeof props.data === 'object' && props.data && 'id' in props.data
+			? (props.data.id as string)
+			: ''
+	);
+	const rightCameraStatus = useCameraStatus(
+		'Right',
+		typeof props.data === 'object' && props.data && 'id' in props.data
+			? (props.data.id as string)
+			: ''
+	);
+	const carStatus = useCarStatus(
+		typeof props.data === 'object' && props.data && 'car_id' in props.data
+			? (props.data.car_id as string)
+			: ''
+	);
+
 	const getPill = (inputField: InputFieldProp<T>) => {
-		if (typeof props.data === 'object' && props.data && 'id' in props.data) {
-			if (inputField.id === 'front_cam_name')
-				return props.setPill?.('Front', props.data.id as string);
-			else if (inputField.id === 'back_cam_name')
-				return props.setPill?.('Back', props.data.id as string);
-			else if (inputField.id === 'left_cam_name')
-				return props.setPill?.('Left', props.data.id as string);
-			else if (inputField.id === 'right_cam_name')
-				return props.setPill?.('Right', props.data.id as string);
-		}
-		return props.setPill?.();
+		if (inputField.id === 'front_cam_name') return frontCameraStatus;
+		else if (inputField.id === 'back_cam_name') return backCameraStatus;
+		else if (inputField.id === 'left_cam_name') return leftCameraStatus;
+		else if (inputField.id === 'right_cam_name') return rightCameraStatus;
+		else if (inputField.id === 'car') return carStatus;
+		else return;
 	};
 
 	const handleDataChange = (id: keyof T, value: string) => {

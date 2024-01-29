@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import {
 	HeartbeatFleetContext,
-	CarSpeedFleetContext,
+	useCarSpeedFleetContext,
 	LocationFleetContext,
 } from '@/context/fleet';
 import {
@@ -16,7 +16,7 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 		CAR: { [id: string]: FLEET_HEARTBEAT };
 		RSU: { [id: string]: FLEET_HEARTBEAT };
 	}>({ CAR: {}, RSU: {} });
-	const [carSpeedData, setCarSpeedData] = useState<{
+	const [useCarSpeedData, setuseCarSpeedData] = useState<{
 		[id: string]: FLEET_CAR_SPEED;
 	}>({});
 	const [locationData, setLocationData] = useState<{
@@ -82,7 +82,7 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 		});
 
 		socket.on('car_speed', (car_speed: FLEET_CAR_SPEED) => {
-			setCarSpeedData((prev) => {
+			setuseCarSpeedData((prev) => {
 				return {
 					...prev,
 					[car_speed.id]: { ...car_speed },
@@ -99,9 +99,11 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 	return (
 		<HeartbeatFleetContext.Provider value={[heartbeatData, setHeartbeatData]}>
 			<LocationFleetContext.Provider value={[locationData, setLocationData]}>
-				<CarSpeedFleetContext.Provider value={[carSpeedData, setCarSpeedData]}>
+				<useCarSpeedFleetContext.Provider
+					value={[useCarSpeedData, setuseCarSpeedData]}
+				>
 					{props.children}
-				</CarSpeedFleetContext.Provider>
+				</useCarSpeedFleetContext.Provider>
 			</LocationFleetContext.Provider>
 		</HeartbeatFleetContext.Provider>
 	);

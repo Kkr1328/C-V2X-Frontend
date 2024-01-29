@@ -21,7 +21,11 @@ import { ICar } from '@/types/models/car.model';
 // services
 import { getCarAPI } from '@/services/api-call';
 // utilities
-import { carLocation, carSpeed, carStatus } from '@/utils/FleetRetriever';
+import {
+	useCarLocation,
+	useCarSpeed,
+	useCarStatus,
+} from '@/utils/FleetRetriever';
 
 interface CarCardProps {
 	id: string;
@@ -38,9 +42,9 @@ export default function CarCard(props: CarCardProps) {
 		queryFn: async () => await getCarAPI({ id: props.id }),
 	});
 
-	const location = carLocation(props.id) as google.maps.LatLngLiteral;
-	const status = carStatus(props.id);
-	const speed = carSpeed(props.id);
+	const location = useCarLocation(props.id) as google.maps.LatLngLiteral;
+	const status = useCarStatus(props.id);
+	const speed = useCarSpeed(props.id);
 
 	if (
 		!car ||

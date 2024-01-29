@@ -12,7 +12,7 @@ import { CameraType } from '@/types/ENTITY';
 // utilities
 import IconMapper from '@/utils/IconMapper';
 import { WidthObserver } from '@/utils/WidthObserver';
-import { carStatus, handleCarLocate } from '@/utils/FleetRetriever';
+import { useCarStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
 import { useRouter } from 'next/navigation';
 import { Position } from '@/types/COMMON';
 
@@ -35,8 +35,8 @@ export default function CameraCard(props: CameraCardProps) {
 	const useNormalLayout = cardWidth < 1200;
 	const useCompactLayout = cardWidth < 600;
 
-	const handleLocate = handleCarLocate(router, props.carId);
-	const status = carStatus(props.carId);
+	const handleLocate = useHandleCarLocate(router, props.carId);
+	const status = useCarStatus(props.carId);
 
 	if (props.isLoading)
 		return (
@@ -89,7 +89,7 @@ export default function CameraCard(props: CameraCardProps) {
 							<CameraSection
 								carId={props.carId}
 								carName={props.carName}
-								carStatus={status}
+								useCarStatus={status}
 								position={position}
 								cameraName={camera?.name}
 								handleLocate={handleLocate}

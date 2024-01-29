@@ -17,10 +17,10 @@ import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 // utilities
 import { WidthObserver } from '@/utils/WidthObserver';
 import {
-	carLocation,
-	carStatus,
-	rsuLocation,
-	rsuStatus,
+	useCarLocation,
+	useCarStatus,
+	useRSULocation,
+	useRSUStatus,
 } from '@/utils/FleetRetriever';
 
 export default function Home() {
@@ -38,14 +38,18 @@ export default function Home() {
 	// check initial focus on a device
 	const searchParams = useSearchParams();
 	const id = searchParams.get('id') ?? '';
-	const carLoc = carLocation(id) as google.maps.LatLngLiteral;
-	const carStat = carStatus(id);
-	const rsuLoc = rsuLocation(id) as google.maps.LatLngLiteral;
-	const rsuStat = rsuStatus(id);
+	const carLoc = useCarLocation(id) as google.maps.LatLngLiteral;
+	const carStat = useCarStatus(id);
+	const rsuLoc = useRSULocation(id) as google.maps.LatLngLiteral;
+	const rsuStat = useRSUStatus(id);
 
 	const [focus, setFocus] = useState<FocusState | null>(null);
-	const focusCarLoc = carLocation(focus?.id ?? '') as google.maps.LatLngLiteral;
-	const focusRSULoc = rsuLocation(focus?.id ?? '') as google.maps.LatLngLiteral;
+	const focusCarLoc = useCarLocation(
+		focus?.id ?? ''
+	) as google.maps.LatLngLiteral;
+	const focusRSULoc = useRSULocation(
+		focus?.id ?? ''
+	) as google.maps.LatLngLiteral;
 
 	useEffect(() => {
 		if (!id) return;

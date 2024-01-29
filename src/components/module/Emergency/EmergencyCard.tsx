@@ -13,7 +13,7 @@ import { BUTTON_LABEL, EMERGENCY_CARD_LABEL, STATUS } from '@/constants/LABEL';
 import { Emergency } from '@/types/COMMON';
 // utilities
 import IconMapper from '@/utils/IconMapper';
-import { carStatus, handleCarLocate } from '@/utils/FleetRetriever';
+import { useCarStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
 
 type EmeregncyCardProps = {
 	index?: number;
@@ -28,8 +28,8 @@ type EmeregncyCardProps = {
 
 export default function EmergencyCard(props: EmeregncyCardProps) {
 	const router = useRouter();
-	const handleLocate = handleCarLocate(router, props.carId ?? '');
-	const pill = carStatus(props.carId ?? '');
+	const handleLocate = useHandleCarLocate(router, props.carId ?? '');
+	const pill = useCarStatus(props.carId ?? '');
 
 	if (props.isLoading)
 		return (

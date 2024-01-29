@@ -7,7 +7,7 @@ import { STATUS } from '@/constants/LABEL';
 // types
 import { StuffLocation } from '@/types/OVERVIEW';
 // utilities
-import { carLocation, carStatus } from '@/utils/FleetRetriever';
+import { useCarLocation, useCarStatus } from '@/utils/FleetRetriever';
 
 interface CarPinProps {
 	id: string;
@@ -17,8 +17,8 @@ interface CarPinProps {
 
 export default function CarPin(props: CarPinProps) {
 	const id = props.id;
-	const location = carLocation(id) as google.maps.LatLngLiteral;
-	const status = carStatus(id);
+	const location = useCarLocation(id) as google.maps.LatLngLiteral;
+	const status = useCarStatus(id);
 
 	if (!location || !status || status === STATUS.INACTIVE) return;
 

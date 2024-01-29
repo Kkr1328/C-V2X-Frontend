@@ -36,7 +36,7 @@ import {
 import { DefaultDataGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
-import { handleRSULocate, rsuStatus } from '@/utils/FleetRetriever';
+import { useHandleRSULocate, useRSUStatus } from '@/utils/FleetRetriever';
 
 export default function Home() {
 	const { enqueueSnackbar } = useSnackbar();
@@ -144,8 +144,8 @@ export default function Home() {
 				data={informModalData}
 				onDataChange={setInformModalData}
 				isHeaderLocate
-				handleHeaderLocate={handleRSULocate(router, informModalData.id)}
-				headerPill={rsuStatus(informModalData.id)}
+				handleHeaderLocate={useHandleRSULocate(router, informModalData.id)}
+				headerPill={useRSUStatus(informModalData.id)}
 				isCompact={isUseCompactModal}
 			/>
 			<InputModal

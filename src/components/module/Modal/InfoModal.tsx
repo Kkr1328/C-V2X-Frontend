@@ -19,7 +19,6 @@ interface InfoModalProp<T> extends ModalHeaderProp, ModalInputsProp<T> {
 	headerPill?: STATUS;
 	isBodyLocate?: boolean;
 	handleBodyLocate?: () => void;
-	setBodyPill?: (position?: Position, id?: string) => STATUS;
 }
 
 export default function InfoModal<T>(props: InfoModalProp<T>) {
@@ -47,7 +46,6 @@ export default function InfoModal<T>(props: InfoModalProp<T>) {
 						{...props}
 						isLocate={props.isBodyLocate}
 						handleLocate={props.handleBodyLocate}
-						setPill={props.setBodyPill}
 						isReadOnly
 					/>
 				</div>

@@ -39,14 +39,14 @@ import {
 } from '@/utils/DataGenerator';
 import { handleOpenModal } from '@/utils/ModalController';
 import {
-	cameraStatus,
-	carStatus,
-	carsHeartbeat,
-	handleCarLocate,
-	handleRSULocate,
-	resetHeartbeat,
-	rsuStatus,
-	rsusHeartbeat,
+	useCameraStatus,
+	useCarStatus,
+	useCarsHeartbeat,
+	useHandleCarLocate,
+	useHandleRSULocate,
+	useResetHeartbeat,
+	useRSUStatus,
+	useRSUsHeartbeat,
 } from '@/utils/FleetRetriever';
 // services
 import { getCarsAPI, getRSUsAPI } from '@/services/api-call';
@@ -99,8 +99,8 @@ export default function Home() {
 		queryFn: async () => await getRSUsAPI({}),
 	});
 
-	const handleRefresh = () => {
-		resetHeartbeat();
+	const useHandleRefresh = () => {
+		useResetHeartbeat();
 		refetchCars();
 		refetchRSUs();
 	};
@@ -115,11 +115,8 @@ export default function Home() {
 				data={informCarModalData}
 				onDataChange={setInformCarModalData}
 				isHeaderLocate
-				handleHeaderLocate={handleCarLocate(router, informCarModalData.id)}
-				headerPill={carStatus(informCarModalData.id)}
-				setBodyPill={(position?: Position, id?: string) =>
-					cameraStatus(position, id)
-				}
+				handleHeaderLocate={useHandleCarLocate(router, informCarModalData.id)}
+				headerPill={useCarStatus(informCarModalData.id)}
 				isCompact={isUseCompactModal}
 			/>
 			<InfoModal
@@ -130,8 +127,8 @@ export default function Home() {
 				data={informRSUModalData}
 				onDataChange={setInformRSUModalData}
 				isHeaderLocate
-				handleHeaderLocate={handleRSULocate(router, informRSUModalData.id)}
-				headerPill={rsuStatus(informRSUModalData.id)}
+				handleHeaderLocate={useHandleRSULocate(router, informRSUModalData.id)}
+				headerPill={useRSUStatus(informRSUModalData.id)}
 				isCompact={isUseCompactModal}
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
@@ -161,7 +158,7 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={useCompactButton ? '' : BUTTON_LABEL.REFRESH}
 								variant="outlined"
-								onClick={handleRefresh}
+								onClick={useHandleRefresh}
 							/>
 						</div>
 						<Divider />
@@ -174,9 +171,8 @@ export default function Home() {
 							<Grid item xs={useCompactContent ? 81 : 56}>
 								<TableContent
 									columns={CarsHeartbeatTableTemplate}
-									rows={carsHeartbeat(cars ?? [])}
+									rows={useCarsHeartbeat(cars ?? [])}
 									isLoading={isCarsLoading}
-									handleLocate={(id: string) => handleCarLocate(router, id)}
 									handleOnClickInformation={(data) =>
 										handleOpenModal(
 											CarDataTransformer(data),
@@ -194,9 +190,8 @@ export default function Home() {
 							<Grid item xs={useCompactContent ? 81 : 24}>
 								<TableContent
 									columns={RSUsHeartbeatTableTemplate}
-									rows={rsusHeartbeat(rsus ?? [])}
+									rows={useRSUsHeartbeat(rsus ?? [])}
 									isLoading={isRsusLoading}
-									handleLocate={(id: string) => handleRSULocate(router, id)}
 									handleOnClickInformation={(data: IRSU) =>
 										handleOpenModal(
 											data,

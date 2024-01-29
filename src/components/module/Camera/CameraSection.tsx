@@ -11,12 +11,12 @@ import { BUTTON_LABEL, STATUS, TAB_LABEL } from '@/constants/LABEL';
 // types
 import { Position } from '@/types/COMMON';
 // utilities
-import { cameraStatus } from '@/utils/FleetRetriever';
+import { useCameraStatus } from '@/utils/FleetRetriever';
 
 interface CameraSectionProps {
 	carId: string;
 	carName: string;
-	carStatus: STATUS;
+	useCarStatus: STATUS;
 	cameraName?: string;
 	position: Position;
 	handleLocate?: () => void;
@@ -27,7 +27,7 @@ export default function CameraSection(props: CameraSectionProps) {
 	const [videoModeNumber, setVideoModeNumber] = useState(0);
 	const [openModal, setOpenModal] = useState(false);
 
-	const status = cameraStatus(props.position, props.carId);
+	const status = useCameraStatus(props.position, props.carId);
 	const isDisabled =
 		props.cameraName === undefined || status === STATUS.INACTIVE;
 

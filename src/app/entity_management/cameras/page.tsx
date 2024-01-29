@@ -38,9 +38,9 @@ import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
 import {
-	cameraStatus,
-	carStatus,
-	handleCarLocate,
+	useCameraStatus,
+	useCarStatus,
+	useHandleCarLocate,
 } from '@/utils/FleetRetriever';
 
 export default function Home() {
@@ -174,13 +174,12 @@ export default function Home() {
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
-				headerPill={cameraStatus(
+				headerPill={useCameraStatus(
 					informModalData.position,
 					informModalData.car_id
 				)}
 				isBodyLocate
-				handleBodyLocate={handleCarLocate(router, informModalData.car_id)}
-				setBodyPill={() => carStatus(informModalData.car_id)}
+				handleBodyLocate={useHandleCarLocate(router, informModalData.car_id)}
 				isCompact={isUseCompactModal}
 			/>
 			<InputModal

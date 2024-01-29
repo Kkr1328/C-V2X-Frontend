@@ -3,7 +3,7 @@ import { Circle, Marker } from '@react-google-maps/api';
 // const
 import { MAP_ASSETS } from '@/constants/ASSETS';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
-import { rsuLocation, rsuStatus } from '@/utils/FleetRetriever';
+import { useRSULocation, useRSUStatus } from '@/utils/FleetRetriever';
 import { STATUS } from '@/constants/LABEL';
 // types
 import { StuffLocation } from '@/types/OVERVIEW';
@@ -16,8 +16,8 @@ interface RSUPinProps {
 
 export default function RSUPin(props: RSUPinProps) {
 	const id = props.id;
-	const location = rsuLocation(id) as google.maps.LatLngLiteral;
-	const status = rsuStatus(id);
+	const location = useRSULocation(id) as google.maps.LatLngLiteral;
+	const status = useRSUStatus(id);
 
 	if (!location || !status || status === STATUS.INACTIVE) return;
 
