@@ -74,7 +74,7 @@ export default function InputModal<T>(props: InputModalProp<T>) {
 				<Card className="w-4/5 max-w-[600px] min-w-[400px] max-h-[90%] flex flex-col rounded-lg">
 					<ModalHeader title={props.title} />
 					<Divider />
-					<div className="p-16 flex gap-16 flex-col overflow-y-auto">
+					<div className="p-16 overflow-y-auto">
 						<ModalInputs {...props} error={error} resetError={resetError} />
 					</div>
 					<Divider />

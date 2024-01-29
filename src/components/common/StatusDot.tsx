@@ -1,44 +1,32 @@
 // consts
-import { BUTTON_LABEL } from '@/constants/LABEL';
-//types
-import { StatusDotType } from '@/types/COMMON';
+import { BUTTON_LABEL, STATUS } from '@/constants/LABEL';
 // utilities
 import IconMapper from '@/utils/IconMapper';
 
 interface StatusDotProps {
-	variant: (typeof StatusDotType)[number];
+	variant: STATUS;
 }
 
 export default function StatusDot(props: StatusDotProps) {
-	if (props.variant === 'Active') {
-		return (
-			<div className="text-active_green">
-				<IconMapper icon={BUTTON_LABEL.STATUS} size="16px" />
-			</div>
-		);
-	} else if (props.variant === 'Inactive') {
-		return (
-			<div className="text-light_text_grey">
-				<IconMapper icon={BUTTON_LABEL.STATUS} size="16px" />
-			</div>
-		);
-	} else if (props.variant === 'Warning') {
-		return (
-			<div className="text-dark_warning_yellow">
-				<IconMapper icon={BUTTON_LABEL.STATUS} size="16px" />
-			</div>
-		);
-	} else if (props.variant === 'Emergency') {
-		return (
-			<div className="text-error_red">
-				<IconMapper icon={BUTTON_LABEL.STATUS} size="16px" />
-			</div>
-		);
-	} else if (props.variant === 'Missing') {
-		return (
-			<div className="text-black">
-				<IconMapper icon={BUTTON_LABEL.MISSING} size="16px" />
-			</div>
-		);
-	}
+	const statusDotColor =
+		props.variant === STATUS.ACTIVE
+			? 'text-active_green'
+			: props.variant === STATUS.INACTIVE
+			? 'text-light_text_grey'
+			: props.variant === STATUS.WARNING
+			? 'text-dark_warning_yellow'
+			: props.variant === STATUS.EMERGENCY
+			? 'text-error_red'
+			: 'text-black';
+
+	const statusDotIcon =
+		props.variant === STATUS.MISSING
+			? BUTTON_LABEL.MISSING
+			: BUTTON_LABEL.STATUS;
+
+	return (
+		<div className={statusDotColor}>
+			<IconMapper icon={statusDotIcon} size="16px" />
+		</div>
+	);
 }

@@ -21,7 +21,7 @@ export default function TableEntityActionButtonsCell<T>(
 			<div className="flex flex-row gap-8 justify-center">
 				<IconButton
 					disableRipple
-					className="p-none text-primary_blue"
+					className="p-none text-primary_blue disabled:text-light_text_grey"
 					onClick={() => props.handleOnClickInformation?.(props.row as T)}
 				>
 					<IconMapper icon={BUTTON_LABEL.SEARCH} />

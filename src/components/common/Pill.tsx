@@ -1,36 +1,35 @@
 // material ui
-import { Chip } from '@mui/material';
+import MuiChip from '@mui/material/Chip';
+// components
+import Text from './Text';
 // consts
-import { PILL_LABEL } from '@/constants/LABEL';
+import { STATUS } from '@/constants/LABEL';
 
 interface PillProps {
-	variant: keyof typeof PILL_LABEL;
+	variant: STATUS;
 }
 
 export default function Pill(props: PillProps) {
+	const pillColor =
+		props.variant === STATUS.INACTIVE
+			? 'text-light_text_grey border-light_text_grey'
+			: props.variant === STATUS.EMERGENCY
+			? 'text-error_red border-error_red'
+			: props.variant === STATUS.WARNING
+			? 'text-dark_warning_yellow border-dark_warning_yellow'
+			: 'text-active_green border-active_green';
+
 	return (
-		<Chip
+		<MuiChip
 			sx={{
 				height: '20px',
 				'& .MuiChip-label': {
 					p: 0,
 				},
 			}}
-			label={
-				<p className="inline-block align-baseline font-istok text-h6">
-					{props.variant}
-				</p>
-			}
+			label={<Text style="text-h6" content={props.variant} />}
 			variant="outlined"
-			className={`px-4 py-0 border-2 ${
-				props.variant === PILL_LABEL.INACTIVE
-					? 'text-light_text_grey border-light_text_grey'
-					: props.variant === PILL_LABEL.EMERGENCY
-					? 'text-error_red border-error_red'
-					: props.variant === PILL_LABEL.WARNING
-					? 'text-dark_warning_yellow border-dark_warning_yellow'
-					: 'text-active_green border-active_green'
-			} rounded-sm`}
+			className={`px-4 py-0 border-2 ${pillColor} rounded-sm`}
 		/>
 	);
 }

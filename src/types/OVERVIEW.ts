@@ -1,5 +1,5 @@
-import { PILL_LABEL } from '@/constants/LABEL';
-import { CameraType } from './ENTITY';
+import { STATUS } from '@/constants/LABEL';
+
 export interface Location {
 	lat: number;
 	lng: number;
@@ -12,13 +12,19 @@ interface Driver {
 	phone_no: string;
 }
 
+interface Camera {
+	id: string;
+	name: string;
+	position: string;
+}
+[];
 export interface CarCard {
 	id: string;
 	name: string;
-	cameras: CameraType[];
+	cameras?: Camera[];
+	driver?: Driver;
 	speed: string;
-	driver: Driver;
-	status: PILL_LABEL;
+	status: STATUS;
 }
 
 export interface FocusState {
@@ -32,7 +38,7 @@ export interface StuffLocation {
 	id: string;
 	type: 'RSU' | 'CAR';
 	location: Location;
-	status?: PILL_LABEL;
+	status?: STATUS;
 }
 
 export interface RSUInformation extends StuffLocation {
@@ -41,14 +47,13 @@ export interface RSUInformation extends StuffLocation {
 	recommendSpeed: string;
 
 	connectedCar: {
-		status: PILL_LABEL;
+		status: STATUS;
 		name: string;
 		speed: string;
 	}[];
 }
 
 export interface CONNECTED_CAR_ON_RSU {
-	status: PILL_LABEL;
+	id: string;
 	name: string;
-	speed: string;
 }

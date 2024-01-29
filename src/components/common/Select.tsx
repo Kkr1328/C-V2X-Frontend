@@ -1,12 +1,16 @@
 // react
 import { SyntheticEvent } from 'react';
 // material ui
-import { Autocomplete, TextField, IconButton, Skeleton } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import Skeleton from '@mui/material/Skeleton';
 // components
 import Pill from './Pill';
+import Text from './Text';
 // consts
-import { BUTTON_LABEL, PILL_LABEL } from '@/constants/LABEL';
-//utilities
+import { BUTTON_LABEL, STATUS } from '@/constants/LABEL';
+// utilities
 import IconMapper from '@/utils/IconMapper';
 
 export interface SelectOption {
@@ -14,10 +18,10 @@ export interface SelectOption {
 	label: string;
 }
 
-interface SelectCV2XProp {
+interface SelectProp {
 	title?: string;
 	handleLocate?: () => void;
-	pill?: keyof typeof PILL_LABEL;
+	pill?: STATUS;
 	placeholder?: string;
 	options: SelectOption[];
 	value: SelectOption | null;
@@ -31,25 +35,21 @@ interface SelectCV2XProp {
 	helperMessage?: string;
 }
 
-export default function SelectCV2X(props: SelectCV2XProp) {
+export default function Select(props: SelectProp) {
 	return (
 		<div className="flex flex-col gap-4 w-full">
 			{/* Title */}
 			{props.title && (
 				<div className="flex flex-row gap-16 items-center">
 					<div className="flex flex-row gap-4">
-						<p className="inline-block align-baseline font-istok text-black text-h5">
-							{props.title}
-						</p>
+						<Text style="text-black text-h5" content={props.title} />
 						{props.isRequired && (
-							<p className="inline-block align-baseline font-istok text-error_red text-h5">
-								*
-							</p>
+							<Text style="text-error_red text-h5" content="*" />
 						)}
 						{props.handleLocate && (
 							<IconButton
 								disableRipple
-								className="p-none text-primary_blue"
+								className="p-none text-primary_blue disabled:text-light_text_grey"
 								disabled={props.isLoading}
 								onClick={props.handleLocate}
 							>
@@ -115,10 +115,8 @@ export default function SelectCV2X(props: SelectCV2XProp) {
 				/>
 			)}
 			{/* Helper text */}
-			{!props.isLoading && props.isError && (
-				<p className="inline-block align-baseline font-istok text-error_red text-p2">
-					{props.helperMessage}
-				</p>
+			{!props.isLoading && props.isError && props.helperMessage && (
+				<Text style="text-error_red text-p2" content={props.helperMessage} />
 			)}
 		</div>
 	);

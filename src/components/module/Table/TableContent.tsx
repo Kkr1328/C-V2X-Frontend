@@ -45,9 +45,7 @@ export default function TableContent<T extends TableRowProps>(
 				<TableHead>
 					<TableRow>
 						{props.columns.map((column, index) => (
-							<Fragment key={index}>
-								<TableHeaderCell column={column} />
-							</Fragment>
+							<TableHeaderCell key={index} column={column} />
 						))}
 					</TableRow>
 				</TableHead>
@@ -68,6 +66,7 @@ export default function TableContent<T extends TableRowProps>(
 												{...props}
 												row={row}
 												align={column.align}
+												id={(row as T).id as string}
 											/>
 										) : column.id === 'status' ||
 										  column.id === 'front_cam' ||

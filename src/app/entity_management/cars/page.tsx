@@ -1,6 +1,6 @@
 'use client';
 // react
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 // next
 import { useRouter } from 'next/navigation';
 // notisnack
@@ -13,9 +13,9 @@ import Filter from '@/components/module/Filter/Filter';
 import InputModal from '@/components/module/Modal/InputModal';
 import InfoModal from '@/components/module/Modal/InfoModal';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
+import Table from '@/components/module/Table/Table';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
-import { ROUTE } from '@/constants/ROUTE';
 // types
 import { ICar, ICarInfo, IGetCarsRequest } from '@/types/models/car.model';
 // templates
@@ -35,28 +35,49 @@ import {
 	updateCarAPI,
 } from '@/services/api-call';
 // utilities
-import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
+import {
+	CarDataTransformer,
+	DefaultDataGenerator,
+	OptionGenerator,
+} from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
-import Table from '@/components/module/Table/Table';
+import {
+	useCameraStatus,
+	useCarStatus,
+	useHandleCarLocate,
+} from '@/utils/FleetRetriever';
+import { Position } from '@/types/COMMON';
 
 export default function Home() {
+	const { enqueueSnackbar } = useSnackbar();
+	const router = useRouter();
+
+	// handle responsive modal
 	const [windowWidth, setWindowWidth] = useState(1000);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
-	const { enqueueSnackbar } = useSnackbar();
-	const router = useRouter();
-	const defaultFilterData = DefaultDataGenerator(CarFilterTemplate(1));
-	const defaultData = DefaultDataGenerator(
-		CarActionModalTemplate(isUseCompactModal)
-	);
-	const defaultInfoData = DefaultDataGenerator(
-		CarInfoModalTemplate(isUseCompactModal)
-	);
+	// generate default data
+	const defaultFilterData = DefaultDataGenerator(CarFilterTemplate);
+	const defaultData = DefaultDataGenerator(CarActionModalTemplate);
+	const defaultInfoData = DefaultDataGenerator(CarInfoModalTemplate);
 
+	// states
 	const [search, setSearch] = useState<IGetCarsRequest>(defaultFilterData);
+	// Open-Close modal state
+	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
+	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
+	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
+	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+	// Modal data state
+	const [informModalData, setInformModalData] =
+		useState<ICarInfo>(defaultInfoData);
+	const [registerModalData, setRegisterModalData] = useState<ICar>(defaultData);
+	const [updateModalData, setUpdateModalData] = useState<ICar>(defaultData);
+	const [deleteModalData, setDeleteModalData] = useState<ICar>(defaultData);
 
+	// query
 	const {
 		isLoading: isCarsLoading,
 		data: cars,
@@ -65,7 +86,6 @@ export default function Home() {
 		queryKey: ['getCars'],
 		queryFn: async () => await getCarsAPI(search),
 	});
-
 	const {
 		isLoading: isCamerasListLoading,
 		data: camerasList,
@@ -74,7 +94,6 @@ export default function Home() {
 		queryKey: ['getCamerasList'],
 		queryFn: async () => await getCamerasListAPI(),
 	});
-
 	const {
 		isLoading: isDriversListLoading,
 		data: driversList,
@@ -83,7 +102,6 @@ export default function Home() {
 		queryKey: ['getDriversList'],
 		queryFn: async () => await getDriversListAPI(),
 	});
-
 	const createCar = useMutation({
 		mutationFn: createCarAPI,
 		onSuccess: () => {
@@ -98,7 +116,6 @@ export default function Home() {
 				variant: 'error',
 			}),
 	});
-
 	const updateCar = useMutation({
 		mutationFn: updateCarAPI,
 		onSuccess: () => {
@@ -113,7 +130,6 @@ export default function Home() {
 				variant: 'error',
 			}),
 	});
-
 	const deleteCar = useMutation({
 		mutationFn: deleteCarAPI,
 		onSuccess: () => {
@@ -128,47 +144,6 @@ export default function Home() {
 				variant: 'error',
 			}),
 	});
-
-	// Open-Close modal state
-	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
-	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
-	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
-	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-
-	// Modal data state
-	const [informModalData, setInformModalData] =
-		useState<ICarInfo>(defaultInfoData);
-	const [registerModalData, setRegisterModalData] = useState<ICar>(defaultData);
-	const [updateModalData, setUpdateModalData] = useState<ICar>(defaultData);
-	const [deleteModalData, setDeleteModalData] = useState<ICar>(defaultData);
-
-	// Inform modal
-	const handleOpenInformModal = (informData: ICar) => {
-		const front_cam =
-			informData.cameras.length !== 0 &&
-			informData.cameras.filter((camera) => camera.position === 'Front')[0];
-		const back_cam =
-			informData.cameras.length !== 0 &&
-			informData.cameras.filter((camera) => camera.position === 'Back')[0];
-		const left_cam =
-			informData.cameras.length !== 0 &&
-			informData.cameras.filter((camera) => camera.position === 'Left')[0];
-		const right_cam =
-			informData.cameras.length !== 0 &&
-			informData.cameras.filter((camera) => camera.position === 'Right')[0];
-		setInformModalData({
-			...informData,
-			front_cam_position: front_cam ? front_cam.position : '',
-			front_cam_name: front_cam ? front_cam.name : '',
-			back_cam_position: back_cam ? back_cam.position : '',
-			back_cam_name: back_cam ? back_cam.name : '',
-			left_cam_position: left_cam ? left_cam.position : '',
-			left_cam_name: left_cam ? left_cam.name : '',
-			right_cam_position: right_cam ? right_cam.position : '',
-			right_cam_name: right_cam ? right_cam.name : '',
-		});
-		setOpenInformModal(true);
-	};
 
 	const handleOnClickRefresh = async () => {
 		await setSearch(defaultFilterData);
@@ -201,11 +176,11 @@ export default function Home() {
 	];
 
 	return (
-		<Fragment>
+		<>
 			<InputModal
 				title={MODAL_LABEL.REGISTER_CAR}
 				variant={BUTTON_LABEL.REGISTER}
-				template={CarActionModalTemplate(isUseCompactModal)}
+				template={CarActionModalTemplate}
 				open={openRegisterModal}
 				onOpenChange={setOpenRegisterModal}
 				data={registerModalData}
@@ -213,22 +188,24 @@ export default function Home() {
 				onSubmit={() => createCar.mutate(registerModalData)}
 				options={options}
 				isPending={createCar.isPending}
+				isCompact={isUseCompactModal}
 			/>
 			<InfoModal
 				title={informModalData.name}
-				template={CarInfoModalTemplate(isUseCompactModal)}
+				template={CarInfoModalTemplate}
 				open={openInformModal}
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
-				handleHeaderLocate={() =>
-					router.push(`${ROUTE.OVERVIEW}?id=${informModalData.id}`)
-				}
+				isHeaderLocate
+				handleHeaderLocate={useHandleCarLocate(router, informModalData.id)}
+				headerPill={useCarStatus(informModalData.id)}
+				isCompact={isUseCompactModal}
 			/>
 			<InputModal
 				title={MODAL_LABEL.UPDATE_CAR + updateModalData.id}
 				variant={BUTTON_LABEL.UPDATE}
-				template={CarActionModalTemplate(isUseCompactModal)}
+				template={CarActionModalTemplate}
 				open={openUpdateModal}
 				onOpenChange={setOpenUpdateModal}
 				data={updateModalData}
@@ -241,6 +218,7 @@ export default function Home() {
 				}
 				options={options}
 				isPending={updateCar.isPending}
+				isCompact={isUseCompactModal}
 			/>
 			<DeleteModal
 				open={openDeleteModal}
@@ -253,7 +231,7 @@ export default function Home() {
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CARS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[400px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={CarFilterTemplate}
 						handleSubmitSearch={refetchGetCars}
@@ -276,7 +254,13 @@ export default function Home() {
 						handleOnClickRefresh={handleOnClickRefresh}
 						columns={CarsTableTemplate}
 						rows={cars ?? []}
-						handleOnClickInformation={handleOpenInformModal}
+						handleOnClickInformation={(data) =>
+							handleOpenModal(
+								CarDataTransformer(data),
+								setOpenInformModal,
+								setInformModalData
+							)
+						}
 						handleOnClickUpdate={(data) =>
 							handleOpenModal(data, setOpenUpdateModal, setUpdateModalData)
 						}
@@ -289,6 +273,6 @@ export default function Home() {
 					/>
 				</Card>
 			</div>
-		</Fragment>
+		</>
 	);
 }

@@ -1,6 +1,6 @@
 'use client';
 // react
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 // next
 import { useRouter } from 'next/navigation';
 // notisnack
@@ -13,9 +13,9 @@ import Filter from '@/components/module/Filter/Filter';
 import InputModal from '@/components/module/Modal/InputModal';
 import InfoModal from '@/components/module/Modal/InfoModal';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
+import Table from '@/components/module/Table/Table';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
-import { ROUTE } from '@/constants/ROUTE';
 // types
 import { ICamera, IGetCamerasRequest } from '@/types/models/camera.model';
 // templates
@@ -37,23 +37,40 @@ import {
 import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
-import Table from '@/components/module/Table/Table';
-import Loading from '@/components/common/Loading';
+import {
+	useCameraStatus,
+	useCarStatus,
+	useHandleCarLocate,
+} from '@/utils/FleetRetriever';
 
 export default function Home() {
+	const { enqueueSnackbar } = useSnackbar();
+	const router = useRouter();
+
+	// handle responsive modal
 	const [windowWidth, setWindowWidth] = useState(1000);
 	useEffect(() => WindowWidthObserver(setWindowWidth), []);
 	const isUseCompactModal = windowWidth <= 640;
 
-	const { enqueueSnackbar } = useSnackbar();
-	const router = useRouter();
-	const defaultFilterData = DefaultDataGenerator(CameraFilterTemplate(1));
-	const defaultData = DefaultDataGenerator(
-		CameraActionModalTemplate(isUseCompactModal)
-	);
+	// generate default data
+	const defaultFilterData = DefaultDataGenerator(CameraFilterTemplate);
+	const defaultData = DefaultDataGenerator(CameraActionModalTemplate);
 
+	// states
 	const [search, setSearch] = useState<IGetCamerasRequest>(defaultFilterData);
+	// Open-Close modal state
+	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
+	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
+	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
+	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+	// Modal data state
+	const [informModalData, setInformModalData] = useState<ICamera>(defaultData);
+	const [registerModalData, setRegisterModalData] =
+		useState<ICamera>(defaultData);
+	const [updateModalData, setUpdateModalData] = useState<ICamera>(defaultData);
+	const [deleteModalData, setDeleteModalData] = useState<ICamera>(defaultData);
 
+	//query
 	const {
 		isLoading: isCamerasLoading,
 		data: cameras,
@@ -62,7 +79,6 @@ export default function Home() {
 		queryKey: ['getCameras'],
 		queryFn: async () => await getCamerasAPI(search),
 	});
-
 	const {
 		isLoading: isCarsListLoading,
 		data: carsList,
@@ -71,7 +87,6 @@ export default function Home() {
 		queryKey: ['getCarsList'],
 		queryFn: async () => await getCarsListAPI(),
 	});
-
 	const createCamera = useMutation({
 		mutationFn: createCameraAPI,
 		onSuccess: () => {
@@ -86,7 +101,6 @@ export default function Home() {
 				variant: 'error',
 			}),
 	});
-
 	const updateCamera = useMutation({
 		mutationFn: updateCameraAPI,
 		onSuccess: () => {
@@ -103,7 +117,6 @@ export default function Home() {
 			});
 		},
 	});
-
 	const deleteCamera = useMutation({
 		mutationFn: deleteCameraAPI,
 		onSuccess: () => {
@@ -119,19 +132,6 @@ export default function Home() {
 			}),
 	});
 
-	// Open-Close modal state
-	const [openInformModal, setOpenInformModal] = useState<boolean>(false);
-	const [openRegisterModal, setOpenRegisterModal] = useState<boolean>(false);
-	const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
-	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-
-	// Modal data state
-	const [informModalData, setInformModalData] = useState<ICamera>(defaultData);
-	const [registerModalData, setRegisterModalData] =
-		useState<ICamera>(defaultData);
-	const [updateModalData, setUpdateModalData] = useState<ICamera>(defaultData);
-	const [deleteModalData, setDeleteModalData] = useState<ICamera>(defaultData);
-
 	const handleOnClickRefresh = async () => {
 		await setSearch(defaultFilterData);
 		refetchGetCameras();
@@ -141,24 +141,10 @@ export default function Home() {
 	const options = [
 		{
 			id: 'position',
-			option: [
-				{
-					value: 'Front',
-					label: 'Front',
-				},
-				{
-					value: 'Back',
-					label: 'Back',
-				},
-				{
-					value: 'Left',
-					label: 'Left',
-				},
-				{
-					value: 'Right',
-					label: 'Right',
-				},
-			],
+			option: ['Front', 'Back', 'Left', 'Right'].map((position) => ({
+				value: position,
+				label: position,
+			})),
 		},
 		{
 			id: 'car_id',
@@ -167,11 +153,11 @@ export default function Home() {
 	];
 
 	return (
-		<Fragment>
+		<>
 			<InputModal
 				title={MODAL_LABEL.REGISTER_CAMERA}
 				variant={BUTTON_LABEL.REGISTER}
-				template={CameraActionModalTemplate(isUseCompactModal)}
+				template={CameraActionModalTemplate}
 				open={openRegisterModal}
 				onOpenChange={setOpenRegisterModal}
 				data={registerModalData}
@@ -179,22 +165,27 @@ export default function Home() {
 				onSubmit={() => createCamera.mutate(registerModalData)}
 				isPending={createCamera.isPending}
 				options={options}
+				isCompact={isUseCompactModal}
 			/>
 			<InfoModal
 				title={informModalData.name}
-				template={CameraInfoModalTemplate(isUseCompactModal)}
+				template={CameraInfoModalTemplate}
 				open={openInformModal}
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
-				handleBodyLocate={() =>
-					router.push(`${ROUTE.OVERVIEW}?id=${informModalData.car_id}`)
-				}
+				headerPill={useCameraStatus(
+					informModalData.position,
+					informModalData.car_id
+				)}
+				isBodyLocate
+				handleBodyLocate={useHandleCarLocate(router, informModalData.car_id)}
+				isCompact={isUseCompactModal}
 			/>
 			<InputModal
 				title={MODAL_LABEL.UPDATE_CAMERA + updateModalData.id}
 				variant={BUTTON_LABEL.UPDATE}
-				template={CameraActionModalTemplate(isUseCompactModal)}
+				template={CameraActionModalTemplate}
 				open={openUpdateModal}
 				onOpenChange={setOpenUpdateModal}
 				data={updateModalData}
@@ -207,6 +198,7 @@ export default function Home() {
 				}
 				isPending={updateCamera.isPending}
 				options={options}
+				isCompact={isUseCompactModal}
 			/>
 			<DeleteModal
 				open={openDeleteModal}
@@ -219,7 +211,7 @@ export default function Home() {
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CAMERAS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[400px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={CameraFilterTemplate}
 						handleSubmitSearch={refetchGetCameras}
@@ -255,6 +247,6 @@ export default function Home() {
 					/>
 				</Card>
 			</div>
-		</Fragment>
+		</>
 	);
 }

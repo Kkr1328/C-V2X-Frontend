@@ -1,7 +1,8 @@
 // material ui
-import { Tab, Tabs } from '@mui/material';
+import MuiTab from '@mui/material/Tab';
+import MuiTabs from '@mui/material/Tabs';
 
-interface TabCV2XProps {
+interface TabProps {
 	children?: React.ReactElement;
 	value: number;
 	options: string[];
@@ -9,17 +10,19 @@ interface TabCV2XProps {
 	size?: 'small' | 'large';
 }
 
-export default function TabCV2X(props: TabCV2XProps) {
+export default function Tab(props: TabProps) {
 	return (
-		<Tabs
+		<MuiTabs
 			value={props.value}
-			onChange={(_: React.SyntheticEvent, newValue: number) => props.onChange(newValue)}
+			onChange={(_: React.SyntheticEvent, newValue: number) =>
+				props.onChange(newValue)
+			}
 			variant="fullWidth"
 			className="rounded-t-sm px-8 bg-light_background_grey"
 			sx={{
-				minHeight: props.size === 'large' ? '32px' : '24px',
+				minHeight: props.size === 'large' ? '28px' : '24px',
 				'& .MuiTab-root': {
-					minHeight: props.size === 'large' ? '32px' : '24px',
+					minHeight: props.size === 'large' ? '28px' : '24px',
 				},
 				'& .MuiTabs-indicator': {
 					backgroundColor: '#17A5D3',
@@ -27,14 +30,14 @@ export default function TabCV2X(props: TabCV2XProps) {
 			}}
 		>
 			{props.options.map((option) => (
-				<Tab
+				<MuiTab
 					key={option}
 					className="p-none m-none"
 					sx={{
 						minWidth: 0,
 						fontFamily: ['var(--font-istok-web)'],
 						fontWeight: '400px',
-						fontSize: props.size === 'large' ? '16px' : '10px',
+						fontSize: props.size === 'large' ? '14px' : '10px',
 						'&:hover': {
 							color: '#17A5D3',
 							opacity: 1,
@@ -46,6 +49,6 @@ export default function TabCV2X(props: TabCV2XProps) {
 					label={option}
 				/>
 			))}
-		</Tabs>
+		</MuiTabs>
 	);
 }
