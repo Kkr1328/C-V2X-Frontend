@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 // tanstack
 import { useQuery } from '@tanstack/react-query';
 // react
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 // material ui
 import { Card, Divider, Grid } from '@mui/material';
 // components
@@ -30,7 +30,6 @@ import { STATUS_DEFINITION } from '@/constants/DEFINITION';
 // types
 import { ICarInfo } from '@/types/models/car.model';
 import { IRSU } from '@/types/models/rsu.model';
-import { Position } from '@/types/COMMON';
 // utilities
 import { WidthObserver, WindowWidthObserver } from '@/utils/WidthObserver';
 import {
@@ -39,20 +38,21 @@ import {
 } from '@/utils/DataGenerator';
 import { handleOpenModal } from '@/utils/ModalController';
 import {
-	useCameraStatus,
 	useCarStatus,
 	useCarsHeartbeat,
 	useHandleCarLocate,
 	useHandleRSULocate,
-	useResetHeartbeat,
 	useRSUStatus,
 	useRSUsHeartbeat,
 } from '@/utils/FleetRetriever';
 // services
 import { getCarsAPI, getRSUsAPI } from '@/services/api-call';
+// contexts
+import { HeartbeatFleetContext } from '@/context/fleet';
 
 export default function Home() {
 	const router = useRouter();
+	const [_, setHeartbeatContextData] = useContext(HeartbeatFleetContext);
 
 	// handle responsive layout
 	const cardRef = useRef<HTMLDivElement>(null);
@@ -99,8 +99,8 @@ export default function Home() {
 		queryFn: async () => await getRSUsAPI({}),
 	});
 
-	const useHandleRefresh = () => {
-		useResetHeartbeat();
+	const handleRefresh = () => {
+		setHeartbeatContextData({ CAR: {}, RSU: {} });
 		refetchCars();
 		refetchRSUs();
 	};
@@ -158,7 +158,7 @@ export default function Home() {
 								icon={BUTTON_LABEL.REFRESH}
 								label={useCompactButton ? '' : BUTTON_LABEL.REFRESH}
 								variant="outlined"
-								onClick={useHandleRefresh}
+								onClick={handleRefresh}
 							/>
 						</div>
 						<Divider />

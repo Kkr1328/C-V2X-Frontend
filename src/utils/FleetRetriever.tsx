@@ -168,11 +168,6 @@ export function useCarsHeartbeat(cars: ICar[]) {
 	});
 }
 
-export function useResetHeartbeat() {
-	const [_, setHeartbeatContextData] = useContext(HeartbeatFleetContext);
-	setHeartbeatContextData({ CAR: {}, RSU: {} });
-}
-
 // --------------------------------------------- LOCATIONS ---------------------------------------------
 export function useRSULocation(id: string) {
 	const [locationContextData] = useContext(LocationFleetContext);
