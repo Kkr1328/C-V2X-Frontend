@@ -1,36 +1,42 @@
+// next
+import { useRouter } from 'next/navigation';
 // react
 import { Draggable } from 'react-beautiful-dnd';
 // material ui
 import { Card, IconButton, Skeleton } from '@mui/material';
 // components
 import Text from '@/components/common/Text';
+import Pill from '@/components/common/Pill';
 // consts
-import { BUTTON_LABEL, EMERGENCY_CARD_LABEL } from '@/constants/LABEL';
+import { BUTTON_LABEL, EMERGENCY_CARD_LABEL, STATUS } from '@/constants/LABEL';
 // types
 import { Emergency } from '@/types/COMMON';
 // utilities
 import IconMapper from '@/utils/IconMapper';
+import { useCarStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
 
 type EmeregncyCardProps = {
 	index?: number;
 	id?: string;
-
 	carName?: string;
-	handleLocate?: () => void;
+	carId?: string;
 	time?: string;
 	driverPhoneNo?: string;
 	state?: Emergency;
-
 	isLoading?: boolean;
 };
 
 export default function EmergencyCard(props: EmeregncyCardProps) {
+	const router = useRouter();
+	const handleLocate = useHandleCarLocate(router, props.carId ?? '');
+	const pill = useCarStatus(props.carId ?? '');
+
 	if (props.isLoading)
 		return (
 			<Skeleton
 				animation="wave"
 				variant="rectangular"
-				className="w-full min-w-272 h-84 rounded-l-none rounded-r-lg border-l-8 mt-16 border-light_text_grey"
+				className="w-full min-w-[272px] min-h-[84px] rounded-l-none rounded-r-lg border-l-8 mt-16 border-light_text_grey"
 			/>
 		);
 
@@ -62,11 +68,14 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 								/>
 								<IconButton
 									disableRipple
-									className="p-none text-primary_blue"
-									onClick={props.handleLocate}
+									className="p-none text-primary_blue disabled:text-light_text_grey"
+									disabled={!handleLocate}
+									onClick={handleLocate}
 								>
 									<IconMapper icon={BUTTON_LABEL.LOCATION} />
 								</IconButton>
+								{pill && <Pill variant={pill} />}
+
 								<div className="grow" />
 								<Text
 									style="text-light_text_grey text-p2"

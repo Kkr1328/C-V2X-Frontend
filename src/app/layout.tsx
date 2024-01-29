@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Istok_Web } from 'next/font/google';
 
-import LayoutWrapper from '@/components/module/LayoutWrapper';
+import LayoutWrapper from '@/components/module/Wrapper/LayoutWrapper';
 import { Suspense } from 'react';
 import Loading from './loading';
 import { SpeedInsights } from '@vercel/speed-insights/next';

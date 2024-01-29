@@ -58,6 +58,7 @@ const config: Config = {
 		},
 		spacing: {
 			none: '0',
+			'2': '2px',
 			'4': '4px',
 			'8': '8px',
 			'12': '12px',

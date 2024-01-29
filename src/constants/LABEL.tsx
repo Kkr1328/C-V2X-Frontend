@@ -15,7 +15,7 @@ export enum NAVBAR_LABEL {
 
 export enum INPUT_LABEL {
 	ID = 'ID',
-	CAMERAS = 'Cameras',
+	CAMERA = 'Camera',
 	FRONT_CAMERA = 'Front Camera',
 	BACK_CAMERA = 'Back Camera',
 	LEFT_CAMERA = 'Left Camera',
@@ -58,14 +58,16 @@ export enum BUTTON_LABEL {
 	INVISIBLE = 'Invisible',
 	CANCLE = 'Cancle',
 	HELP = 'Help',
+	NO_VDO = 'No video',
 }
 
-export enum PILL_LABEL {
-	ALL = 'ALL',
-	ACTIVE = 'ACTIVE',
-	INACTIVE = 'INACTIVE',
-	EMERGENCY = 'EMERGENCY',
-	WARNING = 'WARNING',
+export enum STATUS {
+	ALL = 'All',
+	ACTIVE = 'Active',
+	INACTIVE = 'Inactive',
+	EMERGENCY = 'Emergency',
+	WARNING = 'Warning',
+	MISSING = 'Missing',
 }
 
 export enum MODAL_LABEL {
@@ -89,7 +91,7 @@ export enum EMERGENCY_CARD_LABEL {
 export enum TAB_LABEL {
 	ORIGINAL = 'ORIGINAL',
 	OBJECT = 'OBJ DETECTION',
-	PANOPTIC = 'PANAOPTIC',
+	// PANOPTIC = 'PANAOPTIC',
 }
 export enum OVERVIEW_SUMMARY_CARD_LABEL {
 	ACTIVE_CAR = 'Active car(s)',

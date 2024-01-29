@@ -38,7 +38,7 @@ const LocationFleetContext = createContext<
 const CarSpeedFleetContext = createContext<
 	[
 		{ [id: string]: FLEET_CAR_SPEED | undefined },
-		Dispatch<SetStateAction<{ [id: string]: FLEET_CAR_SPEED }>>
+		Dispatch<SetStateAction<{ [id: string]: FLEET_CAR_SPEED | undefined }>>
 	]
 >([{}, () => {}]);
 

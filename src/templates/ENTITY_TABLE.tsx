@@ -32,7 +32,7 @@ export const CarsTableTemplate: TableHeaderProps<ICar>[] = [
 	},
 	{
 		id: 'cameras',
-		label: INPUT_LABEL.CAMERAS,
+		label: INPUT_LABEL.CAMERA,
 		align: 'left',
 		isSorted: true,
 	},

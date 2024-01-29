@@ -1,5 +1,5 @@
 // react
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 // next
 import { useRouter, usePathname } from 'next/navigation';
 // material ui
@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-// consts
+// const
 import { NAVBAR_LABEL } from '@/constants/LABEL';
 // utilities
 import IconMapper from '@/utils/IconMapper';
@@ -33,8 +33,8 @@ interface NavbarMenuProps {
 export default function NavbarMenu(props: NavbarMenuProps) {
 	const router = useRouter();
 	const pathname = usePathname();
-	const [openSubOptions, setOpenSubOptions] = useState<boolean>(false);
 
+	const [openSubOptions, setOpenSubOptions] = useState<boolean>(false);
 	const handleOpenSubOptions = () => setOpenSubOptions(true);
 	const handleToggleSubOptions = () => setOpenSubOptions(!openSubOptions);
 
@@ -43,7 +43,7 @@ export default function NavbarMenu(props: NavbarMenuProps) {
 	}, [props.isExpanded]);
 
 	return (
-		<Fragment>
+		<>
 			{/* option */}
 			<ListItemButton
 				onClick={() => {
@@ -69,13 +69,13 @@ export default function NavbarMenu(props: NavbarMenuProps) {
 					<IconMapper icon={props.option.label} />
 				</Badge>
 				{props.isExpanded && (
-					<Fragment>
+					<>
 						<ListItemText
 							className="text-p2 truncate m-none"
 							primary={props.option.label}
 						/>
 						{openSubOptions ? <ExpandLess /> : <ExpandMore />}
-					</Fragment>
+					</>
 				)}
 			</ListItemButton>
 
@@ -116,6 +116,6 @@ export default function NavbarMenu(props: NavbarMenuProps) {
 					))}
 				</List>
 			</Collapse>
-		</Fragment>
+		</>
 	);
 }
