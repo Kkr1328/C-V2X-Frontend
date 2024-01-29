@@ -35,11 +35,11 @@ const LocationFleetContext = createContext<
 	]
 >([{ CAR: {}, RSU: {} }, () => {}]);
 
-const useCarSpeedFleetContext = createContext<
+const CarSpeedFleetContext = createContext<
 	[
 		{ [id: string]: FLEET_CAR_SPEED | undefined },
-		Dispatch<SetStateAction<{ [id: string]: FLEET_CAR_SPEED }>>
+		Dispatch<SetStateAction<{ [id: string]: FLEET_CAR_SPEED | undefined }>>
 	]
 >([{}, () => {}]);
 
-export { HeartbeatFleetContext, LocationFleetContext, useCarSpeedFleetContext };
+export { HeartbeatFleetContext, LocationFleetContext, CarSpeedFleetContext };

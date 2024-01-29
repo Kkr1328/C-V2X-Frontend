@@ -12,7 +12,7 @@ import { ICarHeartbeat, IRSUHeartbeat } from '@/types/models/heartbeat.model';
 import { IRSU } from '@/types/models/rsu.model';
 // contexts
 import {
-	useCarSpeedFleetContext,
+	CarSpeedFleetContext,
 	HeartbeatFleetContext,
 	LocationFleetContext,
 } from '@/context/fleet';
@@ -25,15 +25,19 @@ export function useRSUStatus(id: string) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
 	const [locationContextData] = useContext(LocationFleetContext);
 
+	if (
+		!heartbeatContextData.RSU[id] ||
+		heartbeatContextData.RSU[id]?.data.status === STATUS.INACTIVE
+	)
+		return STATUS.INACTIVE;
 	if (!locationContextData.RSU[id]) return STATUS.WARNING;
-
 	return heartbeatContextData.RSU[id]?.data.status || STATUS.INACTIVE;
 }
 
 export function useCarStatus(id: string) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
 	const [locationContextData] = useContext(LocationFleetContext);
-	const [speedContextData] = useContext(useCarSpeedFleetContext);
+	const [speedContextData] = useContext(CarSpeedFleetContext);
 
 	const { data: dataGetEmergencyList } = useQuery({
 		queryKey: ['getEmergencyList'],
@@ -43,7 +47,11 @@ export function useCarStatus(id: string) {
 		(emergency: IEmergency) => emergency.status === 'pending'
 	);
 
-	if (!heartbeatContextData.CAR[id]) return STATUS.INACTIVE;
+	if (
+		!heartbeatContextData.CAR[id] ||
+		heartbeatContextData.CAR[id]?.data.status === STATUS.INACTIVE
+	)
+		return STATUS.INACTIVE;
 	if (
 		pendingEmergency?.some((emergency: IEmergency) => emergency.car_id === id)
 	)
@@ -83,7 +91,12 @@ export function useRSUsHeartbeat(rsus: IRSU[]) {
 
 	return rsus.map((rsu: IRSU): IRSUHeartbeat => {
 		let status;
-		if (!locationContextData.RSU[rsu.id]) status = STATUS.WARNING;
+		if (
+			!heartbeatContextData.RSU[rsu.id] ||
+			heartbeatContextData.RSU[rsu.id]?.data.status === STATUS.INACTIVE
+		)
+			status = STATUS.INACTIVE;
+		else if (!locationContextData.RSU[rsu.id]) status = STATUS.WARNING;
 		else
 			status = heartbeatContextData.RSU[rsu.id]?.data.status || STATUS.INACTIVE;
 		return {
@@ -96,7 +109,7 @@ export function useRSUsHeartbeat(rsus: IRSU[]) {
 export function useCarsHeartbeat(cars: ICar[]) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
 	const [locationContextData] = useContext(LocationFleetContext);
-	const [speedContextData] = useContext(useCarSpeedFleetContext);
+	const [speedContextData] = useContext(CarSpeedFleetContext);
 
 	const { data: dataGetEmergencyList } = useQuery({
 		queryKey: ['getEmergencyList'],
@@ -108,7 +121,11 @@ export function useCarsHeartbeat(cars: ICar[]) {
 
 	return cars.map((car: ICar): ICarHeartbeat => {
 		let status;
-		if (!heartbeatContextData.CAR[car.id]) status = STATUS.INACTIVE;
+		if (
+			!heartbeatContextData.CAR[car.id] ||
+			heartbeatContextData.CAR[car.id]?.data.status === STATUS.INACTIVE
+		)
+			status = STATUS.INACTIVE;
 		else if (
 			pendingEmergency?.some(
 				(emergency: IEmergency) => emergency.car_id === car.id
@@ -201,7 +218,7 @@ export function useHandleCarLocate(router: AppRouterInstance, id: string) {
 
 // --------------------------------------------- SPEEDS ---------------------------------------------
 export function useCarSpeed(id: string) {
-	const [speedContextData] = useContext(useCarSpeedFleetContext);
+	const [speedContextData] = useContext(CarSpeedFleetContext);
 	const speed = speedContextData[id];
 	const statusCar = useCarStatus(id);
 
