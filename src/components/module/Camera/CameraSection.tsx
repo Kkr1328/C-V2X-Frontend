@@ -62,6 +62,9 @@ export default function CameraSection(props: CameraSectionProps) {
 							carID={props.carName}
 							camNumber={props.cameraName ?? ''}
 							isDisabled={isDisabled}
+							isShowObjectDetection={
+								Object.values(TAB_LABEL)[videoModeNumber] == 'OBJ DETECTION'
+							}
 						/>
 					</div>
 					{!isDisabled && (

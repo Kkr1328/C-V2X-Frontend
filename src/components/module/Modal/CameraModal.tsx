@@ -45,9 +45,9 @@ export default function CameraModal(props: CameraModalProp) {
 								carID={props.carName}
 								camNumber={props.cameraName ?? ''}
 								size={'large'}
-								// isShowObjectDetection={
-								// 	modeOptions[videoModeNumber] == 'OBJ DETECTION'
-								// }
+								isShowObjectDetection={
+									Object.values(TAB_LABEL)[videoModeNumber] == 'OBJ DETECTION'
+								}
 							/>
 						</div>
 					</div>
