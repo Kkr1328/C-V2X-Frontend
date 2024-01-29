@@ -15,7 +15,7 @@ import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 // utilities
 import { WidthObserver } from '@/utils/WidthObserver';
 // context
-import { HeartbeatFleetContext, LocationFleetContext } from '@/context/fleet';
+import { LocationFleetContext } from '@/context/fleet';
 import SummaryCards from '@/components/module/Overview/SummaryCards';
 import FleetDeviceCards from '@/components/module/Overview/FleetDeviceCards';
 import { carLocation, carStatus } from '@/utils/FleetRetriever';
@@ -37,7 +37,14 @@ export default function Home() {
 	const id = searchParams.get('id');
 	useEffect(() => {
 		if (id) {
-			clickOnCarCard(id);
+			const location = carLocation(id) as google.maps.LatLngLiteral;
+			const status = carStatus(id);
+			changeFocus({
+				id: id,
+				type: 'CAR',
+				location: location,
+				status: status,
+			});
 		}
 	}, [id]);
 
@@ -103,52 +110,32 @@ export default function Home() {
 		}
 	}
 
-	function clickOnCarCard(carID: string) {
-		const location = carLocation(carID) as google.maps.LatLngLiteral;
-		const status = carStatus(carID);
-		changeFocus({
-			id: carID,
-			type: 'CAR',
-			location: location,
-			status: status,
-		});
-	}
-
 	return (
 		<div
 			ref={pageRef}
-			className="flex flex-col w-full min-w-[300px] h-auto gap-16"
+			className="flex flex-col w-full min-w-[400px] h-auto gap-16"
 		>
 			<PageTitle title={NAVBAR_LABEL.OVERVIEW} />
 			<SummaryCards summariesXs={summariesXs} />
-			<Card className="flex w-full h-auto rounded-lg px-24 py-24">
-				<Grid
-					container
-					columns={{ xs: 81 }}
-					rowSpacing={1}
-					columnSpacing={{ xs: 1 }}
-				>
-					<Grid item xs={useCompactContent ? 81 : 56}>
-						<Map
-							focus={focus}
-							resetFocus={resetFocus}
-							changeFocus={changeFocus}
-						/>
+			<Card
+				className={`flex ${
+					useCompactContent ? 'flex-col' : 'flex-row'
+				} gap-8 w-full h-auto rounded-lg px-24 py-24`}
+			>
+				<Map focus={focus} resetFocus={resetFocus} changeFocus={changeFocus} />
+				{!useCompactContent && (
+					<Grid item xs={1} className="flex items-center justify-center">
+						<Divider orientation="vertical" />
 					</Grid>
-					{!useCompactContent && (
-						<Grid item xs={1} className="flex items-center justify-center">
-							<Divider orientation="vertical" />
-						</Grid>
-					)}
-					<Grid item xs={useCompactContent ? 81 : 24}>
-						<FleetDeviceCards
-							focus={focus}
-							pillMode={pillMode}
-							changePillMode={changePillMode}
-							clickOnCarCard={clickOnCarCard}
-						/>
-					</Grid>
-				</Grid>
+				)}
+				<div className={`${!useCompactContent && 'w-[500px]'}`}>
+					<FleetDeviceCards
+						focus={focus}
+						pillMode={pillMode}
+						changePillMode={changePillMode}
+						changeFocus={changeFocus}
+					/>
+				</div>
 			</Card>
 		</div>
 	);

@@ -7,7 +7,7 @@ import RSUCard from './RSUCard';
 // const
 import { STATUS } from '@/constants/LABEL';
 // types
-import { FocusState } from '@/types/OVERVIEW';
+import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 import { IResponseList } from '@/types/common/responseList.model';
 // services
 import { getCarsListAPI, getRSUsListAPI } from '@/services/api-call';
@@ -17,7 +17,7 @@ interface FleetDeviceCardsProps {
 	pillMode: STATUS | null;
 	changePillMode: (value: STATUS) => void;
 	focus: FocusState | null;
-	clickOnCarCard: (carID: string) => void;
+	changeFocus: (node: StuffLocation | null) => void;
 }
 
 export default function FleetDeviceCards(props: FleetDeviceCardsProps) {
@@ -68,11 +68,10 @@ export default function FleetDeviceCards(props: FleetDeviceCardsProps) {
 									?.sort((car) => (car.id === props.focus?.id ? -1 : 1))
 									.map((car) => (
 										<CarCard
+											{...props}
 											key={car.id}
 											id={car.id}
-											pillMode={props.pillMode}
 											isFocus={car.id === props.focus?.id}
-											onClick={() => props.clickOnCarCard(car.id)}
 										/>
 									))
 							: rsusList

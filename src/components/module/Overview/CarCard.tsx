@@ -16,18 +16,18 @@ import { STATUS } from '@/constants/LABEL';
 import { MAP_OBJECT_CONFIG } from '@/constants/OVERVIEW';
 import { MAP_ASSETS } from '@/constants/ASSETS';
 // types
-import { CarCard } from '@/types/OVERVIEW';
+import { CarCard, StuffLocation } from '@/types/OVERVIEW';
 import { ICar } from '@/types/models/car.model';
 // services
 import { getCarAPI } from '@/services/api-call';
 // utilities
-import { carSpeed, carStatus } from '@/utils/FleetRetriever';
+import { carLocation, carSpeed, carStatus } from '@/utils/FleetRetriever';
 
 interface CarCardProps {
 	id: string;
 	pillMode: STATUS | null;
 	isFocus: Boolean;
-	onClick: () => void;
+	changeFocus: (node: StuffLocation | null) => void;
 }
 
 export default function CarCard(props: CarCardProps) {
@@ -38,6 +38,7 @@ export default function CarCard(props: CarCardProps) {
 		queryFn: async () => await getCarAPI({ id: props.id }),
 	});
 
+	const location = carLocation(props.id) as google.maps.LatLngLiteral;
 	const status = carStatus(props.id);
 	const speed = carSpeed(props.id);
 
@@ -52,7 +53,14 @@ export default function CarCard(props: CarCardProps) {
 
 	return (
 		<Card
-			onClick={props.onClick}
+			onClick={() =>
+				props.changeFocus({
+					id: props.id,
+					type: 'CAR',
+					location: location,
+					status: status,
+				})
+			}
 			className={`${
 				props.isFocus
 					? 'border-primary_blue border-2 cursor-zoom-out'

@@ -78,22 +78,12 @@ export default function Map(props: MapProps) {
 			onLoad={(map) => setMap(map)}
 		>
 			{carsList?.map(({ id }) => (
-				<CarPin
-					key={id}
-					id={id}
-					isFocus={props.focus?.id === id}
-					changeFocus={props.changeFocus}
-				/>
+				<CarPin {...props} key={id} id={id} isFocus={props.focus?.id === id} />
 			))}
 			{rsusList?.map(({ id }) => (
-				<RSUPin
-					key={id}
-					id={id}
-					isFocus={props.focus?.id === id}
-					changeFocus={props.changeFocus}
-				/>
+				<RSUPin {...props} key={id} id={id} isFocus={props.focus?.id === id} />
 			))}
-			<DrivingTestLocationBtn map={map} resetFocus={props.resetFocus} />
+			<DrivingTestLocationBtn {...props} map={map} />
 		</GoogleMap>
 	);
 }
