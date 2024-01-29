@@ -1,3 +1,5 @@
+// components
+import Text from './Text';
 // consts
 import { BUTTON_LABEL } from '@/constants/LABEL';
 // utilities
@@ -8,38 +10,22 @@ interface NoDataProps {
 }
 
 export default function NoData(props: NoDataProps) {
-	const getSize = () => {
-		switch (props.size) {
-			case 'medium':
-				return '36px';
-			case 'large':
-				return '48px';
-			default:
-				return '24px';
-		}
-	};
+	const iconSize =
+		props.size === 'large' ? '48px' : props.size === 'medium' ? '36px' : '24px';
 
-	const textSizeClass = () => {
-		switch (props.size) {
-			case 'medium':
-				return 'text-h4';
-			case 'large':
-				return 'text-h3';
-			default:
-				return 'text-h5';
-		}
-	};
+	const textStyle =
+		props.size === 'large'
+			? 'text-black text-h3'
+			: props.size === 'medium'
+			? 'text-black text-h4'
+			: 'text-black text-h5';
 
 	return (
 		<div className="flex flex-col w-full h-full gap-4 text-black items-center justify-center">
 			<div className="self-center">
-				<IconMapper icon={BUTTON_LABEL.NO_DATA} size={getSize()} />
+				<IconMapper icon={BUTTON_LABEL.NO_DATA} size={iconSize} />
 			</div>
-			<p
-				className={`self-center inline-block align-baseline font-istok text-black ${textSizeClass()}`}
-			>
-				{BUTTON_LABEL.NO_DATA}
-			</p>
+			<Text style={textStyle} content={BUTTON_LABEL.NO_DATA} />
 		</div>
 	);
 }

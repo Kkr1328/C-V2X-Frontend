@@ -1,7 +1,8 @@
 // next
 import Image from 'next/image';
 // meterial ui
-import { AppBar, Toolbar } from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
 
 export default function Header() {
 	return (

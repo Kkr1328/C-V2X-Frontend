@@ -31,8 +31,9 @@ export default function Navbar() {
 	return (
 		<Drawer
 			variant="permanent"
-			className={`z-10 ${isExpanded ? 'w-280' : 'w-72'
-				} flex shrink-0 bg-white transition-all`}
+			className={`z-10 ${
+				isExpanded ? 'w-280' : 'w-72'
+			} flex shrink-0 bg-white transition-all`}
 			sx={{
 				[`& .MuiDrawer-paper`]: {
 					width: isExpanded ? '280px' : '72px',

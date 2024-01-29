@@ -36,16 +36,17 @@ export interface ICar {
 	model: string;
 	cameras: CameraType[];
 	driver_id: string;
+	driver_phone_no: string;
 	driver: string;
 }
 
 export interface ICarInfo extends ICar {
-	front_cam_position: string;
+	front_cam_position: 'Front' | '';
 	front_cam_name: string;
-	back_cam_position: string;
+	back_cam_position: 'Back' | '';
 	back_cam_name: string;
-	left_cam_position: string;
+	left_cam_position: 'Left' | '';
 	left_cam_name: string;
-	right_cam_position: string;
+	right_cam_position: 'Right' | '';
 	right_cam_name: string;
 }

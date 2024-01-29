@@ -1,9 +1,9 @@
 // material ui
-import Button from '@mui/material/Button';
+import MuiButton from '@mui/material/Button';
 // utilities
 import IconMapper from '@/utils/IconMapper';
 
-interface ButtonCV2XProp {
+interface ButtonProp {
 	icon?: string;
 	label?: string;
 	variant?: 'contained' | 'outlined' | 'text';
@@ -12,7 +12,7 @@ interface ButtonCV2XProp {
 	onClick?: () => void;
 }
 
-export default function ButtonCV2X(props: ButtonCV2XProp) {
+export default function Button(props: ButtonProp) {
 	const containedPrimaryStyle: string =
 		'text-white bg-primary_blue hover:bg-dark_primary_blue disabled:text-light_text_grey disabled:bg-dark_background_grey';
 	const containedSecondaryStyle: string =
@@ -70,7 +70,7 @@ export default function ButtonCV2X(props: ButtonCV2XProp) {
 	}`;
 
 	return (
-		<Button
+		<MuiButton
 			variant={props.variant}
 			className={buttonStyle}
 			disabled={props.isDisabled}
@@ -82,6 +82,6 @@ export default function ButtonCV2X(props: ButtonCV2XProp) {
 					{props.label}
 				</p>
 			)}
-		</Button>
+		</MuiButton>
 	);
 }

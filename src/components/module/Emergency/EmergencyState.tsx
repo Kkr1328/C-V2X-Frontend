@@ -12,7 +12,8 @@ import EmergencyCard from './EmergencyCard';
 // types
 import { Emergency, EmergencyColumn } from '@/types/COMMON';
 import { IEmergency } from '@/types/models/emergency.model';
-import { ROUTE } from '@/constants/ROUTE';
+// utilities
+import { useCarStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
 
 interface EmergencyStateProps {
 	droppableId: EmergencyColumn;
@@ -22,7 +23,6 @@ interface EmergencyStateProps {
 }
 
 export default function EmergencyState(props: EmergencyStateProps) {
-	const router = useRouter();
 	const emergenciesCount = props.emergencies.length;
 
 	return (
@@ -67,11 +67,7 @@ export default function EmergencyState(props: EmergencyStateProps) {
 												carName={emergency.car_name}
 												time={emergency.time}
 												driverPhoneNo={emergency.driver_phone_no}
-												handleLocate={() =>
-													router.push(
-														`${ROUTE.OVERVIEW}?id=${emergency.car_id}`
-													)
-												}
+												carId={emergency.car_id}
 												state={props.title}
 											/>
 										);

@@ -8,11 +8,16 @@ import ModalInputs, { ModalInputsProp } from './ModalInputs';
 // utilities
 import { DefaultDataGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal } from '@/utils/ModalController';
+import { STATUS } from '@/constants/LABEL';
+import { Position } from '@/types/COMMON';
 
 interface InfoModalProp<T> extends ModalHeaderProp, ModalInputsProp<T> {
 	open: boolean;
 	onOpenChange: Dispatch<SetStateAction<boolean>>;
+	isHeaderLocate?: boolean;
 	handleHeaderLocate?: () => void;
+	headerPill?: STATUS;
+	isBodyLocate?: boolean;
 	handleBodyLocate?: () => void;
 }
 
@@ -31,12 +36,15 @@ export default function InfoModal<T>(props: InfoModalProp<T>) {
 				<ModalHeader
 					{...props}
 					handleOnClose={handleOnClose}
+					isLocate={props.isHeaderLocate}
 					handleLocate={props.handleHeaderLocate}
+					pill={props.headerPill}
 				/>
 				<Divider />
-				<div className="p-16 flex gap-16 flex-col overflow-y-auto">
+				<div className="p-16 overflow-y-auto">
 					<ModalInputs
 						{...props}
+						isLocate={props.isBodyLocate}
 						handleLocate={props.handleBodyLocate}
 						isReadOnly
 					/>

@@ -42,5 +42,5 @@ export interface InputFieldProp<T> {
 	isRequired?: boolean;
 	inputType?: InputType;
 	isPassword?: boolean;
-	row: number;
+	isSpan?: boolean;
 }

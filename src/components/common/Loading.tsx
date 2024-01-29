@@ -1,5 +1,6 @@
 // material ui
-import { CircularProgress, Modal } from '@mui/material';
+import Modal from '@mui/material/Modal';
+import CircularProgress from '@mui/material/CircularProgress';
 
 interface LoadingProps {
 	isBackdrop?: boolean;

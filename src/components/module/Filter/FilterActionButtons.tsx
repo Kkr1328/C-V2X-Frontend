@@ -1,12 +1,15 @@
 'use client';
-import ButtonCV2X from '@/components/common/ButtonCV2X';
-import { BUTTON_LABEL } from '@/constants/LABEL';
-import { WidthObserver } from '@/utils/WidthObserver';
-import { Stack } from '@mui/material';
+// react
 import { useEffect, useRef, useState } from 'react';
+// components
+import Button from '@/components/common/Button';
+// consts
+import { BUTTON_LABEL } from '@/constants/LABEL';
+// utilities
+import { WidthObserver } from '@/utils/WidthObserver';
 
 export interface FilterActionButtonsProp {
-	fieldPerRow?: number;
+	isCompact?: boolean;
 	handleClearSearch: () => void;
 	handleSubmitSearch: () => void;
 }
@@ -17,31 +20,22 @@ export default function FilterActionButtons(props: FilterActionButtonsProp) {
 		buttonsRef.current?.clientWidth as number
 	);
 	useEffect(() => WidthObserver(buttonsRef.current, setButtonsWidth), []);
-	const buttonsSize = buttonsWidth < 380 ? 's' : buttonsWidth < 500 ? 'm' : 'l';
 
 	return (
-		<Stack ref={buttonsRef} direction="row" className="w-full gap-8">
+		<div ref={buttonsRef} className="flex flex-row w-full gap-8">
 			<div className="grow" />
-			<ButtonCV2X
+			<Button
 				icon={BUTTON_LABEL.CLEAR}
-				label={
-					props.fieldPerRow === 1 && buttonsSize === 's'
-						? ''
-						: BUTTON_LABEL.CLEAR
-				}
+				label={props.isCompact && buttonsWidth < 374 ? '' : BUTTON_LABEL.CLEAR}
 				variant="outlined"
 				onClick={props.handleClearSearch}
 			/>
-			<ButtonCV2X
+			<Button
 				icon={BUTTON_LABEL.SEARCH}
-				label={
-					props.fieldPerRow === 1 && buttonsSize === 's'
-						? ''
-						: BUTTON_LABEL.SEARCH
-				}
+				label={props.isCompact && buttonsWidth < 374 ? '' : BUTTON_LABEL.SEARCH}
 				variant="contained"
 				onClick={props.handleSubmitSearch}
 			/>
-		</Stack>
+		</div>
 	);
 }
