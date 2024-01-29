@@ -54,9 +54,10 @@ export default function CameraSection(props: CameraSectionProps) {
 					/>
 					<Box
 						sx={{
-							// height: '100%',
-							// width: '100%',
-							// minHeight: '28vh',
+							minHeight: '100%',
+							minWidth: '100%',
+							height: openModal ? '75vh':'auto',
+							width: openModal ? '100vh':'100%',
 							backgroundColor: 'text.disabled',
 							position: 'relative',
 							display: "flex",

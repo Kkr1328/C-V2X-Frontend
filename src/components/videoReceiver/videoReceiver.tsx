@@ -47,6 +47,8 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+    const blackContainerRef = useRef<HTMLDivElement | null>(null);
+
     useEffect(() => {
       if (!socket.current && canvasRef.current) {
         socket.current = io(process.env.NEXT_PUBLIC_API_CAM_URI + "/" || "") as Socket;
@@ -203,24 +205,25 @@ export default function VideoReceiver(props: VideoReceiverProps) {
           }
         }
       }, [stream, uid]);
-      useEffect(() => {
-        if (stream) {
-          const videoRef = document.getElementById(`video ${uid}`) as HTMLVideoElement; // Explicitly cast to HTMLVideoElement
-          if (videoRef) {
-            videoRef.srcObject = stream;
-            // Check if the video is ready to show
-              const container = document.getElementById("videos-container")?.parentElement;
-              if (container) {
-                const containerWidth = container.clientWidth;
-                const containerHeight = container.clientHeight;
+      // useEffect(() => {
+      //   if (stream) {
+      //     const videoRef = document.getElementById(`video ${uid}`) as HTMLVideoElement; // Explicitly cast to HTMLVideoElement
+      //     if (videoRef) {
+      //       videoRef.srcObject = stream;
+      //       // Check if the video is ready to show
+      //         const container = document.getElementById("videos-container")?.parentElement;
+      //         if (container) {
+      //           const containerWidth = container.clientWidth;
+      //           const containerHeight = container.clientHeight;
 
-                videoRef.width = containerWidth;
-                videoRef.height = containerHeight;
-              }
+      //           videoRef.width = containerWidth;
+      //           videoRef.height = containerHeight;
+                
+      //         }
            
-          }
-      }
-      }, [stream, uid]);
+      //     }
+      // }
+      // }, [stream, uid]);
 
       return (
         <Box style={{maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto" }}  id="videos-container">
@@ -252,7 +255,7 @@ export default function VideoReceiver(props: VideoReceiverProps) {
               />
             </>
           ) : (
-            <div className="BlankContainer">
+            <div className="BlankContainer" ref={blackContainerRef}>
               <LoadingSpinner />
             </div>
           )}

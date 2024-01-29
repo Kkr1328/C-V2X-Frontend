@@ -61,6 +61,7 @@ export default function CameraModal(props: CameraModalProp) {
 							<VideoReceiver
 								camNumber={props.cameraName}
 								carID={props.carName}
+								isShowObjectDetection={modeOptions[videoModeNumber]=="OBJ DETECTION"}
 							/>
 						</Box>
 					</div>

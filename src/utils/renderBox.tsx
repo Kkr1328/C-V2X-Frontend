@@ -19,7 +19,7 @@ interface RenderBoxesProps {
  */
 const RenderBoxes: React.FC<RenderBoxesProps> = ({ canvas, boxes }) => {
   const ctx = canvas?.getContext("2d");
-  ctx?.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // clean canvas
+  ctx?.clearRect(0, 0, canvas?.parentElement?.clientWidth || 0, canvas?.parentElement?.clientHeight || 0); // clean canvas
 
   const colors = new Colors();
 
@@ -28,9 +28,12 @@ const RenderBoxes: React.FC<RenderBoxesProps> = ({ canvas, boxes }) => {
     return null;
   }
 
+  const canvasWidth = canvas?.parentElement?.clientWidth || 0;
+  const canvasHeight = canvas?.parentElement?.clientHeight || 0;
+
   // font configs
   const font = `${Math.max(
-    Math.round(Math.max(ctx.canvas.width, ctx.canvas.height) / 40),
+    Math.round(Math.max(canvasWidth, canvasHeight) / 40),
     14
   )}px Arial`;
   ctx.font = font;
@@ -40,7 +43,8 @@ const RenderBoxes: React.FC<RenderBoxesProps> = ({ canvas, boxes }) => {
     const klass = labels[box.label];
     const color = colors.get(box.label);
     const score = (box.probability * 100).toFixed(1);
-    const [x1, y1, width, height] = box.bounding;
+    const [x1Norm, y1Norm, widthNorm, heightNorm] = box.bounding;
+    const [x1, y1, width, height] = [x1Norm*canvasWidth, y1Norm*canvasHeight, widthNorm*canvasWidth, heightNorm*canvasHeight]
 
     // draw box.
     ctx.fillStyle = Colors.hexToRgba(color, 0.2);
@@ -48,7 +52,7 @@ const RenderBoxes: React.FC<RenderBoxesProps> = ({ canvas, boxes }) => {
     // draw border box
     ctx.strokeStyle = color;
     ctx.lineWidth = Math.max(
-      Math.min(ctx.canvas.width, ctx.canvas.height) / 200,
+      Math.min(canvasWidth, canvasHeight) / 200,
       2.5
     );
     ctx.strokeRect(x1, y1, width, height);
