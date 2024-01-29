@@ -46,46 +46,29 @@ export default function Home() {
 			/>
 			<div ref={contentRef} className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CAMERA} />
-				<Grid
-					container
-					columns={{ xs: 41 }}
-					rowSpacing={2}
-					columnSpacing={1}
-					className="justify-center"
-				>
+				<div className="flex flex-col gap-16">
 					{isCarsLoading ? (
 						<>
-							<Grid item key={0} xs={20}>
-								<CameraCard carId="" carName="" cameras={[]} isLoading />
-							</Grid>
-							<Grid item key={1} xs={20}>
-								<CameraCard carId="" carName="" cameras={[]} isLoading />
-							</Grid>
-							<Grid item key={2} xs={20}>
-								<CameraCard carId="" carName="" cameras={[]} isLoading />
-							</Grid>
-							<Grid item key={3} xs={20}>
-								<CameraCard carId="" carName="" cameras={[]} isLoading />
-							</Grid>
+							<CameraCard carId="" carName="" cameras={[]} isLoading />
+							<CameraCard carId="" carName="" cameras={[]} isLoading />
+							<CameraCard carId="" carName="" cameras={[]} isLoading />
+							<CameraCard carId="" carName="" cameras={[]} isLoading />
 						</>
 					) : cars?.length === 0 ? (
-						<Grid item key={0} xs={41} className="h-[calc(100vh-144px)]">
-							<NoData size="large" />
-						</Grid>
+						<NoData size="large" />
 					) : (
 						<>
 							{cars?.map((car: ICar, index) => (
-								<Grid item key={index} xs={useCompactLayout ? 41 : 20}>
-									<CameraCard
-										carId={car.id}
-										carName={car.name}
-										cameras={car.cameras}
-									/>
-								</Grid>
+								<CameraCard
+									key={index}
+									carId={car.id}
+									carName={car.name}
+									cameras={car.cameras}
+								/>
 							))}
 						</>
 					)}
-				</Grid>
+				</div>
 			</div>
 		</>
 	);

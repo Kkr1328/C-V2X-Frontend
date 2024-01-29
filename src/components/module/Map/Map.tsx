@@ -57,7 +57,7 @@ export default function Map(props: MapProps) {
 			<Skeleton
 				animation="wave"
 				variant="rectangular"
-				className="rounded-md h-full min-h-[500px]"
+				className="rounded-md h-full min-h-[500px] w-full"
 			/>
 		);
 

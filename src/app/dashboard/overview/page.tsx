@@ -8,17 +8,15 @@ import { useSearchParams } from 'next/navigation';
 // components
 import PageTitle from '@/components/common/PageTitle';
 import Map from '@/components/module/Map/Map';
+import SummaryCards from '@/components/module/Overview/SummaryCards';
+import FleetDeviceCards from '@/components/module/Overview/FleetDeviceCards';
 // const
 import { NAVBAR_LABEL, STATUS } from '@/constants/LABEL';
 // types
 import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 // utilities
 import { WidthObserver } from '@/utils/WidthObserver';
-// context
-import { LocationFleetContext } from '@/context/fleet';
-import SummaryCards from '@/components/module/Overview/SummaryCards';
-import FleetDeviceCards from '@/components/module/Overview/FleetDeviceCards';
-import { carLocation, carStatus } from '@/utils/FleetRetriever';
+import { carLocation, carStatus, rsuLocation } from '@/utils/FleetRetriever';
 
 export default function Home() {
 	// handle page responsive
@@ -34,11 +32,12 @@ export default function Home() {
 
 	// check initial focus on a device
 	const searchParams = useSearchParams();
-	const id = searchParams.get('id');
+	const id = searchParams.get('id') ?? '';
+	const location = carLocation(id) as google.maps.LatLngLiteral;
+	const status = carStatus(id);
+
 	useEffect(() => {
 		if (id) {
-			const location = carLocation(id) as google.maps.LatLngLiteral;
-			const status = carStatus(id);
 			changeFocus({
 				id: id,
 				type: 'CAR',
@@ -48,32 +47,16 @@ export default function Home() {
 		}
 	}, [id]);
 
-	// retrieve fleet contexts
-	const [locationContextData] = useContext(LocationFleetContext);
-
 	const [focus, setFocus] = useState<FocusState | null>(null);
 	const resetFocus = () => setFocus(null);
 
 	useEffect(() => {
 		if (!focus) return;
-		let location = null;
-		if (focus.type === 'CAR') {
-			const car_location = locationContextData.CAR[focus.id];
-			if (car_location === undefined) return;
-			location = {
-				lat: car_location.latitude,
-				lng: car_location.longitude,
-			};
-		} else if (focus.type === 'RSU') {
-			const rsu_location = locationContextData.RSU[focus.id];
-			if (rsu_location === undefined) return;
-			location = {
-				lat: rsu_location.latitude,
-				lng: rsu_location.longitude,
-			};
-		}
+		const location = (
+			focus.type === 'CAR' ? carLocation(focus.id) : rsuLocation(focus.id)
+		) as google.maps.LatLngLiteral;
 		setFocus({ ...focus, location, zoom: focus.zoom });
-	}, [locationContextData]);
+	}, []);
 
 	const [pillMode, setPillMode] = useState<STATUS | null>(STATUS.ALL);
 
@@ -128,7 +111,7 @@ export default function Home() {
 						<Divider orientation="vertical" />
 					</Grid>
 				)}
-				<div className={`${!useCompactContent && 'w-[500px]'}`}>
+				<div className={`${!useCompactContent && 'min-w-[400px]'}`}>
 					<FleetDeviceCards
 						focus={focus}
 						pillMode={pillMode}

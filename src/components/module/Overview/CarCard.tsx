@@ -65,7 +65,7 @@ export default function CarCard(props: CarCardProps) {
 				props.isFocus
 					? 'border-primary_blue border-2 cursor-zoom-out'
 					: 'cursor-zoom-in'
-			} bg-light_background_grey rounded-lg p-8`}
+			} bg-light_background_grey rounded-lg py-8 px-12`}
 		>
 			<div className="flex flex-col gap-8">
 				{/* head */}

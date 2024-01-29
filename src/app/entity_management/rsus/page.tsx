@@ -176,7 +176,7 @@ export default function Home() {
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.RSUS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[400px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={RSUFilterTemplate}
 						handleSubmitSearch={refetchGetRSUs}

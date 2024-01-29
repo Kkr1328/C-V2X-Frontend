@@ -138,7 +138,7 @@ export default function Home() {
 				<PageTitle title={NAVBAR_LABEL.HEARTBEAT} />
 				<Card
 					ref={cardRef}
-					className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24"
+					className="flex flex-col gap-16 w-full min-w-[400px] h-auto rounded-lg px-32 py-24"
 				>
 					<div className="flex flex-col h-full gap-16">
 						<div className="flex flex-wrap gap-16 items-center">

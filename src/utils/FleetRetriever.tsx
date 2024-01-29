@@ -70,16 +70,16 @@ export function carsHeartbeat(cars: ICar[]) {
 			...car,
 			status: status,
 			front_cam: car.cameras.some((camera) => camera.position === 'Front')
-				? STATUS.INACTIVE
+				? cameraStatus('Front', car.id)
 				: STATUS.MISSING,
 			back_cam: car.cameras.some((camera) => camera.position === 'Back')
-				? STATUS.INACTIVE
+				? cameraStatus('Back', car.id)
 				: STATUS.MISSING,
 			left_cam: car.cameras.some((camera) => camera.position === 'Left')
-				? STATUS.INACTIVE
+				? cameraStatus('Left', car.id)
 				: STATUS.MISSING,
 			right_cam: car.cameras.some((camera) => camera.position === 'Right')
-				? STATUS.INACTIVE
+				? cameraStatus('Right', car.id)
 				: STATUS.MISSING,
 		};
 	});

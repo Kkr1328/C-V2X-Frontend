@@ -175,9 +175,9 @@ export default function Home() {
 				onSubmit={() => deleteDriver.mutate(deleteModalData)}
 				isPending={deleteDriver.isPending}
 			/>
-			<div className="flex flex-col w-full min-w-[300px] h-auto gap-16">
+			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.DRIVERS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[300px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[400px] h-auto rounded-lg px-32 py-24">
 					<Filter
 						template={DriverFilterTemplate}
 						handleSubmitSearch={refetchGetDrivers}

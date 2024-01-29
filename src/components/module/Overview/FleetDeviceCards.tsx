@@ -38,7 +38,7 @@ export default function FleetDeviceCards(props: FleetDeviceCardsProps) {
 	return (
 		<div className="flex flex-col w-full gap-16">
 			<ToggleButton
-				options={[STATUS.ALL, STATUS.EMERGENCY, STATUS.WARNING]}
+				options={[STATUS.ALL, STATUS.WARNING, STATUS.EMERGENCY]}
 				value={props.pillMode ?? ''}
 				onChange={(_event, value) => props.changePillMode(value as STATUS)}
 			/>

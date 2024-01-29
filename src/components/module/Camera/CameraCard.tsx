@@ -14,6 +14,7 @@ import IconMapper from '@/utils/IconMapper';
 import { WidthObserver } from '@/utils/WidthObserver';
 import { carStatus, handleCarLocate } from '@/utils/FleetRetriever';
 import { useRouter } from 'next/navigation';
+import { Position } from '@/types/COMMON';
 
 interface CameraCardProps {
 	carId: string;
@@ -24,13 +25,15 @@ interface CameraCardProps {
 
 export default function CameraCard(props: CameraCardProps) {
 	const router = useRouter();
+	const positions = ['Front', 'Back', 'Left', 'Right'] as Position[];
 
 	const cardRef = useRef<HTMLDivElement>(null);
 	const [cardWidth, setCardWidth] = useState<number>(
 		cardRef.current?.clientWidth as number
 	);
 	useEffect(() => WidthObserver(cardRef.current, setCardWidth), []);
-	const useCompactLayout = cardWidth < 560;
+	const useNormalLayout = cardWidth < 1200;
+	const useCompactLayout = cardWidth < 600;
 
 	const handleLocate = handleCarLocate(router, props.carId);
 	const status = carStatus(props.carId);
@@ -44,10 +47,13 @@ export default function CameraCard(props: CameraCardProps) {
 			/>
 		);
 
-	if (status === STATUS.INACTIVE || props.cameras.length == 0) return;
+	if (status === STATUS.INACTIVE) return;
 
 	return (
-		<Card ref={cardRef} className="flex flex-col gap-8 rounded-lg bg-white">
+		<Card
+			ref={cardRef}
+			className="flex flex-col w-full min-w-[400px] gap-8 rounded-lg bg-white"
+		>
 			<div className="flex flex-row pt-16 px-16 gap-16 items-center">
 				<div className="flex flex-row gap-4 items-center">
 					<p className="inline-block align-baseline font-istok text-black text-h4">
@@ -67,24 +73,31 @@ export default function CameraCard(props: CameraCardProps) {
 			<Divider />
 			<Grid
 				container
-				columns={{ xs: 41 }}
+				columns={{ xs: 641 }}
 				rowSpacing={2}
 				columnSpacing={1}
 				className="px-16 pb-16 justify-center"
 			>
-				{props.cameras.map((camera, index) => (
-					<Grid item key={index} xs={useCompactLayout ? 41 : 20}>
-						<CameraSection
-							carId={props.carId}
-							carName={props.carName}
-							carStatus={status}
-							position={camera.position}
-							cameraName={camera.name}
-							handleLocate={handleLocate}
-							isLoading={props.isLoading}
-						/>
-					</Grid>
-				))}
+				{positions.map((position, index) => {
+					const camera = props.cameras.find((cam) => cam.position === position);
+					return (
+						<Grid
+							item
+							key={index}
+							xs={useCompactLayout ? 641 : useNormalLayout ? 320 : 160}
+						>
+							<CameraSection
+								carId={props.carId}
+								carName={props.carName}
+								carStatus={status}
+								position={position}
+								cameraName={camera?.name}
+								handleLocate={handleLocate}
+								isLoading={props.isLoading}
+							/>
+						</Grid>
+					);
+				})}
 			</Grid>
 		</Card>
 	);
