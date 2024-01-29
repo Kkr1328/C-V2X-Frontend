@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 // next
 import Script from 'next/script';
-// material ui
-import Grid from '@mui/material/Grid';
 // components
 import PageTitle from '@/components/common/PageTitle';
 import CameraCard from '@/components/module/Camera/CameraCard';
@@ -49,7 +47,6 @@ export default function Home() {
 				<div className="flex flex-col gap-16">
 					{isCarsLoading ? (
 						<>
-							<CameraCard carId="" carName="" cameras={[]} isLoading />
 							<CameraCard carId="" carName="" cameras={[]} isLoading />
 							<CameraCard carId="" carName="" cameras={[]} isLoading />
 							<CameraCard carId="" carName="" cameras={[]} isLoading />

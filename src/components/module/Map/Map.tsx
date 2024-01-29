@@ -19,7 +19,6 @@ import { IResponseList } from '@/types/common/responseList.model';
 
 interface MapProps {
 	focus: FocusState | null;
-	resetFocus: () => void;
 	changeFocus: (node: StuffLocation | null) => void;
 }
 
@@ -52,6 +51,8 @@ export default function Map(props: MapProps) {
 		}
 	}, [props.focus]);
 
+	const resetFocus = () => props.changeFocus(null);
+
 	if (!isLoaded)
 		return (
 			<Skeleton
@@ -83,7 +84,7 @@ export default function Map(props: MapProps) {
 			{rsusList?.map(({ id }) => (
 				<RSUPin {...props} key={id} id={id} isFocus={props.focus?.id === id} />
 			))}
-			<DrivingTestLocationBtn {...props} map={map} />
+			<DrivingTestLocationBtn map={map} resetFocus={resetFocus} />
 		</GoogleMap>
 	);
 }

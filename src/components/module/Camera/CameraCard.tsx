@@ -43,7 +43,7 @@ export default function CameraCard(props: CameraCardProps) {
 			<Skeleton
 				animation="wave"
 				variant="rectangular"
-				className="rounded-lg h-[300px]"
+				className="rounded-lg h-[344px]"
 			/>
 		);
 

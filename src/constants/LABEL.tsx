@@ -58,6 +58,7 @@ export enum BUTTON_LABEL {
 	INVISIBLE = 'Invisible',
 	CANCLE = 'Cancle',
 	HELP = 'Help',
+	NO_VDO = 'No video',
 }
 
 export enum STATUS {

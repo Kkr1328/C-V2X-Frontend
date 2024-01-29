@@ -28,6 +28,8 @@ export default function CameraSection(props: CameraSectionProps) {
 	const [openModal, setOpenModal] = useState(false);
 
 	const status = cameraStatus(props.position, props.carId);
+	const isDisabled =
+		props.cameraName === undefined || status === STATUS.INACTIVE;
 
 	return (
 		<>
@@ -39,7 +41,7 @@ export default function CameraSection(props: CameraSectionProps) {
 				cameraName={props.cameraName ?? '-'}
 				initialVideoMode={videoModeNumber}
 				handleLocate={props.handleLocate}
-				// pill={props.carStatus}
+				pill={status}
 			/>
 			<div className="w-full flex flex-col gap-8">
 				<div className="flex flex-row gap-16">
@@ -59,9 +61,10 @@ export default function CameraSection(props: CameraSectionProps) {
 						<CameraVideo
 							carID={props.carName}
 							camNumber={props.cameraName ?? ''}
+							isDisabled={isDisabled}
 						/>
 					</div>
-					{props.cameraName && (
+					{!isDisabled && (
 						<div className="absolute bottom-12 right-12">
 							<Button
 								icon={BUTTON_LABEL.ZOOM}

@@ -44,6 +44,7 @@ export default function CameraModal(props: CameraModalProp) {
 							<CameraVideo
 								carID={props.carName}
 								camNumber={props.cameraName ?? ''}
+								size={'large'}
 							/>
 						</div>
 					</div>

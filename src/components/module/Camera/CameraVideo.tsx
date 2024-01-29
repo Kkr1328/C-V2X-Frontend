@@ -3,6 +3,8 @@ import RTCMultiConnection from 'rtcmulticonnection';
 import { Socket } from 'socket.io-client';
 import { Box } from '@mui/material';
 import Loading from '@/components/common/Loading';
+import IconMapper from '@/utils/IconMapper';
+import { BUTTON_LABEL } from '@/constants/LABEL';
 // import Script from 'next/script'
 
 function generateRandomUID() {
@@ -14,7 +16,9 @@ function generateRandomUID() {
 
 interface CameraVideoProps {
 	carID: String;
-	camNumber: String;
+	camNumber?: String;
+	size?: 'small' | 'large';
+	isDisabled?: boolean;
 }
 
 export default function CameraVideo(props: CameraVideoProps) {
@@ -174,11 +178,14 @@ export default function CameraVideo(props: CameraVideoProps) {
 	// 	}
 	// }, [stream, props.camNumber]);
 
-	return (
-		<div className="">
-			<Loading />
-		</div>
-	);
+	if (props.isDisabled)
+		return (
+			<div className="text-dark_text_grey">
+				<IconMapper icon={BUTTON_LABEL.NO_VDO} size="36px" />
+			</div>
+		);
+
+	return <Loading size={props.size === 'large' ? 48 : 24} />;
 
 	return (
 		<Box

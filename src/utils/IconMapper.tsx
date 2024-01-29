@@ -25,6 +25,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 import HelpOutlineRoundedIcon from '@mui/icons-material/HelpOutlineRounded';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 // const
 import { BUTTON_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 
@@ -91,5 +92,7 @@ export default function IconMapper(props: IconMapperProps) {
 			return <VisibilityOff sx={iconStyle} />;
 		case BUTTON_LABEL.HELP:
 			return <HelpOutlineRoundedIcon sx={iconStyle} />;
+		case BUTTON_LABEL.NO_VDO:
+			return <VisibilityOffOutlinedIcon sx={iconStyle} />;
 	}
 }
