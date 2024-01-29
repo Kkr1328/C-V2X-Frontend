@@ -14,7 +14,14 @@ import { STATUS } from '@/constants/LABEL';
 import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 import { IResponseList } from '@/types/common/responseList.model';
 // services
-import { getCarsListAPI, getRSUsListAPI } from '@/services/api-call';
+import {
+	getCarsAPI,
+	getCarsListAPI,
+	getRSUsListAPI,
+} from '@/services/api-call';
+import { useCarsHeartbeat } from '@/utils/FleetRetriever';
+import { ICar } from '@/types/models/car.model';
+import NoData from '@/components/common/NoData';
 
 interface FleetDeviceCardsProps {
 	focus: FocusState | null;
@@ -41,6 +48,10 @@ export default function FleetDeviceCards(props: FleetDeviceCardsProps) {
 	}
 
 	// query
+	const { data: cars } = useQuery<ICar[]>({
+		queryKey: ['getCars'],
+		queryFn: async () => await getCarsAPI({}),
+	});
 	const { isLoading: isCarsListLoading, data: carsList } = useQuery<
 		IResponseList[]
 	>({
@@ -54,8 +65,25 @@ export default function FleetDeviceCards(props: FleetDeviceCardsProps) {
 		queryFn: async () => await getRSUsListAPI(),
 	});
 
+	const isNoActiveCars =
+		useCarsHeartbeat(cars ?? []).filter((car) => car.status !== STATUS.INACTIVE)
+			.length === 0;
+	const isNoWarningCars =
+		useCarsHeartbeat(cars ?? []).filter((car) => car.status === STATUS.WARNING)
+			.length === 0;
+	const isNoEmergencyCars =
+		useCarsHeartbeat(cars ?? []).filter(
+			(car) => car.status === STATUS.EMERGENCY
+		).length === 0;
+	const isNoData =
+		pillMode === STATUS.ALL
+			? isNoActiveCars
+			: pillMode === STATUS.WARNING
+			? isNoWarningCars
+			: pillMode === STATUS.EMERGENCY && isNoEmergencyCars;
+
 	return (
-		<div className="flex flex-col w-full gap-16">
+		<div className="flex flex-col w-full h-full gap-16">
 			<ToggleButton
 				options={[STATUS.ALL, STATUS.WARNING, STATUS.EMERGENCY]}
 				value={pillMode ?? ''}
@@ -80,6 +108,8 @@ export default function FleetDeviceCards(props: FleetDeviceCardsProps) {
 							className="h-[112px] rounded-lg"
 						/>
 					</>
+				) : isNoData ? (
+					<NoData />
 				) : (
 					<>
 						{props.focus === null || props.focus.type === 'CAR'

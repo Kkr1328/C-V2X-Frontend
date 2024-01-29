@@ -172,7 +172,7 @@ export default function Home() {
 					ref={emergenciesRef}
 					className={`flex ${
 						useCompact ? 'flex-col' : 'flex-row'
-					} gap-32 w-full h-auto`}
+					} gap-32 w-full h-auto min-h-[calc(100vh-192px)]`}
 				>
 					<DragDropContext onDragEnd={onDragEnd}>
 						<EmergencyState
