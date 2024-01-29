@@ -58,7 +58,9 @@ export default function RSUCard(props: RSUCardProps) {
 			</div>
 			{connectedCar.length > 0 && <Divider />}
 			{connectedCar.length > 0 &&
-				connectedCar.map(({ id, name }) => <CarDetail id={id} name={name} />)}
+				connectedCar.map(({ id, name }, index) => (
+					<CarDetail key={index} id={id} name={name} />
+				))}
 		</Card>
 	);
 }

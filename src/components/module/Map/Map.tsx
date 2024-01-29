@@ -43,13 +43,14 @@ export default function Map(props: MapProps) {
 
 	useEffect(() => {
 		if (!props.focus) return;
+
 		if (props.focus.location) {
 			map?.panTo(props.focus.location);
 		}
 		if (props.focus.zoom) {
 			map?.setZoom(props.focus.zoom);
 		}
-	}, [props.focus]);
+	}, [props.focus, map]);
 
 	const resetFocus = () => props.changeFocus(null);
 

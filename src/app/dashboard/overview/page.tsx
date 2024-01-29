@@ -43,6 +43,10 @@ export default function Home() {
 	const rsuLoc = rsuLocation(id) as google.maps.LatLngLiteral;
 	const rsuStat = rsuStatus(id);
 
+	const [focus, setFocus] = useState<FocusState | null>(null);
+	const focusCarLoc = carLocation(focus?.id ?? '') as google.maps.LatLngLiteral;
+	const focusRSULoc = rsuLocation(focus?.id ?? '') as google.maps.LatLngLiteral;
+
 	useEffect(() => {
 		if (!id) return;
 
@@ -64,12 +68,10 @@ export default function Home() {
 		}
 	}, [id]);
 
-	const [focus, setFocus] = useState<FocusState | null>(null);
-
 	useEffect(() => {
 		if (!focus) return;
 		const location = (
-			focus.type === 'CAR' ? carLocation(focus.id) : rsuLocation(focus.id)
+			focus.type === 'CAR' ? focusCarLoc : focusRSULoc
 		) as google.maps.LatLngLiteral;
 		setFocus({ ...focus, location, zoom: focus.zoom });
 	}, []);
