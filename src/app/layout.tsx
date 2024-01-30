@@ -28,8 +28,11 @@ export default function RootLayout({
 		<>
 			<html lang="en" className={`${istok_web.variable} font-sans`}>
 				<body id="__next" suppressHydrationWarning={true}>
-					<Script src="https://muazkhan.com:9001/dist/RTCMultiConnection.min.js" />
-					<Script src="https://muazkhan.com:9001/socket.io/socket.io.js" />
+					<Script
+						src="/scripts/RTCMultiConnection.min.js"
+						strategy="beforeInteractive"
+					/>
+					<Script src="/scripts/socket.io.js" strategy="beforeInteractive" />
 					<LayoutWrapper>
 						<Suspense fallback={<Loading />}>
 							{children}
