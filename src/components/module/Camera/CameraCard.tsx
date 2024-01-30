@@ -31,7 +31,7 @@ export default function CameraCard(props: CameraCardProps) {
 	const [cardWidth, setCardWidth] = useState<number>(
 		cardRef.current?.clientWidth as number
 	);
-	useEffect(() => WidthObserver(cardRef.current, setCardWidth), []);
+	useEffect(() => WidthObserver(cardRef.current, setCardWidth), [cardRef]);
 	const useNormalLayout = cardWidth < 1200;
 	const useCompactLayout = cardWidth < 600;
 
