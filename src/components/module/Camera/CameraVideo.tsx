@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import RTCMultiConnection from 'rtcmulticonnection';
-// import { Socket } from 'socket.io-client';
 import { Box } from '@mui/material';
 import { io, Socket } from 'socket.io-client';
 import RenderBoxes from '@/utils/renderBox';
 import IconMapper from '@/utils/IconMapper';
 import { BUTTON_LABEL } from '@/constants/LABEL';
 import Loading from '../../common/Loading';
-// import Script from 'next/script'
 
 interface Box {
 	label: number;
@@ -43,32 +41,29 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-	const blackContainerRef = useRef<HTMLDivElement | null>(null);
-
 	useEffect(() => {
 		if (!socket.current && canvasRef.current && connection.current) {
-			socket.current = io(
-				process.env.NEXT_PUBLIC_API_CAM_URI + '/' || ''
-			) as Socket;
+			socket.current = io(process.env.NEXT_PUBLIC_API_CAM_URI || '') as Socket;
 			socket.current?.emit('control center connecting', {
 				roomID: connection.current.sessionid,
 			});
-
-			socket.current?.on('send object detection', (boxes: Array<Box>) => {
-				if (canvasRef.current) {
-					// console.log(boxes)
-					RenderBoxes({ canvas: canvasRef.current, boxes: boxes });
-				}
-			});
 		}
+
+		socket.current?.on('send object detection', (boxes: Array<Box>) => {
+			if (canvasRef.current) {
+				// console.log(boxes)
+				RenderBoxes({ canvas: canvasRef.current, boxes: boxes });
+			}
+		});
 	}, [canvasRef.current]);
 
 	useEffect(() => {
 		if (!connection.current) {
 			connection.current = new RTCMultiConnection();
 
-			connection.current.socketURL = process.env.NEXT_PUBLIC_API_CAM_URI + '/';
-			console.log(process.env.NEXT_PUBLIC_API_CAM_URI + '/');
+			connection.current.socketURL = process.env
+				.NEXT_PUBLIC_API_CAM_URI as string;
+			console.log(process.env.NEXT_PUBLIC_API_CAM_URI as string);
 
 			connection.current.socketMessageEvent = 'video-broadcast-demo';
 
@@ -149,13 +144,12 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 				OfferToReceiveVideo: false,
 			};
 		}
-
-		connection.current?.join(
-			`Room${props.carID}${props.camNumber}`,
-			function () {
-				console.log(connection.current?.sessionid);
-			}
-		);
+		// connection.current?.join(
+		// 	`Room${props.carID}${props.camNumber}`,
+		// 	function () {
+		// 		console.log(connection.current?.sessionid);
+		// 	}
+		// );
 	};
 
 	useEffect(() => {
@@ -234,48 +228,29 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			</div>
 		);
 
-	return (
-		<Box
-			style={{
-				maxWidth: '100%',
-				maxHeight: '100%',
-				display: 'block',
-				margin: 'auto',
-			}}
-			id="videos-container"
-		>
-			{stream ? (
-				<>
-					{isLoading ? (
-						<div className="BlankContainer">
-							<Loading size={props.size === 'large' ? 48 : 24} />
-						</div>
-					) : null}
+	if (isLoading || !stream)
+		return <Loading size={props.size === 'large' ? 48 : 24} />;
 
-					<video
-						className={`video-machine ${isLoading ? 'hidden' : ''}`}
-						id={`video ${uid}`}
-						playsInline
-						autoPlay
-						muted
-					/>
-					<canvas
-						id="canvas"
-						ref={canvasRef}
-						style={{
-							position: 'absolute',
-							top: 0,
-							left: 0,
-							zIndex: 0, // Set a higher z-index to ensure it stays on top
-							display: props.isShowObjectDetection ? 'flex' : 'none',
-						}}
-					/>
-				</>
-			) : (
-				<div className="BlankContainer" ref={blackContainerRef}>
-					<Loading size={props.size === 'large' ? 48 : 24} />
-				</div>
-			)}
-		</Box>
+	return (
+		<div id="videos-container">
+			<video
+				className={`video-machine ${isLoading ? 'hidden' : ''}`}
+				id={`video ${uid}`}
+				playsInline
+				autoPlay
+				muted
+			/>
+			<canvas
+				id="canvas"
+				ref={canvasRef}
+				style={{
+					position: 'absolute',
+					top: 0,
+					left: 0,
+					zIndex: 0, // Set a higher z-index to ensure it stays on top
+					display: props.isShowObjectDetection ? 'flex' : 'none',
+				}}
+			/>
+		</div>
 	);
 }
