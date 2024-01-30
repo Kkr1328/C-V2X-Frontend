@@ -16,7 +16,6 @@ interface Box {
 function generateRandomUID() {
 	const timestamp = new Date().getTime().toString(36);
 	const randomPart = Math.random().toString(36).substring(2, 8);
-
 	return timestamp + randomPart;
 }
 
@@ -29,20 +28,20 @@ interface VideoReceiverProps {
 }
 
 export default function VideoReceiver(props: VideoReceiverProps) {
-	const connection = useRef<RTCMultiConnection | null>(null);
+	const [connection, setConnection] = useState<RTCMultiConnection>();
 	const [socket, setSocket] = useState<Socket>();
 	const [stream, setStream] = useState<MediaStream | null>(null);
-	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const uid = generateRandomUID();
+	const videoRef = useRef<HTMLVideoElement | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
 	useEffect(() => {
-		if (!socket && canvasRef.current && connection.current) {
+		if (!socket && canvasRef.current && connection) {
 			const newSocket = io(
 				process.env.NEXT_PUBLIC_API_CAM_URI || '<API-CAM-URL>'
 			) as Socket;
 			newSocket.emit('control center connecting', {
-				roomID: connection.current.sessionid,
+				roomID: connection.sessionid,
 			});
 			setSocket(newSocket);
 		}
@@ -50,39 +49,36 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 		if (socket)
 			socket.on('send object detection', (boxes: Array<Box>) => {
 				if (canvasRef.current) {
-					// console.log(boxes)
 					RenderBoxes({ canvas: canvasRef.current, boxes: boxes });
 				}
 			});
-	}, [canvasRef.current, socket]);
+	}, [canvasRef.current, socket, connection]);
 
 	useEffect(() => {
-		if (!connection.current) {
-			connection.current = new RTCMultiConnection();
+		if (!connection) {
+			const newConnection = new RTCMultiConnection();
 
-			connection.current.socketURL = process.env
-				.NEXT_PUBLIC_API_CAM_URI as string;
-			console.log(process.env.NEXT_PUBLIC_API_CAM_URI as string);
-
-			connection.current.socketMessageEvent = 'video-broadcast-demo';
-
-			connection.current.session = {
+			newConnection.socketURL = process.env.NEXT_PUBLIC_API_CAM_URI as string;
+			newConnection.socketMessageEvent = 'video-broadcast-demo';
+			newConnection.session = {
 				audio: false,
 				video: false,
 				oneway: true,
 			};
-
-			connection.current.sdpConstraints.mandatory = {
+			newConnection.sdpConstraints.mandatory = {
 				OfferToReceiveAudio: false,
 				OfferToReceiveVideo: false,
 			};
-
-			connection.current.videosContainer =
+			newConnection.videosContainer =
 				document.getElementById('videos-container') ?? document.body;
 
-			if (!props.isDisabled) showCam();
+			if (!props.isDisabled) {
+				newConnection.join(`Room${props.carID}${props.cameraId}`, function () {
+					console.log(newConnection.sessionid);
+				});
+			}
 
-			connection.current.onstream = function (event) {
+			newConnection.onstream = function (event) {
 				var existing = document.getElementById(event.streamid);
 				if (existing && existing.parentNode) {
 					existing.parentNode.removeChild(existing);
@@ -94,8 +90,7 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 				event.mediaElement.volume = 0;
 				setStream(event.stream);
 			};
-
-			connection.current.onstreamended = function (event) {
+			newConnection.onstreamended = function (event) {
 				var mediaElement = document.getElementById(event.streamid);
 				if (mediaElement) {
 					if (mediaElement.parentNode) {
@@ -103,8 +98,8 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 					}
 
 					if (
-						event.userid === connection.current?.sessionid &&
-						!connection.current?.isInitiator
+						event.userid === newConnection.sessionid &&
+						!newConnection.isInitiator
 					) {
 						alert(
 							'Broadcast is ended. We will reload this page to clear the cache.'
@@ -113,27 +108,13 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 					}
 				}
 			};
-
-			connection.current.onMediaError = function (e) {
-				connection.current?.join(connection.current.sessionid);
+			newConnection.onMediaError = function (e) {
+				newConnection.join(newConnection.sessionid);
 			};
-		}
-	}, []);
 
-	const showCam = () => {
-		if (connection.current) {
-			connection.current.sdpConstraints.mandatory = {
-				OfferToReceiveAudio: false,
-				OfferToReceiveVideo: false,
-			};
+			setConnection(newConnection);
 		}
-		connection.current?.join(
-			`Room${props.carID}${props.cameraId}`,
-			function () {
-				console.log(connection.current?.sessionid);
-			}
-		);
-	};
+	}, [connection]);
 
 	useEffect(() => {
 		const handleBeforeUnload = () => {
@@ -150,40 +131,32 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 	}, [socket, props.carID]);
 
 	useEffect(() => {
-		// Update the video elements when stream1 or stream2 changes
 		if (stream) {
-			const videoRef = document.getElementById(
-				`video ${uid}`
-			) as HTMLVideoElement; // Explicitly cast to HTMLVideoElement
-			if (videoRef) {
-				videoRef.srcObject = stream;
-				// Check if the video is ready to show
-				videoRef.onloadedmetadata = () => {
-					const container =
-						document.getElementById('videos-container')?.parentElement;
-					if (container) {
+			if (videoRef.current) {
+				videoRef.current.srcObject = stream;
+				videoRef.current.onloadedmetadata = () => {
+					const container = document.getElementById('videos-container');
+					if (container && videoRef.current) {
 						const containerWidth = container.clientWidth;
 						const containerHeight = container.clientHeight;
 
-						videoRef.width = containerWidth;
-						videoRef.height = containerHeight;
-
-						setIsLoading(false);
+						videoRef.current.width = containerWidth;
+						videoRef.current.height = containerHeight;
 					}
 				};
 			}
 		}
-	}, [stream, props.cameraId]);
+	}, [stream]);
 
 	useEffect(() => {
 		if (stream && canvasRef.current) {
-			const parentBox = canvasRef.current.parentElement;
-			if (parentBox) {
-				canvasRef.current.width = parentBox.clientWidth;
-				canvasRef.current.height = parentBox.clientHeight;
+			const container = document.getElementById('videos-container');
+			if (container) {
+				canvasRef.current.width = container.clientWidth;
+				canvasRef.current.height = container.clientHeight;
 			}
 		}
-	}, [stream, uid]);
+	}, [stream, canvasRef.current]);
 
 	if (props.isDisabled)
 		return (
@@ -195,28 +168,22 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 	if (!stream) return <Loading size={props.size === 'large' ? 48 : 24} />;
 
 	return (
-		<div className="w-full h-full aspect-video" id="videos-container">
+		<div className="h-full w-full" id="videos-container">
 			<video
-				className={`w-full h-full aspect-video video-machine ${
-					isLoading ? 'hidden' : ''
-				}`}
+				className={`h-full w-full video-machine`}
 				id={`video ${uid}`}
+				ref={videoRef}
 				playsInline
 				autoPlay
 				muted
 			/>
-			<canvas
-				className="w-full h-full aspect-video"
-				id="canvas"
-				ref={canvasRef}
-				style={{
-					position: 'absolute',
-					top: 0,
-					left: 0,
-					zIndex: 0, // Set a higher z-index to ensure it stays on top
-					display: props.isShowObjectDetection ? 'flex' : 'none',
-				}}
-			/>
+			{props.isShowObjectDetection && (
+				<canvas
+					className="flex absolute top-none left-none z-0 h-full w-full"
+					id="canvas"
+					ref={canvasRef}
+				/>
+			)}
 		</div>
 	);
 }

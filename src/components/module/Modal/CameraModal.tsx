@@ -29,7 +29,7 @@ export default function CameraModal(props: CameraModalProp) {
 			onClose={props.handleOnClose}
 			className="flex items-center justify-center"
 		>
-			<Card className="w-[70%] flex flex-col rounded-lg">
+			<Card className="w-[100vh] max-w-[90vw] flex flex-col rounded-lg">
 				<ModalHeader {...props} handleOnClose={props.handleOnClose} />
 				<div className="flex flex-col gap-8">
 					<Divider />
@@ -40,7 +40,7 @@ export default function CameraModal(props: CameraModalProp) {
 							onChange={(mode: number) => setVideoModeNumber(mode)}
 							size="large"
 						/>
-						<div className="relative aspect-video bg-dark_background_grey flex justify-center items-center">
+						<div className="relative aspect-[4/3] bg-dark_background_grey flex justify-center items-center">
 							<CameraVideo
 								carID={props.carId}
 								cameraId={props.cameraId}

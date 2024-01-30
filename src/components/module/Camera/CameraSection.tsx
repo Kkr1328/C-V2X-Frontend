@@ -60,7 +60,7 @@ export default function CameraSection(props: CameraSectionProps) {
 						onChange={(mode: number) => setVideoModeNumber(mode)}
 						size="small"
 					/>
-					<div className="relative aspect-video bg-dark_background_grey flex justify-center items-center">
+					<div className="relative aspect-[4/3] bg-dark_background_grey flex justify-center items-center">
 						<CameraVideo
 							carID={props.carId}
 							cameraId={props.cameraId}
