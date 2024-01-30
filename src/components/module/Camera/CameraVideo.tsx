@@ -150,10 +150,10 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 
 	useEffect(() => {
 		if (stream && canvasRef.current) {
-			const container = document.getElementById('videos-container');
-			if (container) {
-				canvasRef.current.width = container.clientWidth;
-				canvasRef.current.height = container.clientHeight;
+			const parentBox = canvasRef.current.parentElement;
+			if (parentBox) {
+				canvasRef.current.width = parentBox.clientWidth;
+				canvasRef.current.height = parentBox.clientHeight;
 			}
 		}
 	}, [stream, canvasRef.current]);
@@ -168,9 +168,9 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 	if (!stream) return <Loading size={props.size === 'large' ? 48 : 24} />;
 
 	return (
-		<div className="h-full w-full" id="videos-container">
+		<div className="h-full w-full aspect-[4/3]" id="videos-container">
 			<video
-				className={`h-full w-full video-machine`}
+				className={`h-full w-full aspect-[4/3] video-machine`}
 				id={`video ${uid}`}
 				ref={videoRef}
 				playsInline
@@ -179,7 +179,7 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			/>
 			{props.isShowObjectDetection && (
 				<canvas
-					className="flex absolute top-none left-none z-0 h-full w-full"
+					className="flex absolute top-none left-none z-0 h-full w-full aspect-[4/3]"
 					id="canvas"
 					ref={canvasRef}
 				/>
