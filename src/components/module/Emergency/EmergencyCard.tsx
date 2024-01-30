@@ -5,15 +5,15 @@ import { Draggable } from 'react-beautiful-dnd';
 // material ui
 import { Card, IconButton, Skeleton } from '@mui/material';
 // components
-import Text from '@/components/common/Text';
 import Pill from '@/components/common/Pill';
+import Text from '@/components/common/Text';
 // consts
-import { BUTTON_LABEL, EMERGENCY_CARD_LABEL, STATUS } from '@/constants/LABEL';
+import { BUTTON_LABEL, EMERGENCY_CARD_LABEL } from '@/constants/LABEL';
 // types
 import { Emergency } from '@/types/COMMON';
 // utilities
-import IconMapper from '@/utils/IconMapper';
 import { useCarStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
+import IconMapper from '@/utils/IconMapper';
 
 type EmeregncyCardProps = {
 	index?: number;
@@ -61,10 +61,11 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 						}`}
 					>
 						<div className="flex flex-col gap-4">
-							<div className="flex flex-row flex-wrap gap-4 items-center">
+							<div className="flex flex-row gap-4 items-center truncate">
 								<Text
 									style="text-black text-h5"
 									content={props.carName ?? 'Undefined car'}
+									isTruncate
 								/>
 								<IconButton
 									disableRipple
@@ -82,7 +83,7 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 									content={props.time ?? 'undefined time'}
 								/>
 							</div>
-							<div className="flex flex-row flex-wrap gap-4 items-center">
+							<div className="flex flex-row gap-4 items-center truncate">
 								<Text
 									style="text-black text-p1"
 									content={EMERGENCY_CARD_LABEL.DRIVER_CONTACT}
@@ -90,6 +91,7 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 								<Text
 									style="text-black text-p1"
 									content={props.driverPhoneNo ?? '-'}
+									isTruncate
 								/>
 							</div>
 						</div>

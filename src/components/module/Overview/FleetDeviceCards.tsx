@@ -89,7 +89,7 @@ export default function FleetDeviceCards(props: FleetDeviceCardsProps) {
 				value={pillMode ?? ''}
 				onChange={(_event, value) => changePillMode(value as STATUS)}
 			/>
-			<div className="flex flex-col w-full min-w-max h-full gap-16 pb-8 overflow-y-auto">
+			<div className="flex flex-col w-full h-full gap-16 pb-8 overflow-y-auto">
 				{isCarsListLoading || isRSUsListLoading ? (
 					<>
 						<Skeleton

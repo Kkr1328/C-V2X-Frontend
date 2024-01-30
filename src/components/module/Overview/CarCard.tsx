@@ -71,39 +71,46 @@ export default function CarCard(props: CarCardProps) {
 					: 'cursor-zoom-in'
 			} bg-light_background_grey rounded-lg py-8 px-12`}
 		>
-			<div className="flex flex-col gap-8">
+			<div className="flex flex-col gap-8 truncate">
 				{/* head */}
 				<div className="flex flex-row gap-16 items-center">
-					<div className="flex flex-row gap-8 items-center">
+					<div className="flex flex-row gap-8 items-center truncate">
 						<Image
 							src={`${MAP_ASSETS.CAR_PROFILE}${status}.svg`}
 							alt={'Car Profile'}
 							width={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
 							height={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
 						/>
-						<Text style="text-black text-h4" content={car.name} />
+						<Text style="text-black text-h4" content={car.name} isTruncate />
 					</div>
 					{status !== STATUS.ACTIVE && <Pill variant={status} />}
 				</div>
 
 				{/* properties */}
-				<Text style="text-black text-p1" content={`Speed : ${speed ?? '-'}`} />
-				<div className="flex flex-col">
+				<Text
+					style="text-black text-p1"
+					content={`Speed : ${speed ?? '-'}`}
+					isTruncate
+				/>
+				<div className="flex flex-col truncate">
 					<Collapse in={expand} timeout="auto">
 						<div className="flex flex-col gap-8">
 							<Text
 								style="text-black text-p1"
 								content={`Driver : ${car.driver ?? '-'}`}
+								isTruncate
 							/>
 							<Text
 								style="text-black text-p1"
 								content={`Phone No. : ${car.driver_phone_no ?? '-'}`}
+								isTruncate
 							/>
 							{car.cameras.map((camera, index) => (
 								<Text
 									key={index}
 									style="text-black text-p1"
 									content={`${camera.position} camera : ${camera.name}`}
+									isTruncate
 								/>
 							))}
 						</div>

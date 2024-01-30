@@ -25,7 +25,13 @@ export default function TableStringCell<T>(props: TableStringCellProp<T>) {
 
 	return (
 		<TableCell align={props.column.align} className="w-full">
-			<Text style="text-black text-p1 flex-wrap" content={content} />
+			<div className={`w-full ${props.column.id !== 'id' && 'flex truncate'}`}>
+				<Text
+					style="text-black text-p1"
+					content={content}
+					isTruncate={props.column.id !== 'id'}
+				/>
+			</div>
 		</TableCell>
 	);
 }
