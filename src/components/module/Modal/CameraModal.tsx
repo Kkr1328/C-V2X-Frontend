@@ -12,8 +12,8 @@ import { TAB_LABEL } from '@/constants/LABEL';
 interface CameraModalProp extends ModalHeaderProp {
 	open: boolean;
 	handleOnClose: () => void;
-	cameraName: string;
-	carName: string;
+	cameraId?: string;
+	carId: string;
 	initialVideoMode: number;
 	handleLocate?: () => void;
 }
@@ -42,11 +42,11 @@ export default function CameraModal(props: CameraModalProp) {
 						/>
 						<div className="relative aspect-video bg-dark_background_grey flex justify-center items-center">
 							<CameraVideo
-								carID={props.carName}
-								camNumber={props.cameraName ?? ''}
+								carID={props.carId}
+								cameraId={props.cameraId}
 								size={'large'}
 								isShowObjectDetection={
-									Object.values(TAB_LABEL)[videoModeNumber] == 'OBJ DETECTION'
+									Object.values(TAB_LABEL)[videoModeNumber] === TAB_LABEL.OBJECT
 								}
 							/>
 						</div>

@@ -12,11 +12,13 @@ import { BUTTON_LABEL, STATUS, TAB_LABEL } from '@/constants/LABEL';
 import { Position } from '@/types/COMMON';
 // utilities
 import { useCameraStatus } from '@/utils/FleetRetriever';
+import Text from '@/components/common/Text';
 
 interface CameraSectionProps {
 	carId: string;
 	carName: string;
 	useCarStatus: STATUS;
+	cameraId?: string;
 	cameraName?: string;
 	position: Position;
 	handleLocate?: () => void;
@@ -28,8 +30,7 @@ export default function CameraSection(props: CameraSectionProps) {
 	const [openModal, setOpenModal] = useState(false);
 
 	const status = useCameraStatus(props.position, props.carId);
-	const isDisabled =
-		props.cameraName === undefined || status === STATUS.INACTIVE;
+	const isDisabled = props.cameraId === undefined || status === STATUS.INACTIVE;
 
 	return (
 		<>
@@ -37,18 +38,20 @@ export default function CameraSection(props: CameraSectionProps) {
 				title={`${props.carName} - ${props.position} : ${props.cameraName}`}
 				open={openModal}
 				handleOnClose={() => setOpenModal(false)}
-				carName={props.carName}
-				cameraName={props.cameraName ?? '-'}
+				carId={props.carId}
+				cameraId={props.cameraId}
 				initialVideoMode={videoModeNumber}
 				handleLocate={props.handleLocate}
 				pill={status}
 			/>
 			<div className="w-full flex flex-col gap-8">
-				<div className="flex flex-row gap-16">
-					<p className="inline-block align-baseline font-istok text-black text-h5">
-						{props.position} : {props.cameraName ?? '-'}
-					</p>
-					{!props.isLoading && props.cameraName && <Pill variant={status} />}
+				<div className="flex flex-row gap-16 truncate">
+					<Text
+						style="text-black text-h5"
+						content={`${props.position} : ${props.cameraName ?? '-'}`}
+						isTruncate
+					/>
+					{!props.isLoading && props.cameraId && <Pill variant={status} />}
 				</div>
 				<div className="flex flex-col relative">
 					<Tab
@@ -59,11 +62,11 @@ export default function CameraSection(props: CameraSectionProps) {
 					/>
 					<div className="relative aspect-video bg-dark_background_grey flex justify-center items-center">
 						<CameraVideo
-							carID={props.carName}
-							camNumber={props.cameraName ?? ''}
+							carID={props.carId}
+							cameraId={props.cameraId}
 							isDisabled={isDisabled}
 							isShowObjectDetection={
-								Object.values(TAB_LABEL)[videoModeNumber] == 'OBJ DETECTION'
+								Object.values(TAB_LABEL)[videoModeNumber] === TAB_LABEL.OBJECT
 							}
 						/>
 					</div>

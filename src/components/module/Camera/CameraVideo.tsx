@@ -22,7 +22,7 @@ function generateRandomUID() {
 
 interface VideoReceiverProps {
 	carID: string;
-	camNumber?: string;
+	cameraId?: string;
 	size?: 'small' | 'large';
 	isDisabled?: boolean;
 	isShowObjectDetection: boolean;
@@ -30,32 +30,31 @@ interface VideoReceiverProps {
 
 export default function VideoReceiver(props: VideoReceiverProps) {
 	const connection = useRef<RTCMultiConnection | null>(null);
-
-	const socket = useRef<Socket | null>(null);
-
+	const [socket, setSocket] = useState<Socket>();
 	const [stream, setStream] = useState<MediaStream | null>(null);
-
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-
 	const uid = generateRandomUID();
-
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
 	useEffect(() => {
-		if (!socket.current && canvasRef.current && connection.current) {
-			socket.current = io(process.env.NEXT_PUBLIC_API_CAM_URI || '') as Socket;
-			socket.current?.emit('control center connecting', {
+		if (!socket && canvasRef.current && connection.current) {
+			const newSocket = io(
+				process.env.NEXT_PUBLIC_API_CAM_URI || '<API-CAM-URL>'
+			) as Socket;
+			newSocket.emit('control center connecting', {
 				roomID: connection.current.sessionid,
 			});
+			setSocket(newSocket);
 		}
 
-		socket.current?.on('send object detection', (boxes: Array<Box>) => {
-			if (canvasRef.current) {
-				// console.log(boxes)
-				RenderBoxes({ canvas: canvasRef.current, boxes: boxes });
-			}
-		});
-	}, [canvasRef.current]);
+		if (socket)
+			socket.on('send object detection', (boxes: Array<Box>) => {
+				if (canvasRef.current) {
+					// console.log(boxes)
+					RenderBoxes({ canvas: canvasRef.current, boxes: boxes });
+				}
+			});
+	}, [canvasRef.current, socket]);
 
 	useEffect(() => {
 		if (!connection.current) {
@@ -78,26 +77,10 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 				OfferToReceiveVideo: false,
 			};
 
-			// // first step, ignore default STUN+TURN servers
-			// connection.current.iceServers = [];
-
-			// // second step, set STUN url
-			// connection.current.iceServers.push({
-			//   urls: process.env.REACT_APP_STUN_SERVER,
-			// });
-
-			// // last step, set TURN url (recommended)
-			// connection.current.iceServers.push({
-			//   urls: process.env.REACT_APP_TURN_SERVER,
-			//   username: process.env.REACT_APP_TURN_USER,
-			//   credential: process.env.REACT_APP_TURN_PASSWORD,
-			// });
-
-			//   console.log(connection.current);
-
 			connection.current.videosContainer =
 				document.getElementById('videos-container') ?? document.body;
-			showCam();
+
+			if (!props.isDisabled) showCam();
 
 			connection.current.onstream = function (event) {
 				var existing = document.getElementById(event.streamid);
@@ -144,18 +127,18 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 				OfferToReceiveVideo: false,
 			};
 		}
-		// connection.current?.join(
-		// 	`Room${props.carID}${props.camNumber}`,
-		// 	function () {
-		// 		console.log(connection.current?.sessionid);
-		// 	}
-		// );
+		connection.current?.join(
+			`Room${props.carID}${props.cameraId}`,
+			function () {
+				console.log(connection.current?.sessionid);
+			}
+		);
 	};
 
 	useEffect(() => {
 		const handleBeforeUnload = () => {
-			if (socket.current) {
-				socket.current.emit('remove_user', { carID: props.carID });
+			if (socket) {
+				socket.emit('remove_user', { carID: props.carID });
 			}
 		};
 
@@ -164,7 +147,7 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 		return () => {
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 		};
-	}, [socket.current, props.carID]);
+	}, [socket, props.carID]);
 
 	useEffect(() => {
 		// Update the video elements when stream1 or stream2 changes
@@ -190,7 +173,7 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 				};
 			}
 		}
-	}, [stream, props.camNumber]);
+	}, [stream, props.cameraId]);
 
 	useEffect(() => {
 		if (stream && canvasRef.current) {
@@ -201,25 +184,6 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			}
 		}
 	}, [stream, uid]);
-	// useEffect(() => {
-	//   if (stream) {
-	//     const videoRef = document.getElementById(`video ${uid}`) as HTMLVideoElement; // Explicitly cast to HTMLVideoElement
-	//     if (videoRef) {
-	//       videoRef.srcObject = stream;
-	//       // Check if the video is ready to show
-	//         const container = document.getElementById("videos-container")?.parentElement;
-	//         if (container) {
-	//           const containerWidth = container.clientWidth;
-	//           const containerHeight = container.clientHeight;
-
-	//           videoRef.width = containerWidth;
-	//           videoRef.height = containerHeight;
-
-	//         }
-
-	//     }
-	// }
-	// }, [stream, uid]);
 
 	if (props.isDisabled)
 		return (
@@ -228,19 +192,21 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			</div>
 		);
 
-	if (isLoading || !stream)
-		return <Loading size={props.size === 'large' ? 48 : 24} />;
+	if (!stream) return <Loading size={props.size === 'large' ? 48 : 24} />;
 
 	return (
-		<div id="videos-container">
+		<div className="w-full h-full aspect-video" id="videos-container">
 			<video
-				className={`video-machine ${isLoading ? 'hidden' : ''}`}
+				className={`w-full h-full aspect-video video-machine ${
+					isLoading ? 'hidden' : ''
+				}`}
 				id={`video ${uid}`}
 				playsInline
 				autoPlay
 				muted
 			/>
 			<canvas
+				className="w-full h-full aspect-video"
 				id="canvas"
 				ref={canvasRef}
 				style={{
