@@ -146,19 +146,19 @@ export function useCarsHeartbeat(cars: ICar[]) {
 			back_cam: backCamera
 				? status === STATUS.INACTIVE
 					? STATUS.INACTIVE
-					: heartbeatContextData.CAR[backCamera.id]?.data.status ||
+					: heartbeatContextData.CAMERA[backCamera.id]?.data.status ||
 					  STATUS.INACTIVE
 				: STATUS.MISSING,
 			left_cam: leftCamera
 				? status === STATUS.INACTIVE
 					? STATUS.INACTIVE
-					: heartbeatContextData.CAR[leftCamera.id]?.data.status ||
+					: heartbeatContextData.CAMERA[leftCamera.id]?.data.status ||
 					  STATUS.INACTIVE
 				: STATUS.MISSING,
 			right_cam: rightCamera
 				? status === STATUS.INACTIVE
 					? STATUS.INACTIVE
-					: heartbeatContextData.CAR[rightCamera.id]?.data.status ||
+					: heartbeatContextData.CAMERA[rightCamera.id]?.data.status ||
 					  STATUS.INACTIVE
 				: STATUS.MISSING,
 		};
