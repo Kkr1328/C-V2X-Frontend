@@ -57,8 +57,9 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 	useEffect(() => {
 		if (!connection) {
 			const newConnection = new RTCMultiConnection();
-
 			newConnection.socketURL = process.env.NEXT_PUBLIC_API_CAM_URI as string;
+			newConnection.enableLogs = false;
+
 			newConnection.socketMessageEvent = 'video-broadcast-demo';
 			newConnection.session = {
 				audio: false,
@@ -72,7 +73,7 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			newConnection.videosContainer =
 				document.getElementById('videos-container') ?? document.body;
 
-			if (!props.isDisabled) {
+			if (!props.isDisabled && !connection) {
 				newConnection.join(`Room${props.carID}${props.cameraId}`, function () {
 					console.log(newConnection.sessionid);
 				});

@@ -21,20 +21,14 @@ interface CameraCardProps {
 	carId: string;
 	carName: string;
 	cameras: CameraType[];
+	useNormalLayout?: boolean;
+	useCompactLayout?: boolean;
 	isLoading?: boolean;
 }
 
 export default function CameraCard(props: CameraCardProps) {
 	const router = useRouter();
 	const positions = ['Front', 'Back', 'Left', 'Right'] as Position[];
-
-	const cardRef = useRef<HTMLDivElement>(null);
-	const [cardWidth, setCardWidth] = useState<number>(
-		cardRef.current?.clientWidth as number
-	);
-	useEffect(() => WidthObserver(cardRef.current, setCardWidth), []);
-	const useNormalLayout = cardWidth < 1200;
-	const useCompactLayout = cardWidth < 600;
 
 	const handleLocate = useHandleCarLocate(router, props.carId);
 	const status = useCarStatus(props.carId);
@@ -51,10 +45,7 @@ export default function CameraCard(props: CameraCardProps) {
 	if (status === STATUS.INACTIVE) return;
 
 	return (
-		<Card
-			ref={cardRef}
-			className="flex flex-col w-full min-w-[400px] gap-8 rounded-lg bg-white"
-		>
+		<Card className="flex flex-col w-full min-w-[400px] gap-8 rounded-lg bg-white">
 			<div className="flex flex-row pt-16 px-16 gap-16 items-center">
 				<div className="flex flex-row gap-4 items-center truncate">
 					<Text style="text-black text-h4" content={props.carName} isTruncate />
@@ -83,7 +74,9 @@ export default function CameraCard(props: CameraCardProps) {
 						<Grid
 							item
 							key={index}
-							xs={useCompactLayout ? 641 : useNormalLayout ? 320 : 160}
+							xs={
+								props.useCompactLayout ? 641 : props.useNormalLayout ? 320 : 160
+							}
 						>
 							<CameraSection
 								carId={props.carId}

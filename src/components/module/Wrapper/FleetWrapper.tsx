@@ -11,12 +11,25 @@ import {
 	FLEET_LOCATION,
 } from '@/types/FLEET';
 import { STATUS } from '@/constants/LABEL';
+import RTCMultiConnection from 'rtcmulticonnection';
+import { useQuery } from '@tanstack/react-query';
+import { getCarsAPI } from '@/services/api-call';
+import { ICar } from '@/types/models/car.model';
+import { CameraType } from '@/types/ENTITY';
 
 export default function FleetWrapper(props: { children: React.ReactNode }) {
+	// query
+	const { data: cars } = useQuery({
+		queryKey: ['getCars'],
+		queryFn: async () => await getCarsAPI({}),
+	});
+
+	// states
 	const [heartbeatData, setHeartbeatData] = useState<{
 		CAR: { [id: string]: FLEET_HEARTBEAT };
+		CAMERA: { [id: string]: FLEET_HEARTBEAT };
 		RSU: { [id: string]: FLEET_HEARTBEAT };
-	}>({ CAR: {}, RSU: {} });
+	}>({ CAR: {}, CAMERA: {}, RSU: {} });
 	const [carSpeedData, setCarSpeedData] = useState<{
 		[id: string]: FLEET_CAR_SPEED | undefined;
 	}>({});
@@ -25,37 +38,34 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 		RSU: { [id: string]: FLEET_LOCATION };
 	}>({ CAR: {}, RSU: {} });
 
-	useEffect(() => {
-		const socket = io(
-			process.env.NEXT_PUBLIC_WEB_SOCKET_URL ?? '<SOCKET-URL>',
-			{ transports: ['websocket', 'polling'] }
-		);
-		socket.on('connect', () => {
-			console.log('connected: fleeting websocket');
-		});
+	// timers
+	const carHeartbeatTimers: { [id: string]: NodeJS.Timeout } = {};
+	const rsuHeartbeatTimers: { [id: string]: NodeJS.Timeout } = {};
+	const carLocationTimers: { [id: string]: NodeJS.Timeout } = {};
+	const rsuLocationTimers: { [id: string]: NodeJS.Timeout } = {};
+	const carSpeedTimers: { [id: string]: NodeJS.Timeout } = {};
 
-		const carHeartbeatTimers: { [id: string]: NodeJS.Timeout } = {};
-		const rsuHeartbeatTimers: { [id: string]: NodeJS.Timeout } = {};
-		const carLocationTimers: { [id: string]: NodeJS.Timeout } = {};
-		const rsuLocationTimers: { [id: string]: NodeJS.Timeout } = {};
-		const carSpeedTimers: { [id: string]: NodeJS.Timeout } = {};
-
-		const setInactive = (id: string, type: 'CAR' | 'RSU', dataType: string) => {
-			if (dataType === 'heartbeat') {
-				setHeartbeatData((prevData) => ({
-					...prevData,
-					[type]: {
-						...prevData[type],
-						[id]: {
-							...prevData[type][id],
-							data: {
-								...prevData[type][id].data,
-								status: STATUS.INACTIVE,
-							},
+	const setInactive = (
+		id: string,
+		type: 'CAR' | 'CAMERA' | 'RSU',
+		dataType: string
+	) => {
+		if (dataType === 'heartbeat') {
+			setHeartbeatData((prevData) => ({
+				...prevData,
+				[type]: {
+					...prevData[type],
+					[id]: {
+						...prevData[type][id],
+						data: {
+							...prevData[type][id].data,
+							status: STATUS.INACTIVE,
 						},
 					},
-				}));
-			} else if (dataType === 'location') {
+				},
+			}));
+		} else if (dataType === 'location') {
+			if (type !== 'CAMERA') {
 				setLocationData((prev) => ({
 					...prev,
 					[type]: {
@@ -63,41 +73,61 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 						[id]: undefined,
 					},
 				}));
-			} else if (dataType === 'speed') {
-				setCarSpeedData((prev) => ({
-					...prev,
-					[id]: undefined,
-				}));
 			}
-		};
+		} else if (dataType === 'speed') {
+			setCarSpeedData((prev) => ({
+				...prev,
+				[id]: undefined,
+			}));
+		}
+	};
 
-		const handleTimeout = (
-			id: string,
-			type: 'CAR' | 'RSU',
-			dataType: string
-		) => {
-			const timers =
-				dataType === 'location'
-					? type === 'CAR'
-						? carLocationTimers
-						: rsuLocationTimers
-					: dataType === 'heartbeat'
-					? type === 'CAR'
-						? carHeartbeatTimers
-						: rsuHeartbeatTimers
-					: carSpeedTimers;
-			timers[id] = setTimeout(() => {
-				setInactive(id, type, dataType);
-			}, 10000);
-		};
+	const handleTimeout = (
+		id: string,
+		type: 'CAR' | 'CAMERA' | 'RSU',
+		dataType: string
+	) => {
+		const timers =
+			dataType === 'location'
+				? type === 'CAR'
+					? carLocationTimers
+					: rsuLocationTimers
+				: dataType === 'heartbeat'
+				? type === 'CAR'
+					? carHeartbeatTimers
+					: rsuHeartbeatTimers
+				: carSpeedTimers;
+		timers[id] = setTimeout(() => {
+			setInactive(id, type, dataType);
+		}, 5000);
+	};
 
+	useEffect(() => {
+		// socket connection
+		const socket = io(
+			process.env.NEXT_PUBLIC_WEB_SOCKET_URL ?? '<SOCKET-URL>',
+			{
+				transports: ['websocket', 'polling'],
+			}
+		);
+		socket.on('connect', () => {
+			console.log('connected: fleeting websocket');
+		});
+
+		// on receive heartbeat
 		socket.on('heartbeat', (heartbeat: FLEET_HEARTBEAT) => {
 			const { id, type } = heartbeat;
 			setHeartbeatData((prev) => ({
 				...prev,
 				[type]: {
 					...prev[type],
-					[id]: heartbeat,
+					[id]: {
+						...prev[type][id],
+						data: {
+							...prev[type][id]?.data,
+							status: heartbeat.data.status,
+						},
+					},
 				},
 			}));
 			clearTimeout(
@@ -106,6 +136,7 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 			handleTimeout(id, type, 'heartbeat');
 		});
 
+		// on receive location
 		socket.on('location', (location: FLEET_LOCATION) => {
 			const { id, type } = location;
 			setLocationData((prev) => ({
@@ -121,6 +152,7 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 			handleTimeout(id, type, 'location');
 		});
 
+		// on receive car speed
 		socket.on('car_speed', (car_speed: FLEET_CAR_SPEED) => {
 			const { id } = car_speed;
 			setCarSpeedData((prev) => ({
@@ -130,25 +162,42 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 			clearTimeout(carSpeedTimers[id]);
 			handleTimeout(id, 'CAR', 'speed');
 		});
-
-		Object.entries(heartbeatData).forEach(([type, data]) => {
-			Object.keys(data).forEach((id) => {
-				handleTimeout(id, type as 'CAR' | 'RSU', 'heartbeat');
-			});
-		});
-
-		return () => {
-			socket.disconnect();
-			console.log('disconnected: fleeting websocket');
-
-			// Clear all heartbeat timers
-			Object.values(carHeartbeatTimers).forEach((timer) => clearTimeout(timer));
-			Object.values(rsuHeartbeatTimers).forEach((timer) => clearTimeout(timer));
-			Object.values(carLocationTimers).forEach((timer) => clearTimeout(timer));
-			Object.values(rsuLocationTimers).forEach((timer) => clearTimeout(timer));
-			Object.values(carSpeedTimers).forEach((timer) => clearTimeout(timer));
-		};
 	}, []);
+
+	useEffect(() => {
+		// emit pull camera heartbeat
+		const connection = new RTCMultiConnection();
+		connection.socketURL = process.env.NEXT_PUBLIC_API_CAM_URI as string;
+		connection.enableLogs = false;
+
+		const intervalId = setInterval(() => {
+			cars &&
+				cars.map((car: ICar) =>
+					car.cameras.map((camera: CameraType) => {
+						connection.checkPresence(
+							`Room${car.id}${camera.id}`,
+							(isRoomExist) => {
+								setHeartbeatData((prevData) => ({
+									...prevData,
+									CAMERA: {
+										...prevData.CAMERA,
+										[camera.id]: {
+											...prevData.CAMERA[camera.id],
+											data: {
+												...prevData.CAMERA[camera.id]?.data,
+												status: isRoomExist ? STATUS.ACTIVE : STATUS.INACTIVE,
+											},
+										},
+									},
+								}));
+							}
+						);
+					})
+				);
+		}, 1000);
+
+		return () => clearInterval(intervalId);
+	}, [cars]);
 
 	return (
 		<HeartbeatFleetContext.Provider value={[heartbeatData, setHeartbeatData]}>

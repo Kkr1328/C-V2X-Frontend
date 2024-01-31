@@ -9,16 +9,18 @@ const HeartbeatFleetContext = createContext<
 	[
 		{
 			CAR: { [id: string]: FLEET_HEARTBEAT | undefined };
+			CAMERA: { [id: string]: FLEET_HEARTBEAT | undefined };
 			RSU: { [id: string]: FLEET_HEARTBEAT | undefined };
 		},
 		Dispatch<
 			SetStateAction<{
 				CAR: { [id: string]: FLEET_HEARTBEAT };
+				CAMERA: { [id: string]: FLEET_HEARTBEAT };
 				RSU: { [id: string]: FLEET_HEARTBEAT };
 			}>
 		>
 	]
->([{ CAR: {}, RSU: {} }, () => {}]);
+>([{ CAR: {}, CAMERA: {}, RSU: {} }, () => {}]);
 
 const LocationFleetContext = createContext<
 	[

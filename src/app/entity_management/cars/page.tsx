@@ -10,19 +10,19 @@ import { Card, Divider } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter/Filter';
-import InputModal from '@/components/module/Modal/InputModal';
-import InfoModal from '@/components/module/Modal/InfoModal';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
+import InfoModal from '@/components/module/Modal/InfoModal';
+import InputModal from '@/components/module/Modal/InputModal';
 import Table from '@/components/module/Table/Table';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
 import { ICar, ICarInfo, IGetCarsRequest } from '@/types/models/car.model';
 // templates
-import { CarFilterTemplate } from '@/templates/FILTER';
-import { CarsTableTemplate } from '@/templates/ENTITY_TABLE';
-import { CarInfoModalTemplate } from '@/templates/INFO_MODAL';
 import { CarActionModalTemplate } from '@/templates/ACTION_MODAL';
+import { CarsTableTemplate } from '@/templates/ENTITY_TABLE';
+import { CarFilterTemplate } from '@/templates/FILTER';
+import { CarInfoModalTemplate } from '@/templates/INFO_MODAL';
 // tanstack
 import { useMutation, useQuery } from '@tanstack/react-query';
 // services
@@ -40,14 +40,9 @@ import {
 	DefaultDataGenerator,
 	OptionGenerator,
 } from '@/utils/DataGenerator';
+import { useCarStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
-import {
-	useCameraStatus,
-	useCarStatus,
-	useHandleCarLocate,
-} from '@/utils/FleetRetriever';
-import { Position } from '@/types/COMMON';
 
 export default function Home() {
 	const { enqueueSnackbar } = useSnackbar();

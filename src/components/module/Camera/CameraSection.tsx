@@ -29,8 +29,8 @@ export default function CameraSection(props: CameraSectionProps) {
 	const [videoModeNumber, setVideoModeNumber] = useState(0);
 	const [openModal, setOpenModal] = useState(false);
 
-	const status = useCameraStatus(props.position, props.carId);
-	const isDisabled = props.cameraId === undefined || status === STATUS.INACTIVE;
+	const status = useCameraStatus(props.cameraId, props.carId);
+	const isDisabled = status === STATUS.INACTIVE;
 
 	return (
 		<>

@@ -170,10 +170,7 @@ export default function Home() {
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
-				headerPill={useCameraStatus(
-					informModalData.position,
-					informModalData.car_id
-				)}
+				headerPill={useCameraStatus(informModalData.id, informModalData.car_id)}
 				isBodyLocate
 				handleBodyLocate={useHandleCarLocate(router, informModalData.car_id)}
 				isCompact={isUseCompactModal}

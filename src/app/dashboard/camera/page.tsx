@@ -1,4 +1,6 @@
 'use client';
+// react
+import { useEffect, useRef, useState } from 'react';
 // tanstack
 import { useQuery } from '@tanstack/react-query';
 // components
@@ -12,10 +14,19 @@ import { NAVBAR_LABEL, STATUS } from '@/constants/LABEL';
 import { ICar } from '@/types/models/car.model';
 // utilities
 import { useCarsHeartbeat } from '@/utils/FleetRetriever';
+import { WidthObserver } from '@/utils/WidthObserver';
 // services
 import { getCarsAPI } from '@/services/api-call';
 
 export default function Home() {
+	const pageRef = useRef<HTMLDivElement>(null);
+	const [pageWidth, setPageWidth] = useState<number>(
+		pageRef.current?.clientWidth as number
+	);
+	useEffect(() => WidthObserver(pageRef.current, setPageWidth), []);
+	const useNormalLayout = pageWidth < 1200;
+	const useCompactLayout = pageWidth < 600;
+
 	// query
 	const { isLoading: isCarsLoading, data: cars } = useQuery<ICar[]>({
 		queryKey: ['getCars'],
@@ -29,7 +40,7 @@ export default function Home() {
 	return (
 		<>
 			{isCarsLoading && <Loading size={48} isBackdrop />}
-			<div className="flex flex-col w-full h-auto gap-16">
+			<div ref={pageRef} className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CAMERA} />
 				<div className="flex flex-col min-h-[calc(100vh-192px)] gap-16">
 					{isCarsLoading ? (
@@ -48,6 +59,8 @@ export default function Home() {
 									carId={car.id}
 									carName={car.name}
 									cameras={car.cameras}
+									useNormalLayout={useNormalLayout}
+									useCompactLayout={useCompactLayout}
 								/>
 							))}
 						</>

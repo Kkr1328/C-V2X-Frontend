@@ -42,6 +42,7 @@ export const CarDataTransformer = (data: ICar) => {
 		accumulator[`${position.toLowerCase()}_cam_name`] = camera
 			? camera.name
 			: '';
+		accumulator[`${position.toLowerCase()}_cam_id`] = camera ? camera.id : '';
 		return accumulator;
 	}, {});
 

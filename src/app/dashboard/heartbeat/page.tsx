@@ -100,7 +100,7 @@ export default function Home() {
 	});
 
 	const handleRefresh = () => {
-		setHeartbeatContextData({ CAR: {}, RSU: {} });
+		setHeartbeatContextData({ CAR: {}, CAMERA: {}, RSU: {} });
 		refetchCars();
 		refetchRSUs();
 	};
