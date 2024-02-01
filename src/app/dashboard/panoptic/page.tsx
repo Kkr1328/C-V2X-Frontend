@@ -37,6 +37,7 @@ export default function Home() {
 	});
 
 	// set data
+	const emptyFilterData = { car_id: '', camera_id: '' };
 	const defaultFilterData = { car_id: carId, camera_id: cameraId };
 
 	//states
@@ -67,7 +68,7 @@ export default function Home() {
 						handleSubmitSearch={() => {}}
 						search={search}
 						setSearch={setSearch}
-						handleClearSearch={() => setSearch(defaultFilterData)}
+						handleClearSearch={() => setSearch(emptyFilterData)}
 						options={options}
 					/>
 					<Divider />
