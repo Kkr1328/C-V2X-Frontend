@@ -2,6 +2,7 @@ export enum NAVBAR_LABEL {
 	DASHBOARD = 'Dashboard',
 	OVERVIEW = 'Overview',
 	CAMERA = 'Camera',
+	PANOPTIC = 'Panoptic',
 	EMERGENCY = 'Emergency',
 	HEARTBEAT = 'Heartbeat',
 	ENTITY_MANAGEMENT = 'Entity Management',

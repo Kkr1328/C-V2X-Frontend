@@ -44,3 +44,8 @@ export interface InputFieldProp<T> {
 	isPassword?: boolean;
 	isSpan?: boolean;
 }
+
+export interface IGetPanopticRequest {
+	car_id: string;
+	camera_id: string;
+}

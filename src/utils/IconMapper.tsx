@@ -26,6 +26,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 import HelpOutlineRoundedIcon from '@mui/icons-material/HelpOutlineRounded';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import ViewInArRoundedIcon from '@mui/icons-material/ViewInArRounded';
 // const
 import { BUTTON_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 
@@ -44,6 +45,8 @@ export default function IconMapper(props: IconMapperProps) {
 			return <PieChartRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.CAMERA:
 			return <CameraAltRoundedIcon sx={iconStyle} />;
+		case NAVBAR_LABEL.PANOPTIC:
+			return <ViewInArRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.EMERGENCY:
 			return <NotificationsRoundedIcon sx={iconStyle} />;
 		case NAVBAR_LABEL.HEARTBEAT:

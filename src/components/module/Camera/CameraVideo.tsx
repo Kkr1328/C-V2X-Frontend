@@ -24,7 +24,7 @@ interface VideoReceiverProps {
 	cameraId?: string;
 	size?: 'small' | 'large';
 	isDisabled?: boolean;
-	isShowObjectDetection: boolean;
+	isShowObjectDetection?: boolean;
 }
 
 export default function VideoReceiver(props: VideoReceiverProps) {

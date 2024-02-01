@@ -2,6 +2,7 @@ export enum ROUTE {
 	DASHBOARD = '/dashboard',
 	OVERVIEW = ROUTE.DASHBOARD + '/overview',
 	CAMERA = ROUTE.DASHBOARD + '/camera',
+	PANOPTIC = ROUTE.DASHBOARD + '/panoptic',
 	EMERGENCY = ROUTE.DASHBOARD + '/emergency',
 	HEARTBEAT = ROUTE.DASHBOARD + '/heartbeat',
 	ENTITY_MANAGEMENT = '/entity_management',

@@ -63,6 +63,10 @@ export default function Navbar() {
 							route: ROUTE.CAMERA,
 						},
 						{
+							label: NAVBAR_LABEL.PANOPTIC,
+							route: ROUTE.PANOPTIC,
+						},
+						{
 							label: NAVBAR_LABEL.EMERGENCY,
 							route: ROUTE.EMERGENCY,
 						},
