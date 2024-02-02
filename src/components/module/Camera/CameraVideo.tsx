@@ -58,7 +58,7 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 		if (!connection) {
 			const newConnection = new RTCMultiConnection();
 			newConnection.socketURL = process.env.NEXT_PUBLIC_API_CAM_URI as string;
-			newConnection.enableLogs = false;
+			// newConnection.enableLogs = false;
 
 			newConnection.socketMessageEvent = 'video-broadcast-demo';
 			newConnection.session = {
@@ -73,7 +73,7 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			newConnection.videosContainer =
 				document.getElementById('videos-container') ?? document.body;
 
-			if (!props.isDisabled && !connection) {
+			if (!props.isDisabled) {
 				newConnection.join(`Room${props.carID}${props.cameraId}`, function () {
 					console.log(newConnection.sessionid);
 				});
@@ -114,8 +114,14 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			};
 
 			setConnection(newConnection);
+		} else {
+			if (!props.isDisabled) {
+				connection.join(`Room${props.carID}${props.cameraId}`, function () {
+					console.log(connection.sessionid);
+				});
+			}
 		}
-	}, [connection]);
+	}, [connection, props.isDisabled]);
 
 	useEffect(() => {
 		const handleBeforeUnload = () => {

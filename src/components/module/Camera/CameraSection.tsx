@@ -41,7 +41,7 @@ export default function CameraSection(props: CameraSectionProps) {
 	const [openModal, setOpenModal] = useState(false);
 
 	const status = useCameraStatus(props.cameraId, props.carId);
-	const isDisabled = status === STATUS.INACTIVE;
+	const isDisabled = status === STATUS.INACTIVE || !props.carId || !props;
 
 	const handlePanoptic = () =>
 		router.push(
