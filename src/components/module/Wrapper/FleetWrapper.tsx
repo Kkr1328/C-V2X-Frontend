@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getCarsAPI } from '@/services/api-call';
 import { ICar } from '@/types/models/car.model';
 import { CameraType } from '@/types/ENTITY';
+import { convertFleetStatusToFormat } from '@/utils/StringFormat';
 
 export default function FleetWrapper(props: { children: React.ReactNode }) {
 	// query
@@ -93,10 +94,10 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 					? carLocationTimers
 					: rsuLocationTimers
 				: dataType === 'heartbeat'
-				? type === 'CAR'
-					? carHeartbeatTimers
-					: rsuHeartbeatTimers
-				: carSpeedTimers;
+					? type === 'CAR'
+						? carHeartbeatTimers
+						: rsuHeartbeatTimers
+					: carSpeedTimers;
 		timers[id] = setTimeout(() => {
 			setInactive(id, type, dataType);
 		}, 5000);
@@ -125,7 +126,7 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 						...prev[type][id],
 						data: {
 							...prev[type][id]?.data,
-							status: heartbeat.data.status,
+							status: convertFleetStatusToFormat(heartbeat.data.status),
 						},
 					},
 				},
