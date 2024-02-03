@@ -22,7 +22,7 @@ import { PanopticFilterTemplate } from '@/templates/FILTER';
 // services
 import { getCarsAPI } from '@/services/api-call';
 // utilities
-import { OptionGenerator } from '@/utils/DataGenerator';
+import { DateOptionGenerator, OptionGenerator } from '@/utils/DataGenerator';
 
 export default function Home() {
 	// check initial select camera
@@ -37,8 +37,17 @@ export default function Home() {
 	});
 
 	// set data
-	const emptyFilterData = { car_id: '', camera_id: '' };
-	const defaultFilterData = { car_id: carId, camera_id: cameraId };
+	const dates = DateOptionGenerator();
+	const emptyFilterData = {
+		car_id: '',
+		camera_id: '',
+		date: dates[0].value,
+	};
+	const defaultFilterData = {
+		car_id: carId,
+		camera_id: cameraId,
+		date: dates[0].value,
+	};
 
 	//states
 	const [search, setSearch] = useState<IGetPanopticRequest>(defaultFilterData);
@@ -54,6 +63,10 @@ export default function Home() {
 		{
 			id: 'camera_id',
 			option: OptionGenerator(cameraList),
+		},
+		{
+			id: 'date',
+			option: dates,
 		},
 	];
 
@@ -73,11 +86,11 @@ export default function Home() {
 					/>
 					<Divider />
 					<div className="aspect-video bg-dark_background_grey flex justify-center items-center">
-						<CameraVideo
+						{/* <CameraVideo
 							carID={search.car_id}
 							cameraId={search.camera_id}
 							isDisabled={!search.car_id || !search.camera_id}
-						/>
+						/> */}
 					</div>
 				</Card>
 			</div>

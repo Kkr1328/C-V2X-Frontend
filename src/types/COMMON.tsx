@@ -48,4 +48,5 @@ export interface InputFieldProp<T> {
 export interface IGetPanopticRequest {
 	car_id: string;
 	camera_id: string;
+	date: string;
 }

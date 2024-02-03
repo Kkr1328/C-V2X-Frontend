@@ -18,6 +18,12 @@ export const PanopticFilterTemplate: InputFieldProp<IGetPanopticRequest>[] = [
 		type: 'Select',
 		placeholder: 'ex. Camera01',
 	},
+	{
+		id: 'date',
+		label: INPUT_LABEL.DATE,
+		type: 'Select',
+		placeholder: 'ex. 1 Jan 2024',
+	},
 ];
 
 export const CarFilterTemplate: InputFieldProp<IGetCarsRequest>[] = [

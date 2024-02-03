@@ -35,6 +35,7 @@ export default function Filter<T>(props: FilterProp<T>) {
 	const getSearch = (id: keyof T) => `${props.search[id]}`;
 
 	const handleSearchChange = (id: keyof T, value: string) => {
+		console.log(props.search);
 		props.setSearch({
 			...props.search,
 			[id]: value,
@@ -78,10 +79,9 @@ export default function Filter<T>(props: FilterProp<T>) {
 								title={inputField.label}
 								placeholder={inputField.placeholder}
 								value={
-									getOption(inputField).find(
-										(option: Option) =>
-											option.value === getSearch(inputField.id)
-									) || null
+									getOption(inputField).find((option: Option) => {
+										return option.value === getSearch(inputField.id);
+									}) || null
 								}
 								onChange={(_, value) => {
 									handleSearchChange(inputField.id, value ? value.value : '');
