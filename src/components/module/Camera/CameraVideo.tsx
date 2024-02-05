@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useRef, useState } from 'react';
 import RTCMultiConnection from 'rtcmulticonnection';
 import { Box } from '@mui/material';
@@ -19,7 +20,7 @@ function generateRandomUID() {
 	return timestamp + randomPart;
 }
 
-interface VideoReceiverProps {
+interface CameraVideoProps {
 	carID: string;
 	cameraId?: string;
 	size?: 'small' | 'large';
@@ -27,13 +28,14 @@ interface VideoReceiverProps {
 	isShowObjectDetection?: boolean;
 }
 
-export default function VideoReceiver(props: VideoReceiverProps) {
+export default function CameraVideo(props: CameraVideoProps) {
 	const [connection, setConnection] = useState<RTCMultiConnection>();
 	const [socket, setSocket] = useState<Socket>();
 	const [stream, setStream] = useState<MediaStream | null>(null);
 	const uid = generateRandomUID();
 	const videoRef = useRef<HTMLVideoElement | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
 
 	useEffect(() => {
 		if (!socket && canvasRef.current && connection) {
@@ -54,11 +56,12 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			});
 	}, [canvasRef.current, socket, connection]);
 
-	useEffect(() => {
-		if (!connection) {
+	function createRTCConnection() {
+		console.log('im video');
+		try {
 			const newConnection = new RTCMultiConnection();
 			newConnection.socketURL = process.env.NEXT_PUBLIC_API_CAM_URI as string;
-			// newConnection.enableLogs = false;
+			newConnection.enableLogs = false;
 
 			newConnection.socketMessageEvent = 'video-broadcast-demo';
 			newConnection.session = {
@@ -72,12 +75,6 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			};
 			newConnection.videosContainer =
 				document.getElementById('videos-container') ?? document.body;
-
-			if (!props.isDisabled) {
-				newConnection.join(`Room${props.carID}${props.cameraId}`, function () {
-					console.log(newConnection.sessionid);
-				});
-			}
 
 			newConnection.onstream = function (event) {
 				var existing = document.getElementById(event.streamid);
@@ -113,13 +110,18 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 				newConnection.join(newConnection.sessionid);
 			};
 
-			setConnection(newConnection);
-		} else {
-			if (!props.isDisabled) {
-				connection.join(`Room${props.carID}${props.cameraId}`, function () {
-					console.log(connection.sessionid);
-				});
-			}
+			return newConnection;
+		} catch (error) {
+			console.error('Error creating RTC connection:', error);
+		}
+	}
+
+	useEffect(() => {
+		if (!connection) {
+			setConnection(createRTCConnection());
+		}
+		if (!props.isDisabled && connection) {
+			connection.join(`Room${props.carID}${props.cameraId}`);
 		}
 	}, [connection, props.isDisabled]);
 
@@ -142,18 +144,21 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			if (videoRef.current) {
 				videoRef.current.srcObject = stream;
 				videoRef.current.onloadedmetadata = () => {
-					const container = document.getElementById('videos-container');
-					if (container && videoRef.current) {
-						const containerWidth = container.clientWidth;
-						const containerHeight = container.clientHeight;
+					if (videoRef.current) {
+						const container = videoRef.current.parentElement;
+						if (container) {
+							const containerWidth = container.clientWidth;
+							const containerHeight = container.clientHeight;
 
-						videoRef.current.width = containerWidth;
-						videoRef.current.height = containerHeight;
+							videoRef.current.width = containerWidth;
+							videoRef.current.height = containerHeight;
+							setIsLoading(false);
+						}
 					}
 				};
 			}
 		}
-	}, [stream]);
+	}, [stream, isLoading]);
 
 	useEffect(() => {
 		if (stream && canvasRef.current) {
@@ -172,12 +177,13 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			</div>
 		);
 
-	if (!stream) return <Loading size={props.size === 'large' ? 48 : 24} />;
-
 	return (
 		<div className="h-full w-full aspect-[4/3]" id="videos-container">
+			{isLoading && <Loading size={props.size === 'large' ? 48 : 24} />}
 			<video
-				className={`h-full w-full aspect-[4/3] video-machine`}
+				className={`h-full w-full aspect-[4/3] video-machine ${
+					isLoading && 'hidden'
+				}`}
 				id={`video ${uid}`}
 				ref={videoRef}
 				playsInline
@@ -186,7 +192,9 @@ export default function VideoReceiver(props: VideoReceiverProps) {
 			/>
 			{props.isShowObjectDetection && (
 				<canvas
-					className="flex absolute top-none left-none z-0 h-full w-full aspect-[4/3]"
+					className={`flex absolute top-none left-none z-0 h-full w-full aspect-[4/3] ${
+						isLoading && 'hidden'
+					}`}
 					id="canvas"
 					ref={canvasRef}
 				/>
