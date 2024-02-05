@@ -4,7 +4,7 @@ import {
 	HeartbeatFleetContext,
 	CarSpeedFleetContext,
 	LocationFleetContext,
-} from '@/context/fleet';
+} from '@/context/FleetContext';
 import {
 	FLEET_CAR_SPEED,
 	FLEET_HEARTBEAT,
@@ -13,16 +13,20 @@ import {
 import { STATUS } from '@/constants/LABEL';
 import RTCMultiConnection from 'rtcmulticonnection';
 import { useQuery } from '@tanstack/react-query';
-import { getCarsAPI } from '@/services/api-call';
+import { getCamerasAPI } from '@/services/api-call';
 import { ICar } from '@/types/models/car.model';
 import { CameraType } from '@/types/ENTITY';
 import { convertFleetStatusToFormat } from '@/utils/StringFormat';
+import { IResponseList } from '@/types/common/responseList.model';
+import { RTCConnectionContext } from '@/context/RTCConnectionContext';
+import { ICamera } from '@/types/models/camera.model';
+import { generateRTCConnection } from '@/utils/RTCConnectionGenerator';
 
 export default function FleetWrapper(props: { children: React.ReactNode }) {
 	// query
-	const { data: cars } = useQuery({
-		queryKey: ['getCars'],
-		queryFn: async () => await getCarsAPI({}),
+	const { data: cameras } = useQuery({
+		queryKey: ['getCameras'],
+		queryFn: async () => await getCamerasAPI({}),
 	});
 
 	// states
@@ -38,6 +42,9 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 		CAR: { [id: string]: FLEET_LOCATION };
 		RSU: { [id: string]: FLEET_LOCATION };
 	}>({ CAR: {}, RSU: {} });
+	const [rtcConnection, setRTCConnection] = useState<{
+		[id: string]: RTCMultiConnection;
+	}>({});
 
 	// timers
 	const carHeartbeatTimers: { [id: string]: NodeJS.Timeout } = {};
@@ -94,10 +101,10 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 					? carLocationTimers
 					: rsuLocationTimers
 				: dataType === 'heartbeat'
-					? type === 'CAR'
-						? carHeartbeatTimers
-						: rsuHeartbeatTimers
-					: carSpeedTimers;
+				? type === 'CAR'
+					? carHeartbeatTimers
+					: rsuHeartbeatTimers
+				: carSpeedTimers;
 		timers[id] = setTimeout(() => {
 			setInactive(id, type, dataType);
 		}, 5000);
@@ -166,17 +173,27 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 	}, []);
 
 	useEffect(() => {
-		// emit pull camera heartbeat
-		const connection = new RTCMultiConnection();
-		connection.socketURL = process.env.NEXT_PUBLIC_API_CAM_URI as string;
-		connection.enableLogs = false;
+		if (cameras) {
+			setRTCConnection((prevState) => {
+				const newState = { ...prevState };
+				cameras.forEach((camera: ICamera) => {
+					newState[camera.id] = generateRTCConnection();
+					newState[`${camera.id}_modal`] = generateRTCConnection();
+				});
+				return newState;
+			});
+		}
+	}, [cameras]);
 
+	useEffect(() => {
+		// emit pull camera heartbeat
 		const intervalId = setInterval(() => {
-			cars &&
-				cars.map((car: ICar) =>
-					car.cameras.map((camera: CameraType) => {
+			if (cameras && rtcConnection) {
+				cameras.forEach((camera: ICamera) => {
+					const connection = rtcConnection[camera.id];
+					if (connection) {
 						connection.checkPresence(
-							`Room${car.id}${camera.id}`,
+							`Room${camera.car_id}${camera.id}`,
 							(isRoomExist) => {
 								setHeartbeatData((prevData) => ({
 									...prevData,
@@ -193,20 +210,25 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 								}));
 							}
 						);
-					})
-				);
+					}
+				});
+			}
 		}, 1000);
 
 		return () => clearInterval(intervalId);
-	}, [cars]);
+	}, [cameras, rtcConnection]);
 
 	return (
-		<HeartbeatFleetContext.Provider value={[heartbeatData, setHeartbeatData]}>
-			<LocationFleetContext.Provider value={[locationData, setLocationData]}>
-				<CarSpeedFleetContext.Provider value={[carSpeedData, setCarSpeedData]}>
-					{props.children}
-				</CarSpeedFleetContext.Provider>
-			</LocationFleetContext.Provider>
-		</HeartbeatFleetContext.Provider>
+		<RTCConnectionContext.Provider value={[rtcConnection, setRTCConnection]}>
+			<HeartbeatFleetContext.Provider value={[heartbeatData, setHeartbeatData]}>
+				<LocationFleetContext.Provider value={[locationData, setLocationData]}>
+					<CarSpeedFleetContext.Provider
+						value={[carSpeedData, setCarSpeedData]}
+					>
+						{props.children}
+					</CarSpeedFleetContext.Provider>
+				</LocationFleetContext.Provider>
+			</HeartbeatFleetContext.Provider>
+		</RTCConnectionContext.Provider>
 	);
 }

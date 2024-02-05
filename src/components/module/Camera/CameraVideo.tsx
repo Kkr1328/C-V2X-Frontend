@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import RTCMultiConnection from 'rtcmulticonnection';
 import { Box } from '@mui/material';
 import { io, Socket } from 'socket.io-client';
@@ -7,6 +7,7 @@ import RenderBoxes from '@/utils/renderBox';
 import IconMapper from '@/utils/IconMapper';
 import { BUTTON_LABEL } from '@/constants/LABEL';
 import Loading from '../../common/Loading';
+import { RTCConnectionContext } from '@/context/RTCConnectionContext';
 
 interface Box {
 	label: number;
@@ -36,6 +37,7 @@ export default function CameraVideo(props: CameraVideoProps) {
 	const videoRef = useRef<HTMLVideoElement | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [rtcConnection] = useContext(RTCConnectionContext);
 
 	useEffect(() => {
 		if (!socket && canvasRef.current && connection) {
@@ -56,23 +58,14 @@ export default function CameraVideo(props: CameraVideoProps) {
 			});
 	}, [canvasRef.current, socket, connection]);
 
-	function createRTCConnection() {
-		console.log('im video');
-		try {
-			const newConnection = new RTCMultiConnection();
-			newConnection.socketURL = process.env.NEXT_PUBLIC_API_CAM_URI as string;
-			newConnection.enableLogs = false;
+	useEffect(() => {
+		if (!connection && props.cameraId) {
+			const connectionName = `${props.cameraId}${
+				props.size === 'large' && '_modal'
+			}`;
+			console.log(connectionName);
+			const newConnection = rtcConnection[connectionName];
 
-			newConnection.socketMessageEvent = 'video-broadcast-demo';
-			newConnection.session = {
-				audio: false,
-				video: false,
-				oneway: true,
-			};
-			newConnection.sdpConstraints.mandatory = {
-				OfferToReceiveAudio: false,
-				OfferToReceiveVideo: false,
-			};
 			newConnection.videosContainer =
 				document.getElementById('videos-container') ?? document.body;
 
@@ -81,20 +74,19 @@ export default function CameraVideo(props: CameraVideoProps) {
 				if (existing && existing.parentNode) {
 					existing.parentNode.removeChild(existing);
 				}
-
 				event.mediaElement.removeAttribute('src');
 				event.mediaElement.removeAttribute('srcObject');
 				event.mediaElement.muted = true;
 				event.mediaElement.volume = 0;
 				setStream(event.stream);
 			};
+
 			newConnection.onstreamended = function (event) {
 				var mediaElement = document.getElementById(event.streamid);
 				if (mediaElement) {
 					if (mediaElement.parentNode) {
 						mediaElement.parentNode.removeChild(mediaElement);
 					}
-
 					if (
 						event.userid === newConnection.sessionid &&
 						!newConnection.isInitiator
@@ -109,16 +101,7 @@ export default function CameraVideo(props: CameraVideoProps) {
 			newConnection.onMediaError = function (e) {
 				newConnection.join(newConnection.sessionid);
 			};
-
-			return newConnection;
-		} catch (error) {
-			console.error('Error creating RTC connection:', error);
-		}
-	}
-
-	useEffect(() => {
-		if (!connection) {
-			setConnection(createRTCConnection());
+			setConnection(newConnection);
 		}
 		if (!props.isDisabled && connection) {
 			connection.join(`Room${props.carID}${props.cameraId}`);

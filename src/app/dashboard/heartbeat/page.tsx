@@ -48,7 +48,7 @@ import {
 // services
 import { getCarsAPI, getRSUsAPI } from '@/services/api-call';
 // contexts
-import { HeartbeatFleetContext } from '@/context/fleet';
+import { HeartbeatFleetContext } from '@/context/FleetContext';
 
 export default function Home() {
 	const router = useRouter();
