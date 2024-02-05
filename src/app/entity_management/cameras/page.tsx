@@ -107,7 +107,6 @@ export default function Home() {
 			});
 		},
 		onError: (error) => {
-			console.log(error);
 			enqueueSnackbar(`Fail to update a Camera : ${error.message}`, {
 				variant: 'error',
 			});

@@ -17,7 +17,7 @@ import {
 	getRSUsListAPI,
 } from '@/services/api-call';
 // contexts
-import { HeartbeatFleetContext } from '@/context/fleet';
+import { HeartbeatFleetContext } from '@/context/FleetContext';
 
 interface SummaryCardsProps {
 	summariesXs: number;

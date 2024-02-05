@@ -35,7 +35,6 @@ export default function Filter<T>(props: FilterProp<T>) {
 	const getSearch = (id: keyof T) => `${props.search[id]}`;
 
 	const handleSearchChange = (id: keyof T, value: string) => {
-		console.log(props.search);
 		props.setSearch({
 			...props.search,
 			[id]: value,
