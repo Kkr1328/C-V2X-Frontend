@@ -63,7 +63,6 @@ export default function CameraVideo(props: CameraVideoProps) {
 			const connectionName = `${props.cameraId}${
 				props.size === 'large' && '_modal'
 			}`;
-			console.log(connectionName);
 			const newConnection = rtcConnection[connectionName];
 
 			newConnection.videosContainer =
