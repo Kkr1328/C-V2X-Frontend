@@ -40,7 +40,7 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 			: '';
 	};
 
-	const getCameraStatus = (
+	const useGetCameraStatus = (
 		camIdField: keyof typeof props.data,
 		carIdField: keyof typeof props.data
 	) => {
@@ -55,26 +55,27 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 		return useCameraStatus(camId, carId);
 	};
 
-	const frontCameraStatus = getCameraStatus(
+	const frontCameraStatus = useGetCameraStatus(
 		'front_cam_id' as keyof typeof props.data,
 		'id' as keyof typeof props.data
 	);
-	const backCameraStatus = getCameraStatus(
+	const backCameraStatus = useGetCameraStatus(
 		'back_cam_id' as keyof typeof props.data,
 		'id' as keyof typeof props.data
 	);
-	const leftCameraStatus = getCameraStatus(
+	const leftCameraStatus = useGetCameraStatus(
 		'left_cam_id' as keyof typeof props.data,
 		'id' as keyof typeof props.data
 	);
-	const rightCameraStatus = getCameraStatus(
+	const rightCameraStatus = useGetCameraStatus(
 		'right_cam_id' as keyof typeof props.data,
 		'id' as keyof typeof props.data
 	);
-	const carStatus =
+	const carId =
 		typeof props.data === 'object' && props.data && 'car_id' in props.data
-			? useCarStatus(props.data.car_id as string)
-			: undefined;
+			? (props.data.car_id as string)
+			: '';
+	const carStatus = useCarStatus(carId);
 
 	const getPill = (inputField: InputFieldProp<T>) => {
 		switch (inputField.id) {
