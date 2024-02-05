@@ -7,13 +7,15 @@ import { Card, IconButton, Skeleton } from '@mui/material';
 // components
 import Pill from '@/components/common/Pill';
 import Text from '@/components/common/Text';
+import Pill from '@/components/common/Pill';
 // consts
-import { BUTTON_LABEL, EMERGENCY_CARD_LABEL } from '@/constants/LABEL';
+import { BUTTON_LABEL, EMERGENCY_CARD_LABEL, STATUS } from '@/constants/LABEL';
 // types
 import { Emergency } from '@/types/COMMON';
 // utilities
 import { useCarStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
 import IconMapper from '@/utils/IconMapper';
+import { useCarStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
 
 type EmeregncyCardProps = {
 	index?: number;

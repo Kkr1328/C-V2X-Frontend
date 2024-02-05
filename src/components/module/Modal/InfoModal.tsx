@@ -10,6 +10,8 @@ import { STATUS } from '@/constants/LABEL';
 // utilities
 import { DefaultDataGenerator } from '@/utils/DataGenerator';
 import { handleCloseModal } from '@/utils/ModalController';
+import { STATUS } from '@/constants/LABEL';
+import { Position } from '@/types/COMMON';
 
 interface InfoModalProp<T> extends ModalHeaderProp, ModalInputsProp<T> {
 	open: boolean;
