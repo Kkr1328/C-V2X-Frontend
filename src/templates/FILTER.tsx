@@ -1,9 +1,30 @@
 import { INPUT_LABEL } from '@/constants/LABEL';
-import { InputFieldProp } from '@/types/COMMON';
+import { IGetPanopticRequest, InputFieldProp } from '@/types/COMMON';
 import { IGetCarsRequest } from '@/types/models/car.model';
 import { IGetCamerasRequest } from '@/types/models/camera.model';
 import { IGetDriversRequest } from '@/types/models/driver.model';
 import { IGetRSUsRequest } from '@/types/models/rsu.model';
+
+export const PanopticFilterTemplate: InputFieldProp<IGetPanopticRequest>[] = [
+	{
+		id: 'car_id',
+		label: INPUT_LABEL.CAR,
+		type: 'Select',
+		placeholder: 'ex. Car01',
+	},
+	{
+		id: 'camera_id',
+		label: INPUT_LABEL.CAMERA,
+		type: 'Select',
+		placeholder: 'ex. Camera01',
+	},
+	{
+		id: 'date',
+		label: INPUT_LABEL.DATE,
+		type: 'Select',
+		placeholder: 'ex. 1 Jan 2024',
+	},
+];
 
 export const CarFilterTemplate: InputFieldProp<IGetCarsRequest>[] = [
 	{

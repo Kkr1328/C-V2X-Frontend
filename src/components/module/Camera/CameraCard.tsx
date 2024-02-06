@@ -5,6 +5,7 @@ import { Card, Divider, Grid, IconButton, Skeleton } from '@mui/material';
 // components
 import Pill from '../../common/Pill';
 import CameraSection from './CameraSection';
+import Text from '@/components/common/Text';
 // const
 import { BUTTON_LABEL, STATUS } from '@/constants/LABEL';
 // types
@@ -20,20 +21,14 @@ interface CameraCardProps {
 	carId: string;
 	carName: string;
 	cameras: CameraType[];
+	useNormalLayout?: boolean;
+	useCompactLayout?: boolean;
 	isLoading?: boolean;
 }
 
 export default function CameraCard(props: CameraCardProps) {
 	const router = useRouter();
 	const positions = ['Front', 'Back', 'Left', 'Right'] as Position[];
-
-	const cardRef = useRef<HTMLDivElement>(null);
-	const [cardWidth, setCardWidth] = useState<number>(
-		cardRef.current?.clientWidth as number
-	);
-	useEffect(() => WidthObserver(cardRef.current, setCardWidth), []);
-	const useNormalLayout = cardWidth < 1200;
-	const useCompactLayout = cardWidth < 600;
 
 	const handleLocate = useHandleCarLocate(router, props.carId);
 	const status = useCarStatus(props.carId);
@@ -50,15 +45,10 @@ export default function CameraCard(props: CameraCardProps) {
 	if (status === STATUS.INACTIVE) return;
 
 	return (
-		<Card
-			ref={cardRef}
-			className="flex flex-col w-full min-w-[400px] gap-8 rounded-lg bg-white"
-		>
+		<Card className="flex flex-col w-full min-w-[400px] gap-8 rounded-lg bg-white">
 			<div className="flex flex-row pt-16 px-16 gap-16 items-center">
-				<div className="flex flex-row gap-4 items-center">
-					<p className="inline-block align-baseline font-istok text-black text-h4">
-						{props.carName}
-					</p>
+				<div className="flex flex-row gap-4 items-center truncate">
+					<Text style="text-black text-h4" content={props.carName} isTruncate />
 					<IconButton
 						disableRipple
 						className="p-none text-primary_blue disabled:text-light_text_grey"
@@ -84,13 +74,16 @@ export default function CameraCard(props: CameraCardProps) {
 						<Grid
 							item
 							key={index}
-							xs={useCompactLayout ? 641 : useNormalLayout ? 320 : 160}
+							xs={
+								props.useCompactLayout ? 641 : props.useNormalLayout ? 320 : 160
+							}
 						>
 							<CameraSection
 								carId={props.carId}
 								carName={props.carName}
 								useCarStatus={status}
 								position={position}
+								cameraId={camera?.id}
 								cameraName={camera?.name}
 								handleLocate={handleLocate}
 								isLoading={props.isLoading}

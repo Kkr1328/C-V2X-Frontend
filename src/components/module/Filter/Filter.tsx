@@ -78,10 +78,9 @@ export default function Filter<T>(props: FilterProp<T>) {
 								title={inputField.label}
 								placeholder={inputField.placeholder}
 								value={
-									getOption(inputField).find(
-										(option: Option) =>
-											option.value === getSearch(inputField.id)
-									) || null
+									getOption(inputField).find((option: Option) => {
+										return option.value === getSearch(inputField.id);
+									}) || null
 								}
 								onChange={(_, value) => {
 									handleSearchChange(inputField.id, value ? value.value : '');

@@ -99,22 +99,24 @@ export default function Home() {
 			className="flex flex-col w-full min-w-[400px] h-auto gap-16"
 		>
 			<PageTitle title={NAVBAR_LABEL.OVERVIEW} />
-			<SummaryCards summariesXs={summariesXs} />
-			<Card
-				className={`flex ${
-					useCompactContent ? 'flex-col' : 'flex-row'
-				} gap-8 w-full h-auto rounded-lg px-24 py-24`}
-			>
-				<Map focus={focus} changeFocus={changeFocus} />
-				{!useCompactContent && (
-					<Grid item xs={1} className="flex items-center justify-center">
-						<Divider orientation="vertical" />
-					</Grid>
-				)}
-				<div className={`${!useCompactContent && 'min-w-[400px]'}`}>
-					<FleetDeviceCards focus={focus} changeFocus={changeFocus} />
-				</div>
-			</Card>
+			<div className="flex flex-col min-h-[calc(100vh-192px)] gap-16">
+				<SummaryCards summariesXs={summariesXs} />
+				<Card
+					className={`flex ${
+						useCompactContent ? 'flex-col' : 'flex-row'
+					} gap-8 w-full h-full rounded-lg px-24 py-24`}
+				>
+					<Map focus={focus} changeFocus={changeFocus} />
+					{!useCompactContent && (
+						<Grid item xs={1} className="flex items-center justify-center">
+							<Divider orientation="vertical" />
+						</Grid>
+					)}
+					<div className={`${!useCompactContent && 'min-w-[400px]'}`}>
+						<FleetDeviceCards focus={focus} changeFocus={changeFocus} />
+					</div>
+				</Card>
+			</div>
 		</div>
 	);
 }

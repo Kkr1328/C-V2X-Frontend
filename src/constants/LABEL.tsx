@@ -2,6 +2,7 @@ export enum NAVBAR_LABEL {
 	DASHBOARD = 'Dashboard',
 	OVERVIEW = 'Overview',
 	CAMERA = 'Camera',
+	PANOPTIC = 'Panoptic',
 	EMERGENCY = 'Emergency',
 	HEARTBEAT = 'Heartbeat',
 	ENTITY_MANAGEMENT = 'Entity Management',
@@ -34,6 +35,7 @@ export enum INPUT_LABEL {
 	POSITION = 'Position',
 	RECOMENDED_SPEED = 'Recommended Speed (km/h)',
 	ACTION = 'Action',
+	DATE = 'Date',
 }
 
 export enum BUTTON_LABEL {

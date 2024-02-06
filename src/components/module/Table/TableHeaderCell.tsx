@@ -15,7 +15,11 @@ export default function TableHeaderCell<T>(props: TableHeaderCellProp<T>) {
 			align={props.column.align}
 			className="p-16 bg-dark_background_grey w-[120px]"
 		>
-			<Text style="text-black text-h5" content={props.column.label} />
+			<Text
+				style="text-black text-h5"
+				content={props.column.label}
+				isSentence
+			/>
 		</TableCell>
 	);
 }

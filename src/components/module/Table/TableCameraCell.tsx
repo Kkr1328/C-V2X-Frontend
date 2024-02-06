@@ -26,8 +26,8 @@ export default function TableCameraCell<T>(props: TableCameraCellProp<T>) {
 	return (
 		<TableCell align={props.column.align} className="w-full">
 			{cameras.map((camera, index) => (
-				<div key={index} className="flex flex-row flex-wrap gap-8">
-					<Text style="text-black text-p1" content={camera.name} />
+				<div key={index} className="flex flex-row gap-4 truncate">
+					<Text style="text-black text-p1" content={camera.name} isTruncate />
 					<Text
 						style="text-light_text_grey text-p1"
 						content={`- ${camera.position}`}

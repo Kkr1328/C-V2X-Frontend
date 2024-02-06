@@ -42,8 +42,31 @@ export const CarDataTransformer = (data: ICar) => {
 		accumulator[`${position.toLowerCase()}_cam_name`] = camera
 			? camera.name
 			: '';
+		accumulator[`${position.toLowerCase()}_cam_id`] = camera ? camera.id : '';
 		return accumulator;
 	}, {});
 
 	return { ...data, ...updatedData };
 };
+
+export function DateOptionGenerator(): Option[] {
+	const dates: Option[] = [];
+
+	const endDate: Date = new Date();
+	endDate.setDate(endDate.getDate() - 1); // set end date to be yesterday
+
+	for (let i = 0; i <= 30; i++) {
+		const date: Date = new Date(endDate);
+		date.setDate(endDate.getDate() - i);
+
+		const day = date.getDate();
+		const month = date.toLocaleString('default', { month: 'short' });
+		const year = date.getFullYear();
+
+		const dateValue: string = date.toDateString();
+		const dateLabel: string = `${day} ${month} ${year}`;
+		dates.push({ value: dateValue, label: dateLabel });
+	}
+
+	return dates;
+}

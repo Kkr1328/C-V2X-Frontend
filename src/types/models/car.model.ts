@@ -43,10 +43,14 @@ export interface ICar {
 export interface ICarInfo extends ICar {
 	front_cam_position: 'Front' | '';
 	front_cam_name: string;
+	front_cam_id: string;
 	back_cam_position: 'Back' | '';
 	back_cam_name: string;
+	back_cam_id: string;
 	left_cam_position: 'Left' | '';
 	left_cam_name: string;
+	left_cam_id: string;
 	right_cam_position: 'Right' | '';
 	right_cam_name: string;
+	right_cam_id: string;
 }

@@ -1,7 +1,4 @@
-// next
-import { useRouter } from 'next/navigation';
 // react
-import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 // material ui
 import { Card } from '@mui/material';
@@ -12,8 +9,6 @@ import EmergencyCard from './EmergencyCard';
 // types
 import { Emergency, EmergencyColumn } from '@/types/COMMON';
 import { IEmergency } from '@/types/models/emergency.model';
-// utilities
-import { useCarStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
 
 interface EmergencyStateProps {
 	droppableId: EmergencyColumn;
@@ -49,14 +44,14 @@ export default function EmergencyState(props: EmergencyStateProps) {
 								/>
 							</div>
 							{props.isLoading ? (
-								<div className="flex flex-col w-full min-w-max h-full pb-8 overflow-y-auto">
+								<div className="flex flex-col w-full h-full pb-8 overflow-y-auto">
 									<EmergencyCard isLoading />
 									<EmergencyCard isLoading />
 									<EmergencyCard isLoading />
 									<EmergencyCard isLoading />
 								</div>
 							) : (
-								<div className="flex flex-col w-full min-w-max h-full pb-8 overflow-y-auto">
+								<div className="flex flex-col w-full h-full pb-8 overflow-y-auto">
 									{emergenciesCount === 0 && <NoData />}
 									{props.emergencies.map((emergency, index) => {
 										return (

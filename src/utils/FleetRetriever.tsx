@@ -6,7 +6,6 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
 import { STATUS } from '@/constants/LABEL';
 import { ROUTE } from '@/constants/ROUTE';
 // types
-import { Position } from '@/types/COMMON';
 import { ICar } from '@/types/models/car.model';
 import { ICarHeartbeat, IRSUHeartbeat } from '@/types/models/heartbeat.model';
 import { IRSU } from '@/types/models/rsu.model';
@@ -15,10 +14,10 @@ import {
 	CarSpeedFleetContext,
 	HeartbeatFleetContext,
 	LocationFleetContext,
-} from '@/context/fleet';
-import { useQuery } from '@tanstack/react-query';
+} from '@/context/FleetContext';
 import { getEmergencyListAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
+import { useQuery } from '@tanstack/react-query';
 
 // --------------------------------------------- HEARTBEATS ---------------------------------------------
 export function useRSUStatus(id: string) {
@@ -61,28 +60,17 @@ export function useCarStatus(id: string) {
 	return heartbeatContextData.CAR[id]?.data.status || STATUS.INACTIVE;
 }
 
-export function useCameraStatus(position?: Position, car_id?: string) {
+export function useCameraStatus(camera_id?: string, car_id?: string) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
+	const cameraId = camera_id || '';
 	const carId = car_id || '';
-	const car = heartbeatContextData.CAR[carId]?.data;
 	const statusCar = useCarStatus(carId);
+	const cameraStatus = heartbeatContextData.CAMERA[cameraId]?.data.status;
 
-	if (!car || statusCar === STATUS.INACTIVE) {
+	if (statusCar === STATUS.INACTIVE) {
 		return STATUS.INACTIVE;
 	}
-
-	switch (position) {
-		case 'Front':
-			return car.front_camera || STATUS.INACTIVE;
-		case 'Back':
-			return car.back_camera || STATUS.INACTIVE;
-		case 'Left':
-			return car.left_camera || STATUS.INACTIVE;
-		case 'Right':
-			return car.right_camera || STATUS.INACTIVE;
-		default:
-			return STATUS.INACTIVE;
-	}
+	return cameraStatus || STATUS.INACTIVE;
 }
 
 export function useRSUsHeartbeat(rsus: IRSU[]) {
@@ -137,31 +125,40 @@ export function useCarsHeartbeat(cars: ICar[]) {
 		else
 			status = heartbeatContextData.CAR[car.id]?.data.status || STATUS.INACTIVE;
 
+		const frontCamera = car.cameras.find(
+			(camera) => camera.position === 'Front'
+		);
+		const backCamera = car.cameras.find((camera) => camera.position === 'Back');
+		const leftCamera = car.cameras.find((camera) => camera.position === 'Left');
+		const rightCamera = car.cameras.find(
+			(camera) => camera.position === 'Right'
+		);
+
 		return {
 			...car,
 			status: status,
-			front_cam: car.cameras.some((camera) => camera.position === 'Front')
+			front_cam: frontCamera
 				? status === STATUS.INACTIVE
 					? STATUS.INACTIVE
-					: heartbeatContextData.CAR[car.id]?.data.front_camera ||
+					: heartbeatContextData.CAMERA[frontCamera.id]?.data.status ||
 					  STATUS.INACTIVE
 				: STATUS.MISSING,
-			back_cam: car.cameras.some((camera) => camera.position === 'Back')
+			back_cam: backCamera
 				? status === STATUS.INACTIVE
 					? STATUS.INACTIVE
-					: heartbeatContextData.CAR[car.id]?.data.back_camera ||
+					: heartbeatContextData.CAMERA[backCamera.id]?.data.status ||
 					  STATUS.INACTIVE
 				: STATUS.MISSING,
-			left_cam: car.cameras.some((camera) => camera.position === 'Left')
+			left_cam: leftCamera
 				? status === STATUS.INACTIVE
 					? STATUS.INACTIVE
-					: heartbeatContextData.CAR[car.id]?.data.left_camera ||
+					: heartbeatContextData.CAMERA[leftCamera.id]?.data.status ||
 					  STATUS.INACTIVE
 				: STATUS.MISSING,
-			right_cam: car.cameras.some((camera) => camera.position === 'Right')
+			right_cam: rightCamera
 				? status === STATUS.INACTIVE
 					? STATUS.INACTIVE
-					: heartbeatContextData.CAR[car.id]?.data.right_camera ||
+					: heartbeatContextData.CAMERA[rightCamera.id]?.data.status ||
 					  STATUS.INACTIVE
 				: STATUS.MISSING,
 		};

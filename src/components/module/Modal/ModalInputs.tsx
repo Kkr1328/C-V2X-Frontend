@@ -40,43 +40,58 @@ export default function ModalInputs<T>(props: ModalInputsProp<T>) {
 			: '';
 	};
 
-	const frontCameraStatus = useCameraStatus(
-		'Front',
-		typeof props.data === 'object' && props.data && 'id' in props.data
-			? (props.data.id as string)
-			: ''
+	const useGetCameraStatus = (
+		camIdField: keyof typeof props.data,
+		carIdField: keyof typeof props.data
+	) => {
+		const camId =
+			typeof props.data === 'object' && props.data && camIdField in props.data
+				? (props.data[camIdField] as string)
+				: '';
+		const carId =
+			typeof props.data === 'object' && props.data && carIdField in props.data
+				? (props.data[carIdField] as string)
+				: '';
+		return useCameraStatus(camId, carId);
+	};
+
+	const frontCameraStatus = useGetCameraStatus(
+		'front_cam_id' as keyof typeof props.data,
+		'id' as keyof typeof props.data
 	);
-	const backCameraStatus = useCameraStatus(
-		'Back',
-		typeof props.data === 'object' && props.data && 'id' in props.data
-			? (props.data.id as string)
-			: ''
+	const backCameraStatus = useGetCameraStatus(
+		'back_cam_id' as keyof typeof props.data,
+		'id' as keyof typeof props.data
 	);
-	const leftCameraStatus = useCameraStatus(
-		'Left',
-		typeof props.data === 'object' && props.data && 'id' in props.data
-			? (props.data.id as string)
-			: ''
+	const leftCameraStatus = useGetCameraStatus(
+		'left_cam_id' as keyof typeof props.data,
+		'id' as keyof typeof props.data
 	);
-	const rightCameraStatus = useCameraStatus(
-		'Right',
-		typeof props.data === 'object' && props.data && 'id' in props.data
-			? (props.data.id as string)
-			: ''
+	const rightCameraStatus = useGetCameraStatus(
+		'right_cam_id' as keyof typeof props.data,
+		'id' as keyof typeof props.data
 	);
-	const carStatus = useCarStatus(
+	const carId =
 		typeof props.data === 'object' && props.data && 'car_id' in props.data
 			? (props.data.car_id as string)
-			: ''
-	);
+			: '';
+	const carStatus = useCarStatus(carId);
 
 	const getPill = (inputField: InputFieldProp<T>) => {
-		if (inputField.id === 'front_cam_name') return frontCameraStatus;
-		else if (inputField.id === 'back_cam_name') return backCameraStatus;
-		else if (inputField.id === 'left_cam_name') return leftCameraStatus;
-		else if (inputField.id === 'right_cam_name') return rightCameraStatus;
-		else if (inputField.id === 'car') return carStatus;
-		else return;
+		switch (inputField.id) {
+			case 'front_cam_name':
+				return frontCameraStatus;
+			case 'back_cam_name':
+				return backCameraStatus;
+			case 'left_cam_name':
+				return leftCameraStatus;
+			case 'right_cam_name':
+				return rightCameraStatus;
+			case 'car':
+				return carStatus;
+			default:
+				return;
+		}
 	};
 
 	const handleDataChange = (id: keyof T, value: string) => {

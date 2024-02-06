@@ -19,8 +19,8 @@ export interface ModalHeaderProp {
 export default function ModalHeader(props: ModalHeaderProp) {
 	return (
 		<div className="flex flex-row p-16 gap-16 items-center">
-			<div className="flex flex-row gap-4">
-				<Text style="text-black text-h3" content={props.title} />
+			<div className="flex flex-row gap-4 truncate">
+				<Text style="text-black text-h3" content={props.title} isTruncate />
 				{props.isLocate && (
 					<IconButton
 						disableRipple

@@ -1,18 +1,15 @@
 import { STATUS } from '@/constants/LABEL';
 
 type SPEED = { velocity: number; unit: string };
+interface FLEET_HEARTBEAT_DATA {
+	status: STATUS;
+	connected_OBU: string[];
+}
 
 export interface FLEET_HEARTBEAT {
 	id: string;
-	type: 'CAR' | 'RSU';
-	data: {
-		status: STATUS;
-		front_camera: STATUS;
-		back_camera: STATUS;
-		left_camera: STATUS;
-		right_camera: STATUS;
-		connected_OBU: string[];
-	};
+	type: 'CAR' | 'CAMERA' | 'RSU';
+	data: FLEET_HEARTBEAT_DATA;
 	timestamp: string;
 }
 

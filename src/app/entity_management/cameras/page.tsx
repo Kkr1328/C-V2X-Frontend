@@ -10,19 +10,19 @@ import { Card, Divider } from '@mui/material';
 // components
 import PageTitle from '@/components/common/PageTitle';
 import Filter from '@/components/module/Filter/Filter';
-import InputModal from '@/components/module/Modal/InputModal';
-import InfoModal from '@/components/module/Modal/InfoModal';
 import DeleteModal from '@/components/module/Modal/DeleteModal';
+import InfoModal from '@/components/module/Modal/InfoModal';
+import InputModal from '@/components/module/Modal/InputModal';
 import Table from '@/components/module/Table/Table';
 // consts
 import { BUTTON_LABEL, MODAL_LABEL, NAVBAR_LABEL } from '@/constants/LABEL';
 // types
 import { ICamera, IGetCamerasRequest } from '@/types/models/camera.model';
 // templates
-import { CameraFilterTemplate } from '@/templates/FILTER';
-import { CamerasTableTemplate } from '@/templates/ENTITY_TABLE';
-import { CameraInfoModalTemplate } from '@/templates/INFO_MODAL';
 import { CameraActionModalTemplate } from '@/templates/ACTION_MODAL';
+import { CamerasTableTemplate } from '@/templates/ENTITY_TABLE';
+import { CameraFilterTemplate } from '@/templates/FILTER';
+import { CameraInfoModalTemplate } from '@/templates/INFO_MODAL';
 // tanstack
 import { useMutation, useQuery } from '@tanstack/react-query';
 // services
@@ -35,13 +35,9 @@ import {
 } from '@/services/api-call';
 // utilities
 import { DefaultDataGenerator, OptionGenerator } from '@/utils/DataGenerator';
+import { useCameraStatus, useHandleCarLocate } from '@/utils/FleetRetriever';
 import { handleCloseModal, handleOpenModal } from '@/utils/ModalController';
 import { WindowWidthObserver } from '@/utils/WidthObserver';
-import {
-	useCameraStatus,
-	useCarStatus,
-	useHandleCarLocate,
-} from '@/utils/FleetRetriever';
 
 export default function Home() {
 	const { enqueueSnackbar } = useSnackbar();
@@ -111,7 +107,6 @@ export default function Home() {
 			});
 		},
 		onError: (error) => {
-			console.log(error);
 			enqueueSnackbar(`Fail to update a Camera : ${error.message}`, {
 				variant: 'error',
 			});
@@ -174,10 +169,7 @@ export default function Home() {
 				onOpenChange={setOpenInformModal}
 				data={informModalData}
 				onDataChange={setInformModalData}
-				headerPill={useCameraStatus(
-					informModalData.position,
-					informModalData.car_id
-				)}
+				headerPill={useCameraStatus(informModalData.id, informModalData.car_id)}
 				isBodyLocate
 				handleBodyLocate={useHandleCarLocate(router, informModalData.car_id)}
 				isCompact={isUseCompactModal}
@@ -211,7 +203,7 @@ export default function Home() {
 			/>
 			<div className="flex flex-col w-full h-auto gap-16">
 				<PageTitle title={NAVBAR_LABEL.CAMERAS} />
-				<Card className="flex flex-col gap-16 w-full min-w-[400px] h-auto rounded-lg px-32 py-24">
+				<Card className="flex flex-col gap-16 w-full min-w-[400px] h-auto min-h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Filter
 						template={CameraFilterTemplate}
 						handleSubmitSearch={refetchGetCameras}
