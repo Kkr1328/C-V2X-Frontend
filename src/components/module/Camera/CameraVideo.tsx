@@ -60,15 +60,17 @@ export default function CameraVideo(props: CameraVideoProps) {
 
 	useEffect(() => {
 		if (!connection && props.cameraId) {
-			const connectionName = `${props.cameraId}${
-				props.size === 'large' && '_modal'
-			}`;
-			const newConnection = rtcConnection[connectionName];
-
-			newConnection.videosContainer =
+			const connectionName =
+				props.size === 'large'
+					? `${props.cameraId}_modal`
+					: (props.cameraId as string);
+			setConnection(rtcConnection[connectionName]);
+		}
+		if (!props.isDisabled && connection) {
+			connection.videosContainer =
 				document.getElementById('videos-container') ?? document.body;
 
-			newConnection.onstream = function (event) {
+			connection.onstream = function (event) {
 				var existing = document.getElementById(event.streamid);
 				if (existing && existing.parentNode) {
 					existing.parentNode.removeChild(existing);
@@ -79,30 +81,6 @@ export default function CameraVideo(props: CameraVideoProps) {
 				event.mediaElement.volume = 0;
 				setStream(event.stream);
 			};
-
-			newConnection.onstreamended = function (event) {
-				var mediaElement = document.getElementById(event.streamid);
-				if (mediaElement) {
-					if (mediaElement.parentNode) {
-						mediaElement.parentNode.removeChild(mediaElement);
-					}
-					if (
-						event.userid === newConnection.sessionid &&
-						!newConnection.isInitiator
-					) {
-						alert(
-							'Broadcast is ended. We will reload this page to clear the cache.'
-						);
-						window.location.reload();
-					}
-				}
-			};
-			newConnection.onMediaError = function (e) {
-				newConnection.join(newConnection.sessionid);
-			};
-			setConnection(newConnection);
-		}
-		if (!props.isDisabled && connection) {
 			connection.join(`Room${props.carID}${props.cameraId}`);
 		}
 	}, [connection, props.isDisabled]);
