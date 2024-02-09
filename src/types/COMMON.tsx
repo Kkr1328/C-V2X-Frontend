@@ -14,6 +14,7 @@ export const StatusDotType = [
 export type InputType =
 	| 'NoSpace'
 	| 'Number'
+	| 'Coordination'
 	| 'Password'
 	| 'ConfirmedPassword'
 	| 'PhoneNo'

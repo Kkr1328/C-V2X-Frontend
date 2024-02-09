@@ -99,4 +99,14 @@ export const RSUInfoModalTemplate: InputFieldProp<IRSU>[] = [
 		type: 'TextField',
 		isSpan: true,
 	},
+	{
+		id: 'latitude',
+		label: INPUT_LABEL.LATITUDE,
+		type: 'TextField',
+	},
+	{
+		id: 'longitude',
+		label: INPUT_LABEL.LONGITUDE,
+		type: 'TextField',
+	},
 ];

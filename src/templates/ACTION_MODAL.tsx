@@ -136,4 +136,20 @@ export const RSUActionModalTemplate: InputFieldProp<IRSU>[] = [
 		isRequired: true,
 		inputType: 'Number',
 	},
+	{
+		id: 'latitude',
+		label: INPUT_LABEL.LATITUDE,
+		type: 'TextField',
+		placeholder: 'ex. -10.1',
+		isRequired: true,
+		inputType: 'Coordination',
+	},
+	{
+		id: 'longitude',
+		label: INPUT_LABEL.LONGITUDE,
+		type: 'TextField',
+		placeholder: 'ex. -10.1',
+		isRequired: true,
+		inputType: 'Coordination',
+	},
 ];
