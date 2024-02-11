@@ -1,9 +1,10 @@
 import React from 'react';
 import labels from "./labels.json";
 
-interface Box {
+export interface Box {
   label: number;
   probability: number;
+  label_number: number;
   bounding: [number, number, number, number];
 }
 
@@ -40,9 +41,13 @@ const RenderBoxes: React.FC<RenderBoxesProps> = ({ canvas, boxes }) => {
   ctx.textBaseline = "top";
 
   boxes.forEach((box) => {
-    const klass = labels[box.label];
-    const color = colors.get(box.label);
+    // console.log(box)
+    // const klass = labels[box.label];
+    const klass = box.label
+    const color = colors.get(box.label_number);
     const score = (box.probability * 100).toFixed(1);
+    // console.log(klass, score, color)
+
     const [x1Norm, y1Norm, widthNorm, heightNorm] = box.bounding;
     const [x1, y1, width, height] = [x1Norm*canvasWidth, y1Norm*canvasHeight, widthNorm*canvasWidth, heightNorm*canvasHeight]
 
