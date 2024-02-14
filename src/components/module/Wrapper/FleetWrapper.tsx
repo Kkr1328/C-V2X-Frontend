@@ -101,10 +101,10 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 					? carLocationTimers
 					: rsuLocationTimers
 				: dataType === 'heartbeat'
-				? type === 'CAR'
-					? carHeartbeatTimers
-					: rsuHeartbeatTimers
-				: carSpeedTimers;
+					? type === 'CAR'
+						? carHeartbeatTimers
+						: rsuHeartbeatTimers
+					: carSpeedTimers;
 		timers[id] = setTimeout(() => {
 			setInactive(id, type, dataType);
 		}, 5000);
@@ -134,6 +134,7 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 						data: {
 							...prev[type][id]?.data,
 							status: convertFleetStatusToFormat(heartbeat.data.status),
+							connected_OBU: heartbeat.data.connected_OBU ?? [],
 						},
 					},
 				},
