@@ -76,7 +76,7 @@ export default function CarCard(props: CarCardProps) {
 				<div className="flex flex-row gap-16 items-center">
 					<div className="flex flex-row gap-8 items-center truncate">
 						<Image
-							src={`${MAP_ASSETS.CAR_PROFILE}${status}.svg`}
+							src={`${MAP_ASSETS.CAR_PROFILE}${status?.toUpperCase()}.svg`}
 							alt={'Car Profile'}
 							width={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
 							height={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}

@@ -34,7 +34,7 @@ export default function RSUPin(props: RSUPinProps) {
 			/>
 			<Marker
 				icon={{
-					url: `${MAP_ASSETS.RSU_PIN}${status}.svg`,
+					url: `${MAP_ASSETS.RSU_PIN}${status?.toUpperCase()}.svg`,
 					scaledSize: props.isFocus
 						? new google.maps.Size(
 								MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
