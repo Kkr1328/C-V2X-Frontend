@@ -25,7 +25,7 @@ export default function CarPin(props: CarPinProps) {
 	return (
 		<Marker
 			icon={{
-				url: `${MAP_ASSETS.CAR_PIN}${status}.svg`,
+				url: `${MAP_ASSETS.CAR_PIN}${status?.toUpperCase()}.svg`,
 				scaledSize: props.isFocus
 					? new google.maps.Size(
 							MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
