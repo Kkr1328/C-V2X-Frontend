@@ -8,10 +8,10 @@ export interface IUpdateRSUQuery {
 export interface IDeleteRSUQuery extends IQuerry {}
 
 export interface IRSURequest {
-	name: string;
-	recommended_speed: string;
-	latitude: string;
-	longitude: string;
+	name?: string;
+	recommended_speed?: string;
+	latitude?: string;
+	longitude?: string;
 }
 
 export interface IGetRSUsRequest {

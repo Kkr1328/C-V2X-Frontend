@@ -1,26 +1,23 @@
-import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import { STATUS } from '@/constants/LABEL';
 import {
-	HeartbeatFleetContext,
 	CarSpeedFleetContext,
+	HeartbeatFleetContext,
 	LocationFleetContext,
 } from '@/context/FleetContext';
+import { RTCConnectionContext } from '@/context/RTCConnectionContext';
+import { getCamerasAPI } from '@/services/api-call';
 import {
 	FLEET_CAR_SPEED,
 	FLEET_HEARTBEAT,
 	FLEET_LOCATION,
 } from '@/types/FLEET';
-import { STATUS } from '@/constants/LABEL';
-import RTCMultiConnection from 'rtcmulticonnection';
-import { useQuery } from '@tanstack/react-query';
-import { getCamerasAPI } from '@/services/api-call';
-import { ICar } from '@/types/models/car.model';
-import { CameraType } from '@/types/ENTITY';
-import { convertFleetStatusToFormat } from '@/utils/StringFormat';
-import { IResponseList } from '@/types/common/responseList.model';
-import { RTCConnectionContext } from '@/context/RTCConnectionContext';
 import { ICamera } from '@/types/models/camera.model';
 import { generateRTCConnection } from '@/utils/RTCConnectionGenerator';
+import { convertFleetStatusToFormat } from '@/utils/StringFormat';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import RTCMultiConnection from 'rtcmulticonnection';
+import { io } from 'socket.io-client';
 
 export default function FleetWrapper(props: { children: React.ReactNode }) {
 	// query
@@ -192,24 +189,24 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 				cameras.forEach((camera: ICamera) => {
 					const connection = rtcConnection[camera.id];
 					if (connection) {
-						connection.checkPresence(
-							`Room${camera.car_id}${camera.id}`,
-							(isRoomExist) => {
-								setHeartbeatData((prevData) => ({
-									...prevData,
-									CAMERA: {
-										...prevData.CAMERA,
-										[camera.id]: {
-											...prevData.CAMERA[camera.id],
-											data: {
-												...prevData.CAMERA[camera.id]?.data,
-												status: isRoomExist ? STATUS.ACTIVE : STATUS.INACTIVE,
-											},
-										},
-									},
-								}));
-							}
-						);
+						// connection.checkPresence(
+						// 	`Room${camera.car_id}${camera.id}`,
+						// 	(isRoomExist) => {
+						// 		setHeartbeatData((prevData) => ({
+						// 			...prevData,
+						// 			CAMERA: {
+						// 				...prevData.CAMERA,
+						// 				[camera.id]: {
+						// 					...prevData.CAMERA[camera.id],
+						// 					data: {
+						// 						...prevData.CAMERA[camera.id]?.data,
+						// 						status: isRoomExist ? STATUS.ACTIVE : STATUS.INACTIVE,
+						// 					},
+						// 				},
+						// 			},
+						// 		}));
+						// 	}
+						// );
 					}
 				});
 			}

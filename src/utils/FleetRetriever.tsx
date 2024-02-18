@@ -15,7 +15,7 @@ import {
 	HeartbeatFleetContext,
 	LocationFleetContext,
 } from '@/context/FleetContext';
-import { getEmergencyListAPI } from '@/services/api-call';
+import { getEmergencyListAPI, getRSUAPI } from '@/services/api-call';
 import { IEmergency } from '@/types/models/emergency.model';
 import { useQuery } from '@tanstack/react-query';
 
@@ -167,15 +167,27 @@ export function useCarsHeartbeat(cars: ICar[]) {
 
 // --------------------------------------------- LOCATIONS ---------------------------------------------
 export function useRSULocation(id: string) {
+	if (!id) return;
+
 	const [locationContextData] = useContext(LocationFleetContext);
 	const location = locationContextData.RSU[id];
 	const statusRSU = useRSUStatus(id);
 
-	if (statusRSU === STATUS.INACTIVE || !location) return;
+	const { data: rsu } = useQuery({
+		queryKey: ['getRSU', id],
+		queryFn: async () => await getRSUAPI({ id }),
+	});
+
+	if (!rsu && statusRSU === STATUS.INACTIVE) return;
+
+	if (statusRSU === STATUS.INACTIVE)
+		return { lat: parseFloat(rsu?.latitude), lng: parseFloat(rsu?.longitude) };
+
+	if (!location) return;
 
 	return {
-		lat: location.latitude,
-		lng: location.longitude,
+		lat: location?.latitude,
+		lng: location?.longitude,
 	};
 }
 
