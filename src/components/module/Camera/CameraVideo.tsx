@@ -1,14 +1,13 @@
 'use client';
 import { useContext, useEffect, useRef, useState } from 'react';
 import RTCMultiConnection from 'rtcmulticonnection';
-import {Box} from '@/utils/renderBox';
+import { Box } from '@/utils/renderBox';
 import { io, Socket } from 'socket.io-client';
 import RenderBoxes from '@/utils/renderBox';
 import IconMapper from '@/utils/IconMapper';
 import { BUTTON_LABEL } from '@/constants/LABEL';
 import Loading from '../../common/Loading';
 import { RTCConnectionContext } from '@/context/RTCConnectionContext';
-
 
 function generateRandomUID() {
 	const timestamp = new Date().getTime().toString(36);

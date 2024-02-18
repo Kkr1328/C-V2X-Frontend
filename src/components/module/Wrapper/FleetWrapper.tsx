@@ -98,10 +98,10 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 					? carLocationTimers
 					: rsuLocationTimers
 				: dataType === 'heartbeat'
-					? type === 'CAR'
-						? carHeartbeatTimers
-						: rsuHeartbeatTimers
-					: carSpeedTimers;
+				? type === 'CAR'
+					? carHeartbeatTimers
+					: rsuHeartbeatTimers
+				: carSpeedTimers;
 		timers[id] = setTimeout(() => {
 			setInactive(id, type, dataType);
 		}, 5000);
@@ -190,24 +190,24 @@ export default function FleetWrapper(props: { children: React.ReactNode }) {
 				cameras.forEach((camera: ICamera) => {
 					const connection = rtcConnection[camera.id];
 					if (connection) {
-						// connection.checkPresence(
-						// 	`Room${camera.car_id}${camera.id}`,
-						// 	(isRoomExist) => {
-						// 		setHeartbeatData((prevData) => ({
-						// 			...prevData,
-						// 			CAMERA: {
-						// 				...prevData.CAMERA,
-						// 				[camera.id]: {
-						// 					...prevData.CAMERA[camera.id],
-						// 					data: {
-						// 						...prevData.CAMERA[camera.id]?.data,
-						// 						status: isRoomExist ? STATUS.ACTIVE : STATUS.INACTIVE,
-						// 					},
-						// 				},
-						// 			},
-						// 		}));
-						// 	}
-						// );
+						connection.checkPresence(
+							`Room${camera.car_id}${camera.id}`,
+							(isRoomExist) => {
+								setHeartbeatData((prevData) => ({
+									...prevData,
+									CAMERA: {
+										...prevData.CAMERA,
+										[camera.id]: {
+											...prevData.CAMERA[camera.id],
+											data: {
+												...prevData.CAMERA[camera.id]?.data,
+												status: isRoomExist ? STATUS.ACTIVE : STATUS.INACTIVE,
+											},
+										},
+									},
+								}));
+							}
+						);
 					}
 				});
 			}
