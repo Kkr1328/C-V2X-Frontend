@@ -167,19 +167,15 @@ export function useCarsHeartbeat(cars: ICar[]) {
 
 // --------------------------------------------- LOCATIONS ---------------------------------------------
 export function useRSULocation(id: string) {
-	if (!id) return;
-
-	const [locationContextData] = useContext(LocationFleetContext);
-	const location = locationContextData.RSU[id];
-	const statusRSU = useRSUStatus(id);
-
 	const { data: rsu } = useQuery({
 		queryKey: ['getRSU', id],
 		queryFn: async () => await getRSUAPI({ id }),
 	});
+	const [locationContextData] = useContext(LocationFleetContext);
+	const location = locationContextData.RSU[id];
+	const statusRSU = useRSUStatus(id);
 
 	if (!rsu && statusRSU === STATUS.INACTIVE) return;
-
 	if (statusRSU === STATUS.INACTIVE)
 		return { lat: parseFloat(rsu?.latitude), lng: parseFloat(rsu?.longitude) };
 
