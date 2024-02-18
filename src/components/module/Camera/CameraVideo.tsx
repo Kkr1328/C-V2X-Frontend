@@ -37,8 +37,12 @@ export default function CameraVideo(props: CameraVideoProps) {
 	useEffect(() => {
 		if (!socket && canvasRef.current && connection) {
 			const newSocket = io(
-				process.env.NEXT_PUBLIC_API_CAM_URI || '<API-CAM-URL>'
-			) as Socket;
+				process.env.NEXT_PUBLIC_WEB_SOCKET_URL || '<API-CAM-URL>',
+				{
+					transports: ['websocket'],
+				}
+			);
+			console.log(process.env.NEXT_PUBLIC_API_CAM_URI);
 			newSocket.emit('control center connecting', {
 				roomID: connection.sessionid,
 			});

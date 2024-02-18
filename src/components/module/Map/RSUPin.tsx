@@ -19,7 +19,7 @@ export default function RSUPin(props: RSUPinProps) {
 	const location = useRSULocation(id) as google.maps.LatLngLiteral;
 	const status = useRSUStatus(id);
 
-	if (!location || !status || status === STATUS.INACTIVE) return;
+	if (!location || !status) return;
 
 	return (
 		<>
@@ -34,7 +34,7 @@ export default function RSUPin(props: RSUPinProps) {
 			/>
 			<Marker
 				icon={{
-					url: MAP_ASSETS.RSU_PIN,
+					url: `${MAP_ASSETS.RSU_PIN}${status}.svg`,
 					scaledSize: props.isFocus
 						? new google.maps.Size(
 								MAP_OBJECT_CONFIG.FOCUS_PIN_SIZE,
