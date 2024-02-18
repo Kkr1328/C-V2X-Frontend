@@ -136,6 +136,18 @@ export const RSUsTableTemplate: TableHeaderProps<IRSU>[] = [
 		isSorted: true,
 	},
 	{
+		id: 'latitude',
+		label: INPUT_LABEL.LATITUDE,
+		align: 'left',
+		isSorted: true,
+	},
+	{
+		id: 'longitude',
+		label: INPUT_LABEL.LONGITUDE,
+		align: 'left',
+		isSorted: true,
+	},
+	{
 		id: 'action',
 		label: INPUT_LABEL.ACTION,
 		align: 'center',

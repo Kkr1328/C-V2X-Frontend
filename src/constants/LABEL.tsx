@@ -36,6 +36,8 @@ export enum INPUT_LABEL {
 	RECOMENDED_SPEED = 'Recommended Speed (km/h)',
 	ACTION = 'Action',
 	DATE = 'Date',
+	LATITUDE = 'Latitude',
+	LONGITUDE = 'Longitude',
 }
 
 export enum BUTTON_LABEL {

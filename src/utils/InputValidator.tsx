@@ -3,6 +3,7 @@ import { InputFieldProp } from '@/types/COMMON';
 
 const noSpaceRegex = /^\S*$/;
 const numberRegex = /^[0-9]+$/;
+const coordinationRegex = /^-?\d+(?:\.\d+)?$/;
 const passwordRegex = /^(?=\S{8,}$).*/;
 const phoneNoRegex = /^(\d{3}-\d{3}-\d{4})$/;
 
@@ -27,6 +28,12 @@ export function InputValidator<T>(
 		case 'Number':
 			if (!numberRegex.test(data)) {
 				return `${label} should be a valid number`;
+			}
+			break;
+
+		case 'Coordination':
+			if (!coordinationRegex.test(data)) {
+				return `${label} should be a coordinate number`;
 			}
 			break;
 

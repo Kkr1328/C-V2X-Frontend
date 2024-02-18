@@ -160,6 +160,18 @@ export const RSUFilterTemplate: InputFieldProp<IGetRSUsRequest>[] = [
 		id: 'recommended_speed',
 		label: INPUT_LABEL.RECOMENDED_SPEED,
 		type: 'TextField',
-		placeholder: '50',
+		placeholder: 'ex. 50',
+	},
+	{
+		id: 'latitude',
+		label: INPUT_LABEL.LATITUDE,
+		type: 'TextField',
+		placeholder: 'ex. -10.1',
+	},
+	{
+		id: 'longitude',
+		label: INPUT_LABEL.LONGITUDE,
+		type: 'TextField',
+		placeholder: 'ex. -10.1',
 	},
 ];

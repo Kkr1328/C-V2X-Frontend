@@ -1,19 +1,13 @@
 'use client';
 import { useContext, useEffect, useRef, useState } from 'react';
 import RTCMultiConnection from 'rtcmulticonnection';
-import { Box } from '@mui/material';
+import { Box } from '@/utils/renderBox';
 import { io, Socket } from 'socket.io-client';
 import RenderBoxes from '@/utils/renderBox';
 import IconMapper from '@/utils/IconMapper';
 import { BUTTON_LABEL } from '@/constants/LABEL';
 import Loading from '../../common/Loading';
 import { RTCConnectionContext } from '@/context/RTCConnectionContext';
-
-interface Box {
-	label: number;
-	probability: number;
-	bounding: [number, number, number, number];
-}
 
 function generateRandomUID() {
 	const timestamp = new Date().getTime().toString(36);
@@ -42,8 +36,12 @@ export default function CameraVideo(props: CameraVideoProps) {
 	useEffect(() => {
 		if (!socket && canvasRef.current && connection) {
 			const newSocket = io(
-				process.env.NEXT_PUBLIC_API_CAM_URI || '<API-CAM-URL>'
-			) as Socket;
+				process.env.NEXT_PUBLIC_WEB_SOCKET_URL || '<API-CAM-URL>',
+				{
+					transports: ['websocket'],
+				}
+			);
+			console.log(process.env.NEXT_PUBLIC_API_CAM_URI);
 			newSocket.emit('control center connecting', {
 				roomID: connection.sessionid,
 			});
@@ -52,6 +50,7 @@ export default function CameraVideo(props: CameraVideoProps) {
 
 		if (socket)
 			socket.on('send object detection', (boxes: Array<Box>) => {
+				// console.log(boxes)
 				if (canvasRef.current) {
 					RenderBoxes({ canvas: canvasRef.current, boxes: boxes });
 				}
@@ -60,15 +59,17 @@ export default function CameraVideo(props: CameraVideoProps) {
 
 	useEffect(() => {
 		if (!connection && props.cameraId) {
-			const connectionName = `${props.cameraId}${
-				props.size === 'large' && '_modal'
-			}`;
-			const newConnection = rtcConnection[connectionName];
-
-			newConnection.videosContainer =
+			const connectionName =
+				props.size === 'large'
+					? `${props.cameraId}_modal`
+					: (props.cameraId as string);
+			setConnection(rtcConnection[connectionName]);
+		}
+		if (!props.isDisabled && connection) {
+			connection.videosContainer =
 				document.getElementById('videos-container') ?? document.body;
 
-			newConnection.onstream = function (event) {
+			connection.onstream = function (event) {
 				var existing = document.getElementById(event.streamid);
 				if (existing && existing.parentNode) {
 					existing.parentNode.removeChild(existing);
@@ -79,30 +80,6 @@ export default function CameraVideo(props: CameraVideoProps) {
 				event.mediaElement.volume = 0;
 				setStream(event.stream);
 			};
-
-			newConnection.onstreamended = function (event) {
-				var mediaElement = document.getElementById(event.streamid);
-				if (mediaElement) {
-					if (mediaElement.parentNode) {
-						mediaElement.parentNode.removeChild(mediaElement);
-					}
-					if (
-						event.userid === newConnection.sessionid &&
-						!newConnection.isInitiator
-					) {
-						alert(
-							'Broadcast is ended. We will reload this page to clear the cache.'
-						);
-						window.location.reload();
-					}
-				}
-			};
-			newConnection.onMediaError = function (e) {
-				newConnection.join(newConnection.sessionid);
-			};
-			setConnection(newConnection);
-		}
-		if (!props.isDisabled && connection) {
 			connection.join(`Room${props.carID}${props.cameraId}`);
 		}
 	}, [connection, props.isDisabled]);
