@@ -76,11 +76,12 @@ export default function FleetDeviceCards(props: FleetDeviceCardsProps) {
 			(car) => car.status === STATUS.EMERGENCY
 		).length === 0;
 	const isNoData =
-		pillMode === STATUS.ALL
+		props.focus?.type === 'CAR' &&
+		(pillMode === STATUS.ALL
 			? isNoActiveCars
 			: pillMode === STATUS.WARNING
 			? isNoWarningCars
-			: pillMode === STATUS.EMERGENCY && isNoEmergencyCars;
+			: pillMode === STATUS.EMERGENCY && isNoEmergencyCars);
 
 	return (
 		<div className="flex flex-col w-full h-full gap-16">
