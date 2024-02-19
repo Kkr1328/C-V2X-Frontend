@@ -50,7 +50,6 @@ export default function CarCard(props: CarCardProps) {
 		!car ||
 		!status ||
 		status === STATUS.INACTIVE ||
-		!speed ||
 		(status !== props.pillMode && props.pillMode !== STATUS.ALL)
 	)
 		return;

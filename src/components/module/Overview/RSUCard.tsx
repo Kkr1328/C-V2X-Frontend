@@ -18,6 +18,7 @@ import {
 	useCarSpeed,
 	useCarStatus,
 	useConnectedCars,
+	useRSUStatus,
 } from '@/utils/FleetRetriever';
 
 interface RSUCardProps {
@@ -35,6 +36,8 @@ export default function RSUCard(props: RSUCardProps) {
 		queryFn: async () => await getCarsListAPI(),
 	});
 
+	const status = useRSUStatus(props.id);
+
 	const connectedCar =
 		useConnectedCars(props.id)?.map((carId) => ({
 			id: carId,
@@ -47,7 +50,7 @@ export default function RSUCard(props: RSUCardProps) {
 		<Card className="bg-light_background_grey rounded-lg py-12 flex flex-col gap-8">
 			<div className="flex flex-row gap-8 items-center px-16 truncate">
 				<Image
-					src={MAP_ASSETS.RSU_PROFILE}
+					src={`${MAP_ASSETS.RSU_PROFILE}${status?.toUpperCase()}.svg`}
 					alt={'RSU profile'}
 					width={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
 					height={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
