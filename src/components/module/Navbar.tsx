@@ -94,12 +94,12 @@ export default function Navbar() {
 							route: ROUTE.CARS,
 						},
 						{
-							label: NAVBAR_LABEL.DRIVERS,
-							route: ROUTE.DRIVERS,
-						},
-						{
 							label: NAVBAR_LABEL.CAMERAS,
 							route: ROUTE.CAMERAS,
+						},
+						{
+							label: NAVBAR_LABEL.DRIVERS,
+							route: ROUTE.DRIVERS,
 						},
 						{
 							label: NAVBAR_LABEL.RSUS,
