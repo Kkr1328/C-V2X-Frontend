@@ -78,7 +78,9 @@ function CarDetail({ id, name }: { id: string; name: string }) {
 		<div key={name} className="flex flex-row items-center px-16">
 			<div className="flex flex-row gap-8 w-3/5 items-center truncate">
 				<Image
-					src={`${MAP_ASSETS.CAR_PROFILE}${useCarStatus(id)}.svg`}
+					src={`${MAP_ASSETS.CAR_PROFILE}${useCarStatus(
+						id
+					)?.toUpperCase()}.svg`}
 					alt={'Car Profile'}
 					width={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
 					height={MAP_OBJECT_CONFIG.IMAGE_PROFILE_SIZE}
