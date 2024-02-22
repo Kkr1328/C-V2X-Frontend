@@ -49,7 +49,13 @@ export function useCarStatus(id: string) {
 		pendingEmergency?.some((emergency: IEmergency) => emergency.car_id === id)
 	)
 		return STATUS.EMERGENCY;
-	if (!locationContextData.CAR[id] || !speedContextData[id])
+	if (
+		!locationContextData.CAR[id] ||
+		!locationContextData.CAR[id]?.latitude ||
+		!locationContextData.CAR[id]?.longitude ||
+		!speedContextData[id] ||
+		!speedContextData[id]?.velocity
+	)
 		return STATUS.WARNING;
 	return heartbeatContextData.CAR[id]?.data.status || STATUS.INACTIVE;
 }
@@ -108,7 +114,13 @@ export function useCarsHeartbeat(cars: ICar[]) {
 			)
 		)
 			status = STATUS.EMERGENCY;
-		else if (!locationContextData.CAR[car.id] || !speedContextData[car.id])
+		else if (
+			!locationContextData.CAR[car.id] ||
+			!locationContextData.CAR[car.id]?.latitude ||
+			!locationContextData.CAR[car.id]?.longitude ||
+			!speedContextData[car.id] ||
+			!speedContextData[car.id]?.velocity
+		)
 			status = STATUS.WARNING;
 		else
 			status = heartbeatContextData.CAR[car.id]?.data.status || STATUS.INACTIVE;
