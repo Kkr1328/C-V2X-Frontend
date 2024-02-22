@@ -14,8 +14,10 @@ import NoData from '@/components/common/NoData';
 import TableEntityActionButtonsCell, {
 	TableEntityActionButtonsCellProp,
 } from './TableEntityActionButtonsCell';
-import TableHeartbeatActionButtonsCell, {
+import {
+	TableCarHeartbeatActionButtonsCell,
 	TableHeartbeatActionButtonsCellProp,
+	TableRSUHeartbeatActionButtonsCell,
 } from './TableHeartbeatActionButtonsCell';
 import TableHeaderCell from './TableHeaderCell';
 import TableStatusCell from './TableStatusCell';
@@ -62,12 +64,23 @@ export default function TableContent<T extends TableRowProps>(
 												align={column.align}
 											/>
 										) : column.id === 'heartbeat_action' ? (
-											<TableHeartbeatActionButtonsCell
-												{...props}
-												row={row}
-												align={column.align}
-												id={(row as T).id as string}
-											/>
+											props.columns[0].label === 'RSU' ? (
+												<TableRSUHeartbeatActionButtonsCell
+													{...props}
+													row={row}
+													align={column.align}
+													id={(row as T).id as string}
+												/>
+											) : (
+												props.columns[0].label === 'Car' && (
+													<TableCarHeartbeatActionButtonsCell
+														{...props}
+														row={row}
+														align={column.align}
+														id={(row as T).id as string}
+													/>
+												)
+											)
 										) : column.id === 'status' ||
 										  column.id === 'front_cam' ||
 										  column.id === 'back_cam' ||

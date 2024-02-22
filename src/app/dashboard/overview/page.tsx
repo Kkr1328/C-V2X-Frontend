@@ -45,10 +45,10 @@ export default function Home() {
 
 	const [focus, setFocus] = useState<FocusState | null>(null);
 	const focusCarLoc = useCarLocation(
-		focus?.id ?? ''
+		focus?.type === 'CAR' ? focus?.id ?? '' : ''
 	) as google.maps.LatLngLiteral;
 	const focusRSULoc = useRSULocation(
-		focus?.id ?? ''
+		focus?.type === 'RSU' ? focus?.id ?? '' : ''
 	) as google.maps.LatLngLiteral;
 
 	useEffect(() => {

@@ -22,14 +22,8 @@ import { useQuery } from '@tanstack/react-query';
 // --------------------------------------------- HEARTBEATS ---------------------------------------------
 export function useRSUStatus(id: string) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
-	const [locationContextData] = useContext(LocationFleetContext);
 
-	if (
-		!heartbeatContextData.RSU[id] ||
-		heartbeatContextData.RSU[id]?.data.status === STATUS.INACTIVE
-	)
-		return STATUS.INACTIVE;
-	if (!locationContextData.RSU[id]) return STATUS.WARNING;
+	if (!heartbeatContextData.RSU[id]) return STATUS.INACTIVE;
 	return heartbeatContextData.RSU[id]?.data.status || STATUS.INACTIVE;
 }
 
@@ -75,16 +69,10 @@ export function useCameraStatus(camera_id?: string, car_id?: string) {
 
 export function useRSUsHeartbeat(rsus: IRSU[]) {
 	const [heartbeatContextData] = useContext(HeartbeatFleetContext);
-	const [locationContextData] = useContext(LocationFleetContext);
 
 	return rsus.map((rsu: IRSU): IRSUHeartbeat => {
 		let status;
-		if (
-			!heartbeatContextData.RSU[rsu.id] ||
-			heartbeatContextData.RSU[rsu.id]?.data.status === STATUS.INACTIVE
-		)
-			status = STATUS.INACTIVE;
-		else if (!locationContextData.RSU[rsu.id]) status = STATUS.WARNING;
+		if (!heartbeatContextData.RSU[rsu.id]) status = STATUS.INACTIVE;
 		else
 			status = heartbeatContextData.RSU[rsu.id]?.data.status || STATUS.INACTIVE;
 		return {
@@ -169,21 +157,33 @@ export function useCarsHeartbeat(cars: ICar[]) {
 export function useRSULocation(id: string) {
 	const { data: rsu } = useQuery({
 		queryKey: ['getRSU', id],
-		queryFn: async () => await getRSUAPI({ id }),
+		queryFn: async () => {
+			if (id && id !== '') {
+				const response = await getRSUAPI({ id });
+				return response as IRSU;
+			}
+			return {} as IRSU;
+		},
 	});
 	const [locationContextData] = useContext(LocationFleetContext);
-	const location = locationContextData.RSU[id];
+	const location = locationContextData.RSU[id || ''];
 	const statusRSU = useRSUStatus(id);
 
-	if (!rsu && statusRSU === STATUS.INACTIVE) return;
-	if (statusRSU === STATUS.INACTIVE)
-		return { lat: parseFloat(rsu?.latitude), lng: parseFloat(rsu?.longitude) };
-
-	if (!location) return;
+	if (!rsu) return;
+	if (
+		statusRSU === STATUS.INACTIVE ||
+		!location ||
+		!location.latitude ||
+		!location.longitude
+	)
+		return {
+			lat: parseFloat((rsu as IRSU).latitude),
+			lng: parseFloat((rsu as IRSU).longitude),
+		};
 
 	return {
-		lat: location?.latitude,
-		lng: location?.longitude,
+		lat: location.latitude,
+		lng: location.longitude,
 	};
 }
 
@@ -192,7 +192,13 @@ export function useCarLocation(id: string) {
 	const location = locationContextData.CAR[id];
 	const statusCar = useCarStatus(id);
 
-	if (statusCar === STATUS.INACTIVE || location === undefined) return;
+	if (
+		statusCar === STATUS.INACTIVE ||
+		!location ||
+		!location.latitude ||
+		!location.longitude
+	)
+		return;
 
 	return {
 		lat: location.latitude,
@@ -232,5 +238,12 @@ export function useConnectedCars(id: string) {
 
 	if (!heartbeatContextData.RSU[id]) return [];
 
-	return heartbeatContextData.RSU[id]?.data.connected_OBU;
+	const connectedCars = heartbeatContextData.RSU[id]?.data.connected_OBU || [];
+	const onlineConnectedCars = connectedCars.filter(
+		(car_id) =>
+			heartbeatContextData.CAR[car_id] &&
+			heartbeatContextData.CAR[car_id]?.data.status !== STATUS.INACTIVE
+	);
+
+	return onlineConnectedCars;
 }

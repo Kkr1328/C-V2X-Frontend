@@ -50,14 +50,22 @@ export default function SummaryCards(props: SummaryCardsProps) {
 	const activeCar = useMemo(
 		() =>
 			Object.entries(heartbeatContextData.CAR).filter(([_key, value]) => {
-				return value && value.data.status !== STATUS.INACTIVE;
+				return (
+					value &&
+					value.data.status !== STATUS.INACTIVE &&
+					carsList?.some((car) => car.id === _key)
+				);
 			}).length,
 		[heartbeatContextData.CAR]
 	);
 	const activeRSU = useMemo(
 		() =>
 			Object.entries(heartbeatContextData.RSU).filter(([_key, value]) => {
-				return value && value.data.status === STATUS.ACTIVE;
+				return (
+					value &&
+					value.data.status === STATUS.ACTIVE &&
+					rsusList?.some((rsu) => rsu.id === _key)
+				);
 			}).length,
 		[heartbeatContextData.RSU]
 	);

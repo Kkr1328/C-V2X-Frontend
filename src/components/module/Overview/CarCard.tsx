@@ -49,6 +49,7 @@ export default function CarCard(props: CarCardProps) {
 	if (
 		!car ||
 		!status ||
+		!location ||
 		status === STATUS.INACTIVE ||
 		(status !== props.pillMode && props.pillMode !== STATUS.ALL)
 	)
