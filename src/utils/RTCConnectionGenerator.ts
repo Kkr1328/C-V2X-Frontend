@@ -2,7 +2,7 @@ import RTCMultiConnection from 'rtcmulticonnection';
 
 export function generateRTCConnection(): RTCMultiConnection {
 	const newConnection = new RTCMultiConnection();
-	newConnection.socketURL = process.env.NEXT_PUBLIC_API_CAM_URI as string;
+	newConnection.socketURL = process.env.NEXT_PUBLIC_WEB_SOCKET_URL as string;
 	newConnection.enableLogs = false;
 	newConnection.socketMessageEvent = 'video-broadcast-demo';
 	newConnection.session = {
