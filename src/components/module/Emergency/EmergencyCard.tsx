@@ -56,7 +56,7 @@ export default function EmergencyCard(props: EmeregncyCardProps) {
 							props.state === 'PENDING'
 								? 'border-error_red'
 								: props.state === 'IN PROGRESS'
-								? 'border-warning_yellow'
+								? 'border-primary_blue'
 								: 'border-active_green'
 						}`}
 					>
