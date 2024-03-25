@@ -32,6 +32,7 @@ import {
 	IEmergency,
 	IUpdateEmergencyRequest,
 } from '@/types/models/emergency.model';
+import { IVideo } from '@/types/models/video.model';
 
 class ApiClient extends HttpClient {
 	constructor() {
@@ -162,6 +163,15 @@ class ApiClient extends HttpClient {
 					request
 				),
 		};
+	}
+
+	get VIDEO(){
+		return{
+			GET_EXISTING_VIDEO:(carName:string, cameraName:string) =>
+				this.get<ResponseDataT<IVideo[]>>(
+					API_CONTEXT.VIDEO.GET_EXISTING_VIDEO({carName, cameraName})
+				),
+		}
 	}
 }
 

@@ -121,3 +121,10 @@ export const updateEmergencyAPI = async (query: IUpdateEmergencyQuery) =>
 	executeApiCall((service) =>
 		service.EMERGENCY.UPDATE_EMERGENCY(query, query.request)
 	);
+
+export const listVideoUrl = async (carName:string, cameraName:string ) =>
+	executeApiCall((service) =>
+		service.VIDEO.GET_EXISTING_VIDEO(carName, cameraName)
+	);
+
+	

@@ -2,11 +2,11 @@
 // next
 import { useSearchParams } from 'next/navigation';
 // react
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // material ui
 import { Card, Divider } from '@mui/material';
 // tanstack
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 // components
 import Loading from '@/components/common/Loading';
 import PageTitle from '@/components/common/PageTitle';
@@ -20,7 +20,7 @@ import { ICar } from '@/types/models/car.model';
 // templates
 import { PanopticFilterTemplate } from '@/templates/FILTER';
 // services
-import { getCarsAPI } from '@/services/api-call';
+import { getCarsAPI, listVideoUrl } from '@/services/api-call';
 // utilities
 import { DateOptionGenerator, OptionGenerator } from '@/utils/DataGenerator';
 
@@ -36,25 +36,32 @@ export default function Home() {
 		queryFn: async () => await getCarsAPI({}),
 	});
 
+
 	// set data
-	const dates = DateOptionGenerator();
 	const emptyFilterData = {
 		car_id: '',
 		camera_id: '',
-		date: dates[0].value,
 	};
 	const defaultFilterData = {
 		car_id: carId,
 		camera_id: cameraId,
-		date: dates[0].value,
 	};
 
 	//states
 	const [search, setSearch] = useState<IGetPanopticRequest>(defaultFilterData);
+	console.log(search)
 
 	const carList = cars ?? [];
 	const cameraList =
 		carList.find((car: ICar) => car.id === search.car_id)?.cameras ?? [];
+
+	const { data: dateList } = useQuery({
+		queryKey: ['listVideoUrl', search.car_id, search.camera_id],
+		queryFn: async () => await listVideoUrl(search.car_id, search.camera_id),
+		enabled: !!search.car_id && !!search.camera_id,
+	});
+
+
 	const options = [
 		{
 			id: 'car_id',
@@ -66,9 +73,12 @@ export default function Home() {
 		},
 		{
 			id: 'date',
-			option: dates,
+			option: dateList
+			? dateList.map((item:any) => ({ value: item.url, label: item.videosTimestamp }))
+			: [],
 		},
 	];
+
 
 	return (
 		<>
@@ -78,19 +88,20 @@ export default function Home() {
 				<Card className="flex flex-col gap-16 w-full min-w-[400px] h-auto min-h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Filter
 						template={PanopticFilterTemplate}
-						handleSubmitSearch={() => {}}
+						handleSubmitSearch={() => {console.log("test")}}
 						search={search}
 						setSearch={setSearch}
 						handleClearSearch={() => setSearch(emptyFilterData)}
 						options={options}
 					/>
 					<Divider />
+					
 					<div className="aspect-video bg-dark_background_grey flex justify-center items-center">
-						{/* <CameraVideo
-							carID={search.car_id}
-							cameraId={search.camera_id}
-							isDisabled={!search.car_id || !search.camera_id}
-						/> */}
+						<iframe
+                            className="w-full h-full"
+                            src={search.date}
+                            allowFullScreen
+                        />
 					</div>
 				</Card>
 			</div>
