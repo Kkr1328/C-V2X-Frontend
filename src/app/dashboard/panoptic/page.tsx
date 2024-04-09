@@ -29,6 +29,8 @@ export default function Home() {
 	const searchParams = useSearchParams();
 	const carId = searchParams.get('car_id') ?? '';
 	const cameraId = searchParams.get('camera_id') ?? '';
+	const [showVideo,setShowVideo] = useState(false)
+	const videoRef = useRef<any>(null)
 
 	// query
 	const { isLoading: isCarsLoading, data: cars } = useQuery({
@@ -74,10 +76,22 @@ export default function Home() {
 		{
 			id: 'date',
 			option: dateList
-			? dateList.map((item:any) => ({ value: item.url, label: item.videosTimestamp }))
+			? dateList.map((item:any) => ({ value: item.videosTimestamp, label: new Date(parseInt(item.videosTimestamp)).toLocaleString() }))
 			: [],
 		},
 	];
+
+	useEffect(()=>{
+		if(videoRef.current){
+			videoRef.current.pause()
+			videoRef.current.removeAttribute('src')
+			videoRef.current.load()
+		}
+	})
+
+	useEffect(()=>{
+		setShowVideo(false)
+	},[search])
 
 
 	return (
@@ -88,21 +102,23 @@ export default function Home() {
 				<Card className="flex flex-col gap-16 w-full min-w-[400px] h-auto min-h-[calc(100vh-192px)] rounded-lg px-32 py-24">
 					<Filter
 						template={PanopticFilterTemplate}
-						handleSubmitSearch={() => {console.log("test")}}
+						handleSubmitSearch={() => {setShowVideo(true)}}
 						search={search}
 						setSearch={setSearch}
 						handleClearSearch={() => setSearch(emptyFilterData)}
 						options={options}
 					/>
 					<Divider />
-					
 					<div className="aspect-video bg-dark_background_grey flex justify-center items-center">
-						<iframe
-                            className="w-full h-full"
-                            src={search.date}
-                            allowFullScreen
-                        />
+						{(showVideo && search.car_id && search.camera_id && search.date) ? 
+							<video ref={videoRef} controls autoPlay className="w-full h-full">
+								<source src={`http://localhost:5000/api/videos/${search.car_id}/${search.camera_id}/${search.date}`} type='video/mp4'></source>
+							</video> 
+							:
+							null
+						}
 					</div>
+					
 				</Card>
 			</div>
 		</>
