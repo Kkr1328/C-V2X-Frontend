@@ -112,7 +112,7 @@ export default function Home() {
 					<div className="aspect-video bg-dark_background_grey flex justify-center items-center">
 						{(showVideo && search.car_id && search.camera_id && search.date) ? 
 							<video ref={videoRef} controls autoPlay className="w-full h-full">
-								<source src={`http://localhost:5000/api/videos/${search.car_id}/${search.camera_id}/${search.date}`} type='video/mp4'></source>
+								<source src={`${process.env.NEXT_PUBLIC_API_URL}/videos/${search.car_id}/${search.camera_id}/${search.date}`} type='video/mp4'></source>
 							</video> 
 							:
 							null
