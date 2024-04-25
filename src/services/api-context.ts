@@ -50,6 +50,9 @@ const API_CONTEXT = {
 		UPDATE_EMERGENCY: ({ id }: IQuerry) =>
 			`${process.env.NEXT_PUBLIC_API_URL}/emergencies/${id}`,
 	},
+	VIDEO:{
+		GET_EXISTING_VIDEO: ({ carName, cameraName }: any) => `${process.env.NEXT_PUBLIC_API_URL}/videos/exist-videos?car_id=${carName}&camera_id=${cameraName}`
+	}
 };
 
 export default API_CONTEXT;

@@ -2,6 +2,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import RTCMultiConnection from 'rtcmulticonnection';
 import { Box } from '@/utils/renderBox';
+// @ts-ignore
 import { io, Socket } from 'socket.io-client';
 import RenderBoxes from '@/utils/renderBox';
 import IconMapper from '@/utils/IconMapper';

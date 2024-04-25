@@ -16,6 +16,7 @@ import { getCarsListAPI, getRSUsListAPI } from '@/services/api-call';
 // types
 import { FocusState, StuffLocation } from '@/types/OVERVIEW';
 import { IResponseList } from '@/types/common/responseList.model';
+import { useCarLocation, useRSULocation } from '@/utils/FleetRetriever';
 
 interface MapProps {
 	focus: FocusState | null;
@@ -30,6 +31,12 @@ export default function Map(props: MapProps) {
 
 	// states
 	const [map, setMap] = useState<google.maps.Map>();
+	const focusCarLoc = useCarLocation(
+		props.focus?.type === 'CAR' ? props.focus?.id ?? '' : ''
+	) as google.maps.LatLngLiteral;
+	const focusRSULoc = useRSULocation(
+		props.focus?.type === 'RSU' ? props.focus?.id ?? '' : ''
+	) as google.maps.LatLngLiteral;
 
 	// query
 	const { data: carsList } = useQuery<IResponseList[]>({
@@ -44,13 +51,23 @@ export default function Map(props: MapProps) {
 	useEffect(() => {
 		if (!props.focus) return;
 
-		if (props.focus.location) {
-			map?.panTo(props.focus.location);
+		switch (props.focus.type) {
+			case 'CAR':
+				if (focusCarLoc) {
+					map?.panTo(focusCarLoc);
+				}
+				break;
+			case 'RSU':
+				if (focusRSULoc) {
+					map?.panTo(focusRSULoc);
+				}
+				break;
 		}
+
 		if (props.focus.zoom) {
 			map?.setZoom(props.focus.zoom);
 		}
-	}, [props.focus, map]);
+	}, [props.focus, map, focusCarLoc, focusRSULoc]);
 
 	const resetFocus = () => props.changeFocus(null);
 
